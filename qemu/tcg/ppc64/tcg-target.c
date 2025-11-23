@@ -875,8 +875,13 @@ static void tcg_target_qemu_prologue (TCGContext *s)
         + 8                     /* TOC save area */
         + TCG_STATIC_CALL_ARGS_SIZE
         + ARRAY_SIZE (tcg_target_callee_save_regs) * 8
+        + CPU_TEMP_BUF_NLONGS * sizeof(long)
         ;
     frame_size = (frame_size + 15) & ~15;
+
+    tcg_set_frame(s, TCG_REG_CALL_STACK, frame_size
+                  - CPU_TEMP_BUF_NLONGS * sizeof(long),
+                  CPU_TEMP_BUF_NLONGS * sizeof(long));
 
 #ifndef __APPLE__
     /* First emit adhoc function descriptor */
@@ -966,11 +971,6 @@ static void ppc_addi64 (TCGContext *s, int rt, int ra, tcg_target_long si)
         tcg_out_movi (s, TCG_TYPE_I64, 0, si);
         tcg_out32 (s, ADD | RT (rt) | RA (ra));
     }
-}
-
-static void tcg_out_addi (TCGContext *s, int reg, tcg_target_long val)
-{
-    ppc_addi64 (s, reg, reg, val);
 }
 
 static void tcg_out_cmp (TCGContext *s, int cond, TCGArg arg1, TCGArg arg2,
@@ -1696,6 +1696,4 @@ static void tcg_target_init (TCGContext *s)
     tcg_regset_set_reg (s->reserved_regs, TCG_REG_R13);
 
     tcg_add_target_add_op_defs (ppc_op_defs);
-    tcg_set_frame(s, TCG_AREG0, offsetof(CPUState, temp_buf),
-                  CPU_TEMP_BUF_NLONGS * sizeof(long));
 }
