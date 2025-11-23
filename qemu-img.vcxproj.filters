@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="outside_qemu_tree_custom\XGetopt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\aes.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\aio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\async.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\blkdebug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\blkverify.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\bochs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\cloop.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\cow.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\dmg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\parallels.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2-cache.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2-cluster.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2-refcount.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2-snapshot.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-check.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-cluster.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-gencb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-l2-cache.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-table.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\raw-win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\raw.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\vdi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\vmdk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\vpc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\vvfat.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\cutils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\error.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\json-lexer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\json-parser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\json-streamer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\osdep.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\oslib-win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qbool.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qdict.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-config.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-error.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-img.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-malloc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-option.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-progress.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-thread-win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-timer-common.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-tool.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qerror.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qfloat.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qjson.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qlist.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qstring.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
