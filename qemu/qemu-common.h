@@ -207,7 +207,6 @@ typedef void(__cdecl* qemu_ctor_fn)(void);
 /* FIXME: Remove NEED_CPU_H.  */
 #ifndef NEED_CPU_H
 
-#include <setjmp.h>
 #include "osdep.h"
 #include "bswap.h"
 

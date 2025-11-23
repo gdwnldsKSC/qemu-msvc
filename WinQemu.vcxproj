@@ -495,6 +495,9 @@
     <ClCompile Include="qemu\hw\mips_fulong2e.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="qemu\hw\mpc8544_guts.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="qemu\hw\msi.c" />
     <ClCompile Include="qemu\hw\msix.c" />
     <ClCompile Include="qemu\hw\multiboot.c" />

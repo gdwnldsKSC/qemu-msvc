@@ -44,6 +44,8 @@
 #define VIRTIO_BLK_F_WCACHE     9       /* write cache enabled */
 #define VIRTIO_BLK_F_TOPOLOGY   10      /* Topology information is available */
 
+#define VIRTIO_BLK_ID_BYTES     20      /* ID string length */
+
 #ifdef _MSC_VER
 #pragma pack (push, 1)
 #endif

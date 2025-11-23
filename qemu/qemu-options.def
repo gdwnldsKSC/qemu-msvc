@@ -194,6 +194,10 @@ DEF("portrait", 0, QEMU_OPTION_portrait,
 "-portrait       rotate graphical output 90 deg left (only PXA LCD)\n",
 QEMU_ARCH_ALL)
 
+DEF("rotate", HAS_ARG, QEMU_OPTION_rotate,
+"-rotate <deg>   rotate graphical output some deg left (only PXA LCD)\n",
+QEMU_ARCH_ALL)
+
 DEF("vga", HAS_ARG, QEMU_OPTION_vga,
 "-vga [std|cirrus|vmware|qxl|xenfb|none]\n"
 "                select video card type\n", QEMU_ARCH_ALL)

@@ -415,10 +415,10 @@ static inline void stfq_le_p(void *ptr, float64 v)
 
 #if !defined(HOST_WORDS_BIGENDIAN) || defined(WORDS_ALIGNED)
 
-#ifndef _MSC_VER
+
 static inline int lduw_be_p(const void *ptr)
 {
-#if defined(__i386__)
+#if defined(__i386__) && !defined(_MSC_VER)
     int val;
     asm volatile ("movzwl %1, %0\n"
                   "xchgb %b0, %h0\n"
@@ -433,7 +433,7 @@ static inline int lduw_be_p(const void *ptr)
 
 static inline int ldsw_be_p(const void *ptr)
 {
-#if defined(__i386__)
+#if defined(__i386__) && !defined _MSC_VER
     int val;
     asm volatile ("movzwl %1, %0\n"
                   "xchgb %b0, %h0\n"
@@ -448,7 +448,7 @@ static inline int ldsw_be_p(const void *ptr)
 
 static inline int ldl_be_p(const void *ptr)
 {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(__i386__) && !defined(_MSC_VER) || defined(__x86_64__) && !defined(_MSC_VER)
     int val;
     asm volatile ("movl %1, %0\n"
                   "bswap %0\n"
@@ -471,7 +471,7 @@ static inline uint64_t ldq_be_p(const void *ptr)
 
 static inline void stw_be_p(void *ptr, int v)
 {
-#if defined(__i386__)
+#if defined(__i386__) && !defined(_MSC_VER)
     asm volatile ("xchgb %b0, %h0\n"
                   "movw %w0, %1\n"
                   : "=q" (v)
@@ -485,7 +485,7 @@ static inline void stw_be_p(void *ptr, int v)
 
 static inline void stl_be_p(void *ptr, int v)
 {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(__i386__) && !defined(_MSC_VER) || defined(__x86_64__) && !defined(_MSC_VER)
     asm volatile ("bswap %0\n"
                   "movl %0, %1\n"
                   : "=r" (v)
@@ -542,7 +542,6 @@ static inline void stfq_be_p(void *ptr, float64 v)
     stl_be_p(ptr, u.l.upper);
     stl_be_p((uint8_t *)ptr + 4, u.l.lower);
 }
-#endif
 
 #else
 
