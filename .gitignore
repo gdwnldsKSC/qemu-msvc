@@ -22,5 +22,9 @@
 /WinQemuTest/Release/
 /WinQemuTest/x64/Debug/
 /WinQemu/x64/Debug/
+/qemu-img/Debug/
+/qemu-io/Debug/
+/qemu-system-alpha/Debug/
+/qemu-system-i386/Debug/
 /x64/Debug/
 /libs/Debug/

@@ -17,7 +17,7 @@ Hardcoded to use D:\Images\ for files. - this is not exactly true anymore as we 
 functional parameters for everything. -L specifies where vgabios.bin is, -bios where... 
 the main bios is, and -hda where the disk image is. small.ffs is NetBSD 1.2
 
-### NOTE: WE NO LONGER BUILD AS A DLL. Currently we only emit qemu-system-i386.exe but no more shenanigans! 
+### NOTE: WE NO LONGER BUILD AS A DLL AS OF 11/23/25. TCG still partially broken due to ABI/Calling convention difference issues but will be resolved in future tree updates. Currently we only emit qemu-system-i386.exe and qemu-img.exe but no more shenanigans! Soon to come more tools and targets!
 
 # Progress Updates
 
@@ -26,8 +26,6 @@ how TCG works post 0.12.5 that is only partially resolved, causing large issues 
 This will be resolved soon, however, until then, while it works for bios and partially booting
 systems it is probe to reset and can't fully boot netbsd or windows xp. TCG resolution is 
 expected as we approach 1.1+
-
-### AS OF THIS DATE WE NO LONGER BUILD AS A DLL. Currently only qemu-system-i386.exe, but qemu-img etc will be coming, as well as additional targets as worked on after getting further upstream.
 
 11/13/2025 - There are necessary changes to simplify our TCG hacks and improve reliability
 going forward that appear in qemu-0.15 - these will allow removal of inline assembly and 

@@ -1719,9 +1719,6 @@
     <ClCompile Include="qemu\block\qcow2-cache.c">
       <Filter>qemu\block\src</Filter>
     </ClCompile>
-    <ClCompile Include="qemu\spice-qemu-char.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="qemu\bitmap.c">
       <Filter>qemu\src</Filter>
     </ClCompile>
@@ -1871,6 +1868,9 @@
     </ClCompile>
     <ClCompile Include="qemu\qga\guest-agent-command-state.c">
       <Filter>qga</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\spice-qemu-char.c">
+      <Filter>qemu\ui\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
