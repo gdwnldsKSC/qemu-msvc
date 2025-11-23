@@ -1,5 +1,6 @@
-﻿Currently VS2022! TESTFILES build was created via fully updated
-VS2022 17.11.5 on Windows 11 26257 with the Windows 10 20348 SDK.
+﻿Currently working in VS2026! 
+
+TESTFILES build was created via fully updated VS2022 17.11.5 on Windows 11 26257 with the Windows 10 20348 SDK.
 
 All code that currently compiles and executes matches an upstream tree now, with 
 just MSVC compatibiilty fixes so that building from this repo for GCC/Linux should
@@ -10,14 +11,13 @@ as it appears timeperiod appropriate for the included compiled libraries in the 
 to enable clean building. Eventually, that and other supporting libraries will be brought
 into the project and built alongside the entire solution.
 
-WinQemu builds the dll, WinQemuTest builds the exe to actually use it
+Eventually, we will link in upstream SDL and include the build project in the solution, but not today....
 
 Hardcoded to use D:\Images\ for files. - this is not exactly true anymore as we now have
 functional parameters for everything. -L specifies where vgabios.bin is, -bios where... 
 the main bios is, and -hda where the disk image is. small.ffs is NetBSD 1.2
 
-Check "WinQemuTest.exe -help" for BIOS options, as by default it skips boot menu 
-per default configuration from upstream codebase. 
+### NOTE: WE NO LONGER BUILD AS A DLL. Currently we only emit qemu-system-i386.exe but no more shenanigans! 
 
 # Progress Updates
 
@@ -27,10 +27,7 @@ This will be resolved soon, however, until then, while it works for bios and par
 systems it is probe to reset and can't fully boot netbsd or windows xp. TCG resolution is 
 expected as we approach 1.1+
 
-## NOTE: WE NO LONGER BUILD AS A DLL. Going forward, more items will be added   
-## (qemu-img.exe is next) but now we properly build a real qemu-system-i386.exe! Hurray!  
-## Debugging and handling in general is greatly simplified. This mimics the 'normal'  
-## QEMU build process more closely now.  
+### AS OF THIS DATE WE NO LONGER BUILD AS A DLL. Currently only qemu-system-i386.exe, but qemu-img etc will be coming, as well as additional targets as worked on after getting further upstream.
 
 11/13/2025 - There are necessary changes to simplify our TCG hacks and improve reliability
 going forward that appear in qemu-0.15 - these will allow removal of inline assembly and 
