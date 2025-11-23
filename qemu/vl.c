@@ -21,16 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the
- * General Public License version 3 (GPLv3) at this time for any software where a choice of
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- *
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -2053,12 +2043,7 @@ static const QEMUOption *lookup_opt(int argc, char **argv,
     return popt;
 }
 
-#ifndef _MSC_VER
-int main(int argc, char** argv, char** envp)
-#else
-void init_sse_op_table1(void);
-int __declspec(dllexport) qemu_main(int argc, char** argv, char** envp)
-#endif
+int main(int argc, char **argv, char **envp)
 {
     const char *gdbstub_dev = NULL;
     int i;

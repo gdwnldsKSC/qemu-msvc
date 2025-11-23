@@ -21,6 +21,17 @@ per default configuration from upstream codebase.
 
 # Progress Updates
 
+11/23/2025 - We're in qemu 0.15.x territory now, but there is a large outstanding issue with
+how TCG works post 0.12.5 that is only partially resolved, causing large issues for x86 guests.
+This will be resolved soon, however, until then, while it works for bios and partially booting
+systems it is probe to reset and can't fully boot netbsd or windows xp. TCG resolution is 
+expected as we approach 1.1+
+
+## NOTE: WE NO LONGER BUILD AS A DLL. Going forward, more items will be added   
+## (qemu-img.exe is next) but now we properly build a real qemu-system-i386.exe! Hurray!  
+## Debugging and handling in general is greatly simplified. This mimics the 'normal'  
+## QEMU build process more closely now.  
+
 11/13/2025 - There are necessary changes to simplify our TCG hacks and improve reliability
 going forward that appear in qemu-0.15 - these will allow removal of inline assembly and 
 fix calling convention issues, allowing 64-bit builds to be possible in the future.
@@ -110,19 +121,24 @@ Changing the toolchain from VS 2022 to something else and then back again resolv
 
 Only Debug/Win32 is currently "fixed up" and working as of this time. 
 
+You must build and copy sdl.dll and sdlmain.dll from SDL-1.2 from  
+https://github.com/libsdl-org/SDL-1.2 and copy them to the working directories for the relevant outputs.
+
 Visual Studio 2008 / Visual C++ 2008 Runtime DEBUG version required for currently included build
 of sdl. This requirement will be fixed in the future by properly integrating the SDL build process
 and upgrading to a far newer version. Switching to a 'release' build will remove this requirement
 and allow usage of only the regular VC++ Runtime redistributable, but until that time, the easiest route
 is to acquire MSVCR90D.dll separately or install Visual Studio 2008. 
 
-For a working debug environment, add to D:\Images\ (currently hard coded) vgabios-cirrus.bin, 
-small.ffs, and bios.bin for a minimal x86 emulated system during debugging. This path can 
-be modified in project WinQemu\qemu\inc\config-host.h
+For a working debug environment, add to D:\Images\ (currently hard coded, can be overriden via 
+-L X:\Path on the for default image files on the commandline) vgabios-cirrus.bin, small.ffs, and bios.bin 
+from the qemu\pc-bios folder for a minimal x86 emulated system during debugging. 
+This path can be modified in project WinQemu\qemu\inc\config-host.h
 
-Add '-net none -cpu coreduo -m 512 -M pc -vga std -sdl -hda D:\Images\small.ffs -bios D:\Images\bios.bin -L D:\Images'  
-to the command arguments part of the WinQemuTest project to reproduce the 'test' environment
-or the paths of your choosing now that we can specify arbitrary paths. 
+With all this, in the 'debug' configuration add this to the command line arguments: 
+'-net none -cpu coreduo -m 512 -M pc -vga cirrus -sdl -hda D:\Images\small.ffs -bios D:\Images\bios.bin -L D:\Images'  
+of the qemu-system-i386 project to reproduce the 'test' environment or the paths of your choosing now 
+that we can specify arbitrary paths. 
 
 From a bash shell (or WSL) run  
 ./hxtool -h < qemu-options.hx > qemu-options.def  
@@ -143,7 +159,7 @@ but for ease of use I will be supplying a working version of qemu-options.h in m
 qemu-options generated QEMU_OPTIONS_net must be modified to avoid macro expansion issues
 in MSVC C Preprocessor currently. 
 
-# Included precompiled images/binaries
+# Included precompiled images/binaries - OUTDATED AS OF 11/23/2025
 
 Folder TESTFILES contains working bios image and 'small' BSD disk with not much on it
 but works with these. VGABIOS project for VGA BIOS, and a SeaBIOS image.

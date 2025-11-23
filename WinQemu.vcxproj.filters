@@ -96,13 +96,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WinQemu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="qemu\aes.c">
