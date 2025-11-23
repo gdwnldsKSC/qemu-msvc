@@ -683,10 +683,29 @@
     </ClCompile>
     <ClCompile Include="qemu\oslib-win32.c" />
     <ClCompile Include="qemu\pflib.c" />
+    <ClCompile Include="qemu\qapi\qapi-dealloc-visitor.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qapi-visit-core.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qmp-dispatch.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qmp-input-visitor.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qmp-output-visitor.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qmp-registry.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="qemu\qbool.c" />
     <ClCompile Include="qemu\qdict.c" />
     <ClCompile Include="qemu\qemu-config.c" />
     <ClCompile Include="qemu\qemu-error.c" />
+    <ClCompile Include="qemu\qemu-ga.c" />
     <ClCompile Include="qemu\qemu-io.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -704,6 +723,12 @@
     <ClCompile Include="qemu\qemu-timer.c" />
     <ClCompile Include="qemu\qerror.c" />
     <ClCompile Include="qemu\qfloat.c" />
+    <ClCompile Include="qemu\qga\guest-agent-command-state.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="qemu\qga\guest-agent-commands.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="qemu\qint.c" />
     <ClCompile Include="qemu\qjson.c" />
     <ClCompile Include="qemu\qlist.c" />
@@ -750,6 +775,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug-alpha|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="qemu\tcg-runtime.c" />
+    <ClCompile Include="qemu\test-qmp-commands.c" />
+    <ClCompile Include="qemu\test-visitor.c" />
     <ClCompile Include="qemu\trace.c" />
     <ClCompile Include="qemu\ui\curses.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -795,6 +822,7 @@
     </ClCompile>
     <ClCompile Include="qemu\ui\vnc.c" />
     <ClCompile Include="qemu\ui\x_keymap.c" />
+    <ClCompile Include="qemu\usb-redir.c" />
     <ClCompile Include="qemu\xen-all.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -2054,6 +2082,7 @@
     <ClInclude Include="qemu\bt-host.h" />
     <ClInclude Include="qemu\cmd.h" />
     <ClInclude Include="qemu\compatfd.h" />
+    <ClInclude Include="qemu\compiler.h" />
     <ClInclude Include="qemu\cpu-common.h" />
     <ClInclude Include="qemu\cpus.h" />
     <ClInclude Include="qemu\error.h" />
@@ -2144,6 +2173,24 @@
     <ClInclude Include="qemu\net\vde.h" />
     <ClInclude Include="qemu\notify.h" />
     <ClInclude Include="qemu\pflib.h" />
+    <ClInclude Include="qemu\qapi\qapi-dealloc-visitor.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qapi-types-core.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qapi-visit-core.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qmp-core.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qmp-input-visitor.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qmp-output-visitor.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="qemu\qbool.h" />
     <ClInclude Include="qemu\qdict.h" />
     <ClInclude Include="qemu\qemu-barrier.h" />
@@ -2159,6 +2206,9 @@
     <ClInclude Include="qemu\qemu-thread.h" />
     <ClInclude Include="qemu\qerror.h" />
     <ClInclude Include="qemu\qfloat.h" />
+    <ClInclude Include="qemu\qga\guest-agent-core.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="qemu\qint.h" />
     <ClInclude Include="qemu\qjson.h" />
     <ClInclude Include="qemu\qlist.h" />

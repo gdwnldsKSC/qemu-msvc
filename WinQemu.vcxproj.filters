@@ -88,6 +88,12 @@
     <Filter Include="qemu\hw\9pfs">
       <UniqueIdentifier>{53dcd84f-20a2-4ba0-8358-b20779f2d65b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="qemu\qapi">
+      <UniqueIdentifier>{a6044c40-db84-48b4-8dfc-9f6a4b451298}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="qga">
+      <UniqueIdentifier>{d6294da1-23cd-4824-a3a6-ac47a5b47825}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -1836,6 +1842,42 @@
     <ClCompile Include="qemu\hw\mpc8544_guts.c">
       <Filter>qemu\hw\src</Filter>
     </ClCompile>
+    <ClCompile Include="qemu\qapi\qapi-dealloc-visitor.c">
+      <Filter>qemu\qapi</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qapi-visit-core.c">
+      <Filter>qemu\qapi</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qmp-dispatch.c">
+      <Filter>qemu\qapi</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qmp-input-visitor.c">
+      <Filter>qemu\qapi</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qmp-output-visitor.c">
+      <Filter>qemu\qapi</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\qmp-registry.c">
+      <Filter>qemu\qapi</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-ga.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\test-qmp-commands.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\test-visitor.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\usb-redir.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qga\guest-agent-commands.c">
+      <Filter>qga</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qga\guest-agent-command-state.c">
+      <Filter>qga</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="float80-port.h">
@@ -2818,6 +2860,30 @@
     </ClInclude>
     <ClInclude Include="qemu\hw\virtio-pci.h">
       <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\compiler.h">
+      <Filter>qemu\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qapi-dealloc-visitor.h">
+      <Filter>qemu\qapi</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qapi-types-core.h">
+      <Filter>qemu\qapi</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qapi-visit-core.h">
+      <Filter>qemu\qapi</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qmp-core.h">
+      <Filter>qemu\qapi</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qmp-input-visitor.h">
+      <Filter>qemu\qapi</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qmp-output-visitor.h">
+      <Filter>qemu\qapi</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qga\guest-agent-core.h">
+      <Filter>qga</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
