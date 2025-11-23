@@ -5,7 +5,7 @@
  * Copyright (c) 2008 Samuel Thibault <samuel.thibault@ens-lyon.org>
  * Written by Paul Brook, reused for FTDI by Samuel Thibault
  *
- * This code is licenced under the LGPL.
+ * This code is licensed under the LGPL.
  */
 
 #include "qemu-common.h"
@@ -566,10 +566,16 @@ static USBDevice *usb_braille_init(const char *unused)
     return dev;
 }
 
+static const VMStateDescription vmstate_usb_serial = {
+    .name = "usb-serial",
+    .unmigratable = 1,
+};
+
 static struct USBDeviceInfo serial_info = {
     .product_desc   = "QEMU USB Serial",
     .qdev.name      = "usb-serial",
     .qdev.size      = sizeof(USBSerialState),
+    .qdev.vmsd      = &vmstate_usb_serial,
     .usb_desc       = &desc_serial,
     .init           = usb_serial_initfn,
     .handle_packet  = usb_generic_handle_packet,
@@ -589,6 +595,7 @@ static struct USBDeviceInfo braille_info = {
     .product_desc   = "QEMU USB Braille",
     .qdev.name      = "usb-braille",
     .qdev.size      = sizeof(USBSerialState),
+    .qdev.vmsd      = &vmstate_usb_serial,
     .usb_desc       = &desc_braille,
     .init           = usb_serial_initfn,
     .handle_packet  = usb_generic_handle_packet,

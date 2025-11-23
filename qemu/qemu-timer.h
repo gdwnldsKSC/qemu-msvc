@@ -4,6 +4,7 @@
 #include "qemu-common.h"
 #include <intrin.h>
 #pragma intrinsic(__rdtsc)
+#include "notify.h"
 #include <time.h>
 #include <sys/time.h>
 
@@ -42,6 +43,10 @@ extern QEMUClock *host_clock;
 int64_t qemu_get_clock_ns(QEMUClock *clock);
 void qemu_clock_enable(QEMUClock *clock, int enabled);
 void qemu_clock_warp(QEMUClock *clock);
+
+void qemu_register_clock_reset_notifier(QEMUClock *clock, Notifier *notifier);
+void qemu_unregister_clock_reset_notifier(QEMUClock *clock,
+                                          Notifier *notifier);
 
 QEMUTimer *qemu_new_timer(QEMUClock *clock, int scale,
                           QEMUTimerCB *cb, void *opaque);

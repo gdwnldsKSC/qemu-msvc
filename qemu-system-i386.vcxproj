@@ -623,6 +623,7 @@
     <ClCompile Include="qemu\json-parser.c" />
     <ClCompile Include="qemu\json-streamer.c" />
     <ClCompile Include="qemu\kvm-stub.c" />
+    <ClCompile Include="qemu\memory.c" />
     <ClCompile Include="qemu\microblaze-dis.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -2078,6 +2079,7 @@
     <ClInclude Include="qemu\cpus.h" />
     <ClInclude Include="qemu\error.h" />
     <ClInclude Include="qemu\error_int.h" />
+    <ClInclude Include="qemu\exec-memory.h" />
     <ClInclude Include="qemu\fsdev\file-op-9p.h" />
     <ClInclude Include="qemu\fsdev\qemu-fsdev.h" />
     <ClInclude Include="qemu\hw\9p.h" />
@@ -2151,6 +2153,7 @@
     <ClInclude Include="qemu\json-lexer.h" />
     <ClInclude Include="qemu\json-parser.h" />
     <ClInclude Include="qemu\json-streamer.h" />
+    <ClInclude Include="qemu\memory.h" />
     <ClInclude Include="qemu\module.h" />
     <ClInclude Include="qemu\monitor.h" />
     <ClInclude Include="qemu\net\checksum.h" />

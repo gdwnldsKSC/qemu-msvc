@@ -131,7 +131,7 @@ from the qemu\pc-bios folder for a minimal x86 emulated system during debugging.
 This path can be modified in project WinQemu\qemu\inc\config-host.h
 
 With all this, in the 'debug' configuration add this to the command line arguments: 
-'-net none -cpu coreduo -m 512 -M pc -vga cirrus -sdl -hda D:\Images\small.ffs -bios D:\Images\bios.bin -L D:\Images'  
+'-net none -cpu coreduo -m 512 -machine pc -vga cirrus -sdl -hda D:\Images\small.ffs -bios D:\Images\bios.bin -L D:\Images'  
 of the qemu-system-i386 project to reproduce the 'test' environment or the paths of your choosing now 
 that we can specify arbitrary paths. 
 

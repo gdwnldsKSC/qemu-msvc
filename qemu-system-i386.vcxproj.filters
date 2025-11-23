@@ -1872,6 +1872,9 @@
     <ClCompile Include="qemu\spice-qemu-char.c">
       <Filter>qemu\ui\src</Filter>
     </ClCompile>
+    <ClCompile Include="qemu\memory.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="float80-port.h">
@@ -2878,6 +2881,12 @@
     </ClInclude>
     <ClInclude Include="qemu\qga\guest-agent-core.h">
       <Filter>qemu\qga</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\exec-memory.h">
+      <Filter>qemu\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\memory.h">
+      <Filter>qemu\inc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -20,6 +20,11 @@
 #define WINVER 0x0501  /* needed for ipv6 bits */
 #include <windows.h>
 #endif
+
+#if defined(__arm__) || defined(__sparc__) || defined(__mips__) || defined(__hppa__) || defined(__ia64__)
+#define WORDS_ALIGNED
+#endif
+
 #define TFR(expr) do { if ((expr) != -1) break; } while (errno == EINTR)
 
 typedef struct QEMUTimer QEMUTimer;
@@ -104,11 +109,6 @@ static inline char *realpath(const char *path, char *resolved_path)
     _fullpath(resolved_path, path, _MAX_PATH);
     return resolved_path;
 }
-
-#define PRId64 "I64d"
-#define PRIx64 "I64x"
-#define PRIu64 "I64u"
-#define PRIo64 "I64o"
 #endif
 
 // Add posix supported commands native to windows aliased to standard posix format
@@ -284,6 +284,12 @@ void qemu_set_cloexec(int fd);
 int qemu_add_child_watch(pid_t pid);
 int qemu_eventfd(int pipefd[2]);
 int qemu_pipe(int pipefd[2]);
+#endif
+
+#ifdef _WIN32
+#define qemu_recv(sockfd, buf, len, flags) recv(sockfd, (void *)buf, len, flags)
+#else
+#define qemu_recv(sockfd, buf, len, flags) recv(sockfd, buf, len, flags)
 #endif
 
 /* Error handling.  */

@@ -225,6 +225,15 @@
 
 
 {
+.name       = "blockdev-snapshot-sync",
+.args_type  = "device:B,snapshot-file:s?,format:s?",
+.params     = "device [new-image-file] [format]",
+.user_print = monitor_user_noop,
+.mhandler.cmd_new = do_snapshot_blkdev,
+},
+
+
+{
 .name       = "balloon",
 .args_type  = "value:M",
 .params     = "target",
@@ -294,6 +303,15 @@
 .mhandler.cmd_new = expire_password,
 },
 
+
+{
+.name       = "add_client",
+.args_type  = "protocol:s,fdname:s,skipauth:b?",
+.params     = "protocol fdname skipauth",
+.help       = "add a graphics client",
+.user_print = monitor_user_noop,
+.mhandler.cmd_new = add_graphics_client,
+},
 
 {
 .name       = "qmp_capabilities",

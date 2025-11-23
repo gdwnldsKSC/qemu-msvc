@@ -26,6 +26,7 @@
 #include "pci.h"
 #include "pci_host.h"
 #include "bswap.h"
+#include "exec-memory.h"
 
 typedef struct SHPCIState {
     SysBusDevice busdev;
@@ -80,15 +81,15 @@ static void sh_pci_reg_write (void *p, target_phys_addr_t addr, uint32_t val)
     case 0x1c8:
         if ((val & 0xfffc0000) != (pcic->iobr & 0xfffc0000)) {
             cpu_register_physical_memory(pcic->iobr & 0xfffc0000, 0x40000,
-                IO_MEM_UNASSIGNED);
+                                         IO_MEM_UNASSIGNED);
             pcic->iobr = val & 0xfffc0001;
             isa_mmio_init(pcic->iobr & 0xfffc0000, 0x40000);
-    }
+        }
         break;
     case 0x220:
         pci_data_write(pcic->bus, pcic->par, val, 4);
         break;
-}
+    }
 }
 #endif
 }
@@ -173,7 +174,8 @@ static int sh_pci_init_device(SysBusDevice *dev)
     }
     s->bus = pci_register_bus(&s->busdev.qdev, "pci",
                               sh_pci_set_irq, sh_pci_map_irq,
-                              s->irq, PCI_DEVFN(0, 0), 4);
+                              s->irq, get_system_memory(),
+                              PCI_DEVFN(0, 0), 4);
     s->memconfig = cpu_register_io_memory(sh_pci_reg.r, sh_pci_reg.w,
                                           s, DEVICE_NATIVE_ENDIAN);
     sysbus_init_mmio_cb(dev, 0x224, sh_pci_map);

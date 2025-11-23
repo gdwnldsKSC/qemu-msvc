@@ -7,8 +7,14 @@ DEF("help", 0, QEMU_OPTION_h,
 DEF("version", 0, QEMU_OPTION_version,
 "-version        display version information and exit\n", QEMU_ARCH_ALL)
 
-DEF("M", HAS_ARG, QEMU_OPTION_M,
-"-M machine      select emulated machine (-M ? for list)\n", QEMU_ARCH_ALL)
+DEF("machine", HAS_ARG, QEMU_OPTION_machine, \
+"-machine [type=]name[,prop[=value][,...]]\n"
+"                selects emulated machine (-machine ? for list)\n"
+"                property accel=accel1[:accel2[:...]] selects accelerator\n"
+"                supported accelerators are kvm, xen, tcg (default: tcg)\n",
+QEMU_ARCH_ALL)
+
+DEF("M", HAS_ARG, QEMU_OPTION_M, "", QEMU_ARCH_ALL)
 
 DEF("cpu", HAS_ARG, QEMU_OPTION_cpu,
 "-cpu cpu        select CPU (-cpu ? for list)\n", QEMU_ARCH_ALL)
@@ -71,7 +77,10 @@ DEF("pflash", HAS_ARG, QEMU_OPTION_pflash,
 
 DEF("boot", HAS_ARG, QEMU_OPTION_boot,
 "-boot [order=drives][,once=drives][,menu=on|off]\n"
-"                'drives': floppy (a), hard disk (c), CD-ROM (d), network (n)\n",
+"      [,splash=sp_name][,splash-time=sp_time]\n"
+"                'drives': floppy (a), hard disk (c), CD-ROM (d), network (n)\n"
+"                'sp_name': the file's name that would be passed to bios as logo picture, if menu=on\n"
+"                'sp_time': the period that splash picture last if menu=on, unit is ms\n",
 QEMU_ARCH_ALL)
 
 DEF("snapshot", 0, QEMU_OPTION_snapshot,
@@ -239,7 +248,7 @@ DEF("balloon", HAS_ARG, QEMU_OPTION_balloon,
 "                enable virtio balloon device (default)\n", QEMU_ARCH_ALL)
 
 DEF("acpitable", HAS_ARG, QEMU_OPTION_acpitable,
-"-acpitable [sig=str][,rev=n][,oem_id=str][,oem_table_id=str][,oem_rev=n][,asl_compiler_id=str][,asl_compiler_rev=n][,data=file1[:file2]...]\n"
+"-acpitable [sig=str][,rev=n][,oem_id=str][,oem_table_id=str][,oem_rev=n][,asl_compiler_id=str][,asl_compiler_rev=n][,{data|file}=file1[:file2]...]\n"
 "                ACPI table description\n", QEMU_ARCH_I386)
 
 DEF("smbios", HAS_ARG, QEMU_OPTION_smbios,
@@ -511,9 +520,6 @@ DEF("bios", HAS_ARG, QEMU_OPTION_bios, \
 
 DEF("enable-kvm", 0, QEMU_OPTION_enable_kvm, \
 "-enable-kvm     enable KVM full virtualization support\n", QEMU_ARCH_ALL)
-
-DEF("machine", HAS_ARG, QEMU_OPTION_machine, \
-"-machine accel=accel1[:accel2]    use an accelerator (kvm,xen,tcg), default is tcg\n", QEMU_ARCH_ALL)
 
 DEF("xen-domid", HAS_ARG, QEMU_OPTION_xen_domid,
 "-xen-domid id   specify xen guest domain id\n", QEMU_ARCH_ALL)

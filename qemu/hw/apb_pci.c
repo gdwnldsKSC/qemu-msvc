@@ -34,6 +34,7 @@
 #include "rwhandler.h"
 #include "apb_pci.h"
 #include "sysemu.h"
+#include "exec-memory.h"
 
 /* debug APB */
 //#define DEBUG_APB
@@ -129,7 +130,7 @@ static void apb_config_writel (void *opaque, target_phys_addr_t addr,
     uint32_t addr_temp = addr & 0xffff;
     if (addr_temp >= 0x30 && addr_temp <= 0x4f) { /* DMA error registers */
         /* XXX: not implemented yet */
-    }
+}
     else if (addr_temp >= 0x200 && addr_temp <= 0x20b) { /* IOMMU */
         s->iommu[(addr & 0xf) >> 2] = val;
 }
@@ -431,6 +432,7 @@ PCIBus *pci_apb_init(target_phys_addr_t special_base,
 
     d->bus = pci_register_bus(&d->busdev.qdev, "pci",
                                          pci_apb_set_irq, pci_pbm_map_irq, d,
+                                         get_system_memory(),
                                          0, 32);
     pci_bus_set_mem_base(d->bus, mem_base);
 
