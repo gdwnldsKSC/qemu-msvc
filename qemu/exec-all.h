@@ -323,13 +323,11 @@ static inline tb_page_addr_t get_page_addr_code(CPUState *env1, target_ulong add
     pd = env1->tlb_table[mmu_idx][page_index].addr_code & ~TARGET_PAGE_MASK;
     if (pd > IO_MEM_ROM && !(pd & IO_MEM_ROMD)) {
 #if defined(TARGET_ALPHA) || defined(TARGET_MIPS) || defined(TARGET_SPARC)
-        do_unassigned_access(addr, 0, 1, 0, 4);
+        cpu_unassigned_access(env1, addr, 0, 1, 0, 4);
 #else
         cpu_abort(env1, "Trying to execute code outside RAM or ROM at 0x" TARGET_FMT_lx "\n", addr);
 #endif
     }
-// MSVC FIXME: Should be void * here, but MSVC 2013 doesn't like that so we char * then cast back
-// void * to resolve that
     p = (char *)(unsigned long)addr
         + env1->tlb_table[mmu_idx][page_index].addend;
     return qemu_ram_addr_from_host_nofail(p);

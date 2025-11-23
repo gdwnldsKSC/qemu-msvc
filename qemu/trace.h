@@ -53,6 +53,34 @@ static inline void trace_virtio_notify(void *vdev, void *vq)
 {
 }
 
+static inline void trace_virtio_serial_send_control_event(unsigned int port, uint16_t event, uint16_t value)
+{
+}
+
+static inline void trace_virtio_serial_throttle_port(unsigned int port, bool throttle)
+{
+}
+
+static inline void trace_virtio_serial_handle_control_message(uint16_t event, uint16_t value)
+{
+}
+
+static inline void trace_virtio_serial_handle_control_message_port(unsigned int port)
+{
+}
+
+static inline void trace_virtio_console_flush_buf(unsigned int port, size_t len, ssize_t ret)
+{
+}
+
+static inline void trace_virtio_console_chr_read(unsigned int port, int size)
+{
+}
+
+static inline void trace_virtio_console_chr_event(unsigned int port, int event)
+{
+}
+
 static inline void trace_multiwrite_cb(void *mcb, int ret)
 {
 }
@@ -170,6 +198,14 @@ static inline void trace_cs4231_mem_writel_reg(uint32_t reg, uint32_t old, uint3
 }
 
 static inline void trace_cs4231_mem_writel_dreg(uint32_t reg, uint32_t old, uint32_t val)
+{
+}
+
+static inline void trace_nvram_read(uint32_t addr, uint32_t ret)
+{
+}
+
+static inline void trace_nvram_write(uint32_t addr, uint32_t old, uint32_t val)
 {
 }
 
@@ -541,7 +577,7 @@ static inline void trace_usb_ehci_state(const char *schedule, const char *state)
 {
 }
 
-static inline void trace_usb_ehci_qh_ptrs(void *q, uint32_t addr, uint32_t next, uint32_t c_qtd, uint32_t n_qtd, uint32_t a_qtd)
+static inline void trace_usb_ehci_qh_ptrs(void *q, uint32_t addr, uint32_t nxt, uint32_t c_qtd, uint32_t n_qtd, uint32_t a_qtd)
 {
 }
 
@@ -553,7 +589,7 @@ static inline void trace_usb_ehci_qh_bits(uint32_t addr, int c, int h, int dtc, 
 {
 }
 
-static inline void trace_usb_ehci_qtd_ptrs(void *q, uint32_t addr, uint32_t next, uint32_t altnext)
+static inline void trace_usb_ehci_qtd_ptrs(void *q, uint32_t addr, uint32_t nxt, uint32_t altnext)
 {
 }
 
@@ -565,7 +601,7 @@ static inline void trace_usb_ehci_qtd_bits(uint32_t addr, int ioc, int active, i
 {
 }
 
-static inline void trace_usb_ehci_itd(uint32_t addr, uint32_t next, uint32_t mplen, uint32_t mult, uint32_t ep, uint32_t devaddr)
+static inline void trace_usb_ehci_itd(uint32_t addr, uint32_t nxt, uint32_t mplen, uint32_t mult, uint32_t ep, uint32_t devaddr)
 {
 }
 
@@ -1109,15 +1145,15 @@ static inline void trace_xen_client_set_memory(uint64_t start_addr, unsigned lon
 {
 }
 
-static inline void trace_qemu_map_cache(uint64_t phys_addr)
+static inline void trace_xen_map_cache(uint64_t phys_addr)
 {
 }
 
-static inline void trace_qemu_remap_bucket(uint64_t index)
+static inline void trace_xen_remap_bucket(uint64_t index)
 {
 }
 
-static inline void trace_qemu_map_cache_return(void* ptr)
+static inline void trace_xen_map_cache_return(void* ptr)
 {
 }
 

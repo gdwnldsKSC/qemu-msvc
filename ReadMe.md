@@ -137,10 +137,11 @@ that we can specify arbitrary paths.
 
 From a bash shell (or WSL) run  
 ./hxtool -h < qemu-options.hx > qemu-options.def  
-./hxtool -h < qemu-monitor.hx > qemu-monitor.h
-./hxtool -h < hmp-commands.hx > hmp-commands.hx
-./hxtool -h < hmp-commands.hx > hmp-commands.h
-./tracetool --nop -c < trace-events > trace.c  
+./hxtool -h < qemu-monitor.hx > qemu-monitor.h  
+./hxtool -h < hmp-commands.hx > hmp-commands.hx  
+./hxtool -h < hmp-commands.hx > hmp-commands.h  
+./hxtool -h < qemu-img-cmds.hx > qemu-img-cmds.h  
+./tracetool --nop -c < trace-events > trace.c   
 ./tracetool --nop -h < trace-events > trace.h  
 
 Rebaselined on upstream vl.c which now (as of a few iterations ago) uses that header

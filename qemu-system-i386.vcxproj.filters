@@ -91,7 +91,7 @@
     <Filter Include="qemu\qapi">
       <UniqueIdentifier>{a6044c40-db84-48b4-8dfc-9f6a4b451298}</UniqueIdentifier>
     </Filter>
-    <Filter Include="qga">
+    <Filter Include="qemu\qga">
       <UniqueIdentifier>{d6294da1-23cd-4824-a3a6-ac47a5b47825}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -1864,10 +1864,10 @@
       <Filter>qemu\src</Filter>
     </ClCompile>
     <ClCompile Include="qemu\qga\guest-agent-commands.c">
-      <Filter>qga</Filter>
+      <Filter>qemu\qga</Filter>
     </ClCompile>
     <ClCompile Include="qemu\qga\guest-agent-command-state.c">
-      <Filter>qga</Filter>
+      <Filter>qemu\qga</Filter>
     </ClCompile>
     <ClCompile Include="qemu\spice-qemu-char.c">
       <Filter>qemu\ui\src</Filter>
@@ -2877,7 +2877,7 @@
       <Filter>qemu\qapi</Filter>
     </ClInclude>
     <ClInclude Include="qemu\qga\guest-agent-core.h">
-      <Filter>qga</Filter>
+      <Filter>qemu\qga</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
