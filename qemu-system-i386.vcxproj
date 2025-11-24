@@ -761,6 +761,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug-alpha|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="qemu\tcg-runtime.c" />
+    <ClCompile Include="qemu\tcg\optimize.c" />
     <ClCompile Include="qemu\test-qmp-commands.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>

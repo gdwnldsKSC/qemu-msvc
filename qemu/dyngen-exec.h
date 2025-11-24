@@ -72,6 +72,13 @@ typedef void * host_reg_t;
 #error unsupported CPU
 #endif
 
+#ifdef _MSC_VER
+extern CPUX86State* cpu_single_env;
+#define env cpu_single_env
+#else
+register CPUState *env asm(AREG0);
+#endif
+
 #define xglue(x, y) x ## y
 #define glue(x, y) xglue(x, y)
 #define stringify(s)	tostring(s)

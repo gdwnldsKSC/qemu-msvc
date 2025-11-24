@@ -114,11 +114,6 @@ static inline int tcg_target_get_call_iarg_regs_count(int flags)
         return 6;
     }
 
-#if defined(_MSC_VER)
-    /* use the stack. */
-    (void)flags;
-    return 0;
-#else
     flags &= TCG_CALL_TYPE_MASK;
     switch(flags) {
     case TCG_CALL_TYPE_STD:
@@ -130,7 +125,6 @@ static inline int tcg_target_get_call_iarg_regs_count(int flags)
     default:
         tcg_abort();
     }
-#endif
 }
 
 /* parse target specific constraints */
@@ -1922,18 +1916,6 @@ static void tcg_target_qemu_prologue(TCGContext *s)
 {
     int i, frame_size, push_size, stack_addend;
 
-    /* 32-bit MSVC: env/tb are passed on stack, not in EAX/EDX.  */
-    /* Stack on entry:
-     *   [esp + 0]  return address
-     *   [esp + 4]  env
-     *   [esp + 8]  tb_ptr
-     */
-#if TCG_TARGET_REG_BITS == 32 && defined(_MSC_VER)
-    tcg_out_ld(s, TCG_TYPE_PTR, TCG_REG_EAX, TCG_REG_ESP, 4);
-    tcg_out_ld(s, TCG_TYPE_PTR, TCG_REG_EDX, TCG_REG_ESP, 8);
-#endif
-
-
     /* TB prologue */
 
     /* Reserve some stack space, also for TCG temps.  */
@@ -1948,6 +1930,29 @@ static void tcg_target_qemu_prologue(TCGContext *s)
     tcg_set_frame(s, TCG_REG_CALL_STACK, TCG_STATIC_CALL_ARGS_SIZE,
                   CPU_TEMP_BUF_NLONGS * sizeof(long));
 
+#ifdef _MSC_VER
+    /*
+     * MSVC 32-bit uses __cdecl: arguments are on the stack:
+     *   [esp+4] = env, [esp+8] = tb->tc_ptr.
+     * Load them into registers before we touch the stack.
+     */
+    tcg_out_ld(s, TCG_TYPE_PTR, TCG_REG_EAX, TCG_REG_ESP, 4);  /* env  */
+    tcg_out_ld(s, TCG_TYPE_PTR, TCG_REG_EDX, TCG_REG_ESP, 8);  /* tb   */
+
+    /* Save all callee saved registers.  */
+    for (i = 0; i < ARRAY_SIZE(tcg_target_callee_save_regs); i++) {
+        tcg_out_push(s, tcg_target_callee_save_regs[i]);
+    }
+
+    tcg_out_addi(s, TCG_REG_ESP, -stack_addend);
+
+    /* AREG0 (EBP) := env (from EAX).  */
+    tcg_out_mov(s, TCG_TYPE_PTR, TCG_AREG0, TCG_REG_EAX);
+
+    /* jmp *tb (EDX).  */
+    tcg_out_modrm(s, OPC_GRP5, EXT5_JMPN_Ev, TCG_REG_EDX);
+
+#else
     /* Save all callee saved registers.  */
     for (i = 0; i < ARRAY_SIZE(tcg_target_callee_save_regs); i++) {
         tcg_out_push(s, tcg_target_callee_save_regs[i]);
@@ -1959,6 +1964,7 @@ static void tcg_target_qemu_prologue(TCGContext *s)
 
     /* jmp *tb.  */
     tcg_out_modrm(s, OPC_GRP5, EXT5_JMPN_Ev, tcg_target_call_iarg_regs[1]);
+#endif
 
     /* TB epilogue */
     tb_ret_addr = s->code_ptr;

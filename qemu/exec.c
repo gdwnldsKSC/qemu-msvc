@@ -128,15 +128,6 @@ CPUState *first_cpu;
 /* current CPU in the current thread. It is only valid inside
    cpu_exec() */
 CPUState *cpu_single_env;
-
-#ifdef _MSC_VER
-/* Global env pointer for MSVC - see qemu/target-i386/exec.h
- */
-struct CPUX86State* global_env;
-#endif
-
-
-
 /* 0 = Do not count executed instructions.
    1 = Precise instruction counting.
    2 = Adaptive rate instruction counting.  */

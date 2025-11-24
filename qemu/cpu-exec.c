@@ -24,11 +24,6 @@
 
 int tb_invalidated_flag;
 
-#ifdef _MSC_VER
-extern struct CPUX86State* global_env;
-#endif
-
-
 //#define CONFIG_DEBUG_EXEC
 
 bool qemu_cpu_has_work(CPUState *env)
@@ -201,11 +196,6 @@ int cpu_exec(CPUState *env)
     }
 
     cpu_single_env = env;
-
-#ifdef _MSC_VER
-    /* Keep the global 'env' in sync */
-    global_env = env;
-#endif
 
     if (unlikely(exit_request)) {
         env->exit_request = 1;

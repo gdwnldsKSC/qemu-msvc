@@ -1875,6 +1875,9 @@
     <ClCompile Include="qemu\memory.c">
       <Filter>qemu\src</Filter>
     </ClCompile>
+    <ClCompile Include="qemu\tcg\optimize.c">
+      <Filter>qemu\tcg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="float80-port.h">
