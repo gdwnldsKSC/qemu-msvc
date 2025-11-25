@@ -113,6 +113,18 @@ static inline void trace_bdrv_set_locked(void *bs, int locked)
 {
 }
 
+static inline void trace_bdrv_co_readv(void *bs, int64_t sector_num, int nb_sector)
+{
+}
+
+static inline void trace_bdrv_co_writev(void *bs, int64_t sector_num, int nb_sector)
+{
+}
+
+static inline void trace_bdrv_co_io(int is_write, void *acb)
+{
+}
+
 static inline void trace_virtio_blk_req_complete(void *req, int status)
 {
 }
@@ -689,6 +701,26 @@ static inline void trace_scsi_req_parse_bad(int target, int lun, int tag, int cm
 {
 }
 
+static inline void trace_scsi_req_build_sense(int target, int lun, int tag, int key, int asc, int ascq)
+{
+}
+
+static inline void trace_scsi_report_luns(int target, int lun, int tag)
+{
+}
+
+static inline void trace_scsi_inquiry(int target, int lun, int tag, int cdb1, int cdb2)
+{
+}
+
+static inline void trace_scsi_test_unit_ready(int target, int lun, int tag)
+{
+}
+
+static inline void trace_scsi_request_sense(int target, int lun, int tag)
+{
+}
+
 static inline void trace_vm_state_notify(int running, int reason)
 {
 }
@@ -1170,6 +1202,42 @@ static inline void trace_qemu_put_ram_ptr(void* addr)
 }
 
 static inline void trace_xen_platform_log(char *s)
+{
+}
+
+static inline void trace_qemu_coroutine_enter(void *from, void *to, void *opaque)
+{
+}
+
+static inline void trace_qemu_coroutine_yield(void *from, void *to)
+{
+}
+
+static inline void trace_qemu_coroutine_terminate(void *co)
+{
+}
+
+static inline void trace_qemu_co_queue_next_bh(void)
+{
+}
+
+static inline void trace_qemu_co_queue_next(void *next)
+{
+}
+
+static inline void trace_qemu_co_mutex_lock_entry(void *mutex, void *self)
+{
+}
+
+static inline void trace_qemu_co_mutex_lock_return(void *mutex, void *self)
+{
+}
+
+static inline void trace_qemu_co_mutex_unlock_entry(void *mutex, void *self)
+{
+}
+
+static inline void trace_qemu_co_mutex_unlock_return(void *mutex, void *self)
 {
 }
 

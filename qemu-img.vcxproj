@@ -167,6 +167,7 @@
     <ClCompile Include="qemu\block\vmdk.c" />
     <ClCompile Include="qemu\block\vpc.c" />
     <ClCompile Include="qemu\block\vvfat.c" />
+    <ClCompile Include="qemu\coroutine-win32.c" />
     <ClCompile Include="qemu\cutils.c" />
     <ClCompile Include="qemu\error.c" />
     <ClCompile Include="qemu\json-lexer.c" />
@@ -178,6 +179,8 @@
     <ClCompile Include="qemu\qbool.c" />
     <ClCompile Include="qemu\qdict.c" />
     <ClCompile Include="qemu\qemu-config.c" />
+    <ClCompile Include="qemu\qemu-coroutine-lock.c" />
+    <ClCompile Include="qemu\qemu-coroutine.c" />
     <ClCompile Include="qemu\qemu-error.c" />
     <ClCompile Include="qemu\qemu-img.c" />
     <ClCompile Include="qemu\qemu-malloc.c" />

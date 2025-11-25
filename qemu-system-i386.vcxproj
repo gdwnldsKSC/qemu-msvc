@@ -368,6 +368,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="qemu\compatfd.c" />
+    <ClCompile Include="qemu\coroutine-win32.c" />
     <ClCompile Include="qemu\cpus.c" />
     <ClCompile Include="qemu\cursor.c" />
     <ClCompile Include="qemu\error.c" />
@@ -423,6 +424,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="qemu\hw\hda-audio.c" />
+    <ClCompile Include="qemu\hw\hid.c" />
     <ClCompile Include="qemu\hw\ide\ahci.c" />
     <ClCompile Include="qemu\hw\ide\atapi.c" />
     <ClCompile Include="qemu\hw\ide\cmd646.c" />
@@ -582,6 +584,7 @@
     <ClCompile Include="qemu\hw\usb-bus.c" />
     <ClCompile Include="qemu\hw\usb-desc.c" />
     <ClCompile Include="qemu\hw\usb-ehci.c" />
+    <ClCompile Include="qemu\hw\usb-libhw.c" />
     <ClCompile Include="qemu\hw\vga-isa-mm.c" />
     <ClCompile Include="qemu\hw\vga-isa.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -688,6 +691,8 @@
     <ClCompile Include="qemu\qbool.c" />
     <ClCompile Include="qemu\qdict.c" />
     <ClCompile Include="qemu\qemu-config.c" />
+    <ClCompile Include="qemu\qemu-coroutine-lock.c" />
+    <ClCompile Include="qemu\qemu-coroutine.c" />
     <ClCompile Include="qemu\qemu-error.c" />
     <ClCompile Include="qemu\qemu-ga.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -723,6 +728,7 @@
     <ClCompile Include="qemu\simpletrace.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="qemu\slirp\arp_table.c" />
     <ClCompile Include="qemu\spice-qemu-char.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -2096,6 +2102,7 @@
     <ClInclude Include="qemu\hw\elf_ops.h" />
     <ClInclude Include="qemu\hw\event_notifier.h" />
     <ClInclude Include="qemu\hw\grlib.h" />
+    <ClInclude Include="qemu\hw\hid.h" />
     <ClInclude Include="qemu\hw\ide\ahci.h" />
     <ClInclude Include="qemu\hw\ide\internal.h" />
     <ClInclude Include="qemu\hw\ide\pci.h" />
@@ -2190,6 +2197,8 @@
     <ClInclude Include="qemu\qdict.h" />
     <ClInclude Include="qemu\qemu-barrier.h" />
     <ClInclude Include="qemu\qemu-config.h" />
+    <ClInclude Include="qemu\qemu-coroutine-int.h" />
+    <ClInclude Include="qemu\qemu-coroutine.h" />
     <ClInclude Include="qemu\qemu-error.h" />
     <ClInclude Include="qemu\qemu-objects.h" />
     <ClInclude Include="qemu\qemu-option.h" />

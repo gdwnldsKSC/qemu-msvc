@@ -1878,6 +1878,24 @@
     <ClCompile Include="qemu\tcg\optimize.c">
       <Filter>qemu\tcg</Filter>
     </ClCompile>
+    <ClCompile Include="qemu\coroutine-win32.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-coroutine.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-coroutine-lock.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\hid.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\usb-libhw.c">
+      <Filter>qemu\hw\inc</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\slirp\arp_table.c">
+      <Filter>qemu\slirp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="float80-port.h">
@@ -2890,6 +2908,15 @@
     </ClInclude>
     <ClInclude Include="qemu\memory.h">
       <Filter>qemu\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qemu-coroutine.h">
+      <Filter>qemu\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qemu-coroutine-int.h">
+      <Filter>qemu\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\hw\hid.h">
+      <Filter>qemu\hw\inc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

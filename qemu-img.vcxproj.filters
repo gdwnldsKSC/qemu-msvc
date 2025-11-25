@@ -180,5 +180,14 @@
     <ClCompile Include="qemu\qstring.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="qemu\coroutine-win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-coroutine.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-coroutine-lock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

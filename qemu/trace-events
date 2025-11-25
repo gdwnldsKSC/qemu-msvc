@@ -66,6 +66,9 @@ disable bdrv_aio_flush(void *bs, void *opaque) "bs %p opaque %p"
 disable bdrv_aio_readv(void *bs, int64_t sector_num, int nb_sectors, void *opaque) "bs %p sector_num %"PRId64" nb_sectors %d opaque %p"
 disable bdrv_aio_writev(void *bs, int64_t sector_num, int nb_sectors, void *opaque) "bs %p sector_num %"PRId64" nb_sectors %d opaque %p"
 disable bdrv_set_locked(void *bs, int locked) "bs %p locked %d"
+disable bdrv_co_readv(void *bs, int64_t sector_num, int nb_sector) "bs %p sector_num %"PRId64" nb_sectors %d"
+disable bdrv_co_writev(void *bs, int64_t sector_num, int nb_sector) "bs %p sector_num %"PRId64" nb_sectors %d"
+disable bdrv_co_io(int is_write, void *acb) "is_write %d acb %p"
 
 # hw/virtio-blk.c
 disable virtio_blk_req_complete(void *req, int status) "req %p status %d"
@@ -248,6 +251,11 @@ disable scsi_req_continue(int target, int lun, int tag) "target %d lun %d tag %d
 disable scsi_req_parsed(int target, int lun, int tag, int cmd, int mode, int xfer) "target %d lun %d tag %d command %d dir %d length %d"
 disable scsi_req_parsed_lba(int target, int lun, int tag, int cmd, uint64_t lba) "target %d lun %d tag %d command %d lba %"PRIu64""
 disable scsi_req_parse_bad(int target, int lun, int tag, int cmd) "target %d lun %d tag %d command %d"
+disable scsi_req_build_sense(int target, int lun, int tag, int key, int asc, int ascq) "target %d lun %d tag %d key %#02x asc %#02x ascq %#02x"
+disable scsi_report_luns(int target, int lun, int tag) "target %d lun %d tag %d"
+disable scsi_inquiry(int target, int lun, int tag, int cdb1, int cdb2) "target %d lun %d tag %d page %#02x/%#02x"
+disable scsi_test_unit_ready(int target, int lun, int tag) "target %d lun %d tag %d"
+disable scsi_request_sense(int target, int lun, int tag) "target %d lun %d tag %d"
 
 # vl.c
 disable vm_state_notify(int running, int reason) "running %d reason %d"
@@ -425,3 +433,16 @@ disable qemu_put_ram_ptr(void* addr) "%p"
 
 # hw/xen_platform.c
 disable xen_platform_log(char *s) "xen platform: %s"
+
+# qemu-coroutine.c
+disable qemu_coroutine_enter(void *from, void *to, void *opaque) "from %p to %p opaque %p"
+disable qemu_coroutine_yield(void *from, void *to) "from %p to %p"
+disable qemu_coroutine_terminate(void *co) "self %p"
+
+# qemu-coroutine-lock.c
+disable qemu_co_queue_next_bh(void) ""
+disable qemu_co_queue_next(void *next) "next %p"
+disable qemu_co_mutex_lock_entry(void *mutex, void *self) "mutex %p self %p"
+disable qemu_co_mutex_lock_return(void *mutex, void *self) "mutex %p self %p"
+disable qemu_co_mutex_unlock_entry(void *mutex, void *self) "mutex %p self %p"
+disable qemu_co_mutex_unlock_return(void *mutex, void *self) "mutex %p self %p"
