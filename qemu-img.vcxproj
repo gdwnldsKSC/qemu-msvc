@@ -80,7 +80,7 @@
       <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>.\outside_qemu_tree_custom;.\pxwc\inc;.\zlib;.\SDL\include;.\fmod api 3.75\api\inc;.\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\third_party\zlib;.\third_party\SDL-1.2-main\include;.\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
@@ -90,7 +90,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Ws2_32.lib;zlib.lib;pxwc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Q:\GitHub\WinQEMU\libs\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\third_party\precompiled old winqemu libs\Debug</AdditionalLibraryDirectories>
+      <OutputFile>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName).exe</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,7 +138,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="outside_qemu_tree_custom\XGetopt.c" />
     <ClCompile Include="qemu\aes.c" />
     <ClCompile Include="qemu\aio.c" />
     <ClCompile Include="qemu\async.c" />
@@ -195,6 +195,7 @@
     <ClCompile Include="qemu\qjson.c" />
     <ClCompile Include="qemu\qlist.c" />
     <ClCompile Include="qemu\qstring.c" />
+    <ClCompile Include="third_party\outside_qemu_tree_custom\XGetopt.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

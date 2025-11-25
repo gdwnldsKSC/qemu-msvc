@@ -92,7 +92,7 @@
     <_ProjectFileVersion>11.0.61030.0</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>qemu-system-i386</TargetName>
@@ -120,7 +120,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>.\outside_qemu_tree_custom;.\pxwc\inc;.\zlib;.\SDL\include;.\fmod api 3.75\api\inc;.\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\third_party\zlib;.\third_party\SDL-1.2-main\include;.\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;NEED_CPU_H;__i386__;TARGET_I386;CONFIG_SOFTMMU;DATA_BITS=32;TARGET_PHYS_ADDR_BITS=32;DATA_SIZE=4;WIN32_AIO;HAS_AUDIO;CONFIG_PCSPK;CONFIG_CS4231A;CONFIG_ADLIB;CONFIG_GUS;CONFIG_AC97;CONFIG_ES1370;CONFIG_YMF262;HAS_AUDIO_CHOICE;CONFIG_VNC_THREAD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -135,9 +135,9 @@
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Ws2_32.lib;SDL.lib;zlib.lib;dsound.lib;dxguid.lib;fmodvc.lib;Iphlpapi.lib;WinMM.Lib;pxwc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(SolutionDir)$(Configuration)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>.\fmod api 3.75\api\lib;.\libs\Debug;.\libs\ia32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;SDL.lib;zlib.lib;dsound.lib;dxguid.lib;Iphlpapi.lib;WinMM.Lib;pxwc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>.\third_party\SDL-1.2-main\VisualC\SDL\Win32\Debug;.\third_party\SDL-1.2-main\VisualC\SDLmain\Win32\Debug;.\third_party\precompiled old winqemu libs\Debug;.\third_party\precompiled old winqemu libs\ia32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <ImportLibrary>
@@ -287,9 +287,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="gettimeofday.c" />
-    <ClCompile Include="outside_qemu_tree_custom\clock_gettime.c" />
-    <ClCompile Include="outside_qemu_tree_custom\XGetopt.c" />
     <ClCompile Include="qemu\acl.c" />
     <ClCompile Include="qemu\arch_init.c" />
     <ClCompile Include="qemu\async.c" />
@@ -1023,7 +1020,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="qemu\audio\fmodaudio.c" />
+    <ClCompile Include="qemu\audio\fmodaudio.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="qemu\audio\mixeng.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
@@ -2062,11 +2061,13 @@
     <ClCompile Include="qemu\slirp\tcp_timer.c" />
     <ClCompile Include="qemu\slirp\tftp.c" />
     <ClCompile Include="qemu\slirp\udp.c" />
+    <ClCompile Include="third_party\outside_qemu_tree_custom\clock_gettime.c" />
+    <ClCompile Include="third_party\outside_qemu_tree_custom\gettimeofday.c" />
+    <ClCompile Include="third_party\outside_qemu_tree_custom\XGetopt.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config-target.h" />
     <ClInclude Include="float80-port.h" />
-    <ClInclude Include="outside_qemu_tree_custom\clock_gettime.h" />
     <ClInclude Include="qemu\acl.h" />
     <ClInclude Include="qemu\arch_init.h" />
     <ClInclude Include="qemu\audio\audio_win_int.h" />

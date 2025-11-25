@@ -21,7 +21,16 @@ the main bios is, and -hda where the disk image is. small.ffs is NetBSD 1.2
 
 # Progress Updates
 
-11/25/25 - Introducing glib, which is required for more modern qemu versions.
+11/25/25 - Introducing glib, which is required for more modern qemu versions. This must be
+acquired/built outside of the tree and copied into the relevaing directories in the folder
+third_party\glib - other items will move here too as we clean up and automate the full build.
+Dropping fmod audio support, due to licensing issues and the fact that wav audio works just fine
+for us right now. Given the proprietary nature, we can't statically link it in, and it's 
+removed at some point in the future.
+Integraded and updated SDL in the build process. Moved it into third_party. Current as of
+this date.
+Working copies of the integrated library are included in the tree, but you can update as desired.
+No more msvcr90d.dll dependency anymore. 
 
 11/23/2025 - We're in qemu 0.15.x territory now, but there is a large outstanding issue with
 how TCG works post 0.12.5 that is only partially resolved, causing large issues for x86 guests.
@@ -118,16 +127,10 @@ Changing the toolchain from VS 2022 to something else and then back again resolv
 
 Only Debug/Win32 is currently "fixed up" and working as of this time. 
 
-You must build and copy sdl.dll and sdlmain.dll from SDL-1.2 from  
-https://github.com/libsdl-org/SDL-1.2 and copy them to the working directories for the relevant outputs.
+Integrated SDL. If wishing to update, unzip the SDL 1.2 source code over top of it.  
 
-Visual Studio 2008 / Visual C++ 2008 Runtime DEBUG version required for currently included build
-of sdl. This requirement will be fixed in the future by properly integrating the SDL build process
-and upgrading to a far newer version. Switching to a 'release' build will remove this requirement
-and allow usage of only the regular VC++ Runtime redistributable, but until that time, the easiest route
-is to acquire MSVCR90D.dll separately or install Visual Studio 2008. 
-
-
+Per VisualC.html "If you get an error about SDL_config.h being missing, you should copy  
+include/SDL_config.h.default to include/SDL_config.h and try again."  
 
 For a working debug environment, add to D:\Images\ (currently hard coded, can be overriden via 
 -L X:\Path on the for default image files on the commandline) vgabios-cirrus.bin, small.ffs, and bios.bin 

@@ -1,6 +1,6 @@
 #ifndef __QEMU_THREAD_H
 #define __QEMU_THREAD_H 1
-#include "..\outside_qemu_tree_custom\clock_gettime.h"
+#include "clock_gettime.h"
 
 #include <inttypes.h>
 

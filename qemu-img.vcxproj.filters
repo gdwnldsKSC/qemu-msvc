@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="outside_qemu_tree_custom\XGetopt.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="qemu\aes.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -187,6 +184,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="qemu\qemu-coroutine-lock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\outside_qemu_tree_custom\XGetopt.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

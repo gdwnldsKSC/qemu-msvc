@@ -1143,12 +1143,6 @@
     <ClCompile Include="qemu\hw\microblaze_pic_cpu.c">
       <Filter>qemu\hw\src</Filter>
     </ClCompile>
-    <ClCompile Include="outside_qemu_tree_custom\XGetopt.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="outside_qemu_tree_custom\clock_gettime.c">
-      <Filter>qemu\src</Filter>
-    </ClCompile>
     <ClCompile Include="qemu\block\qcow2-refcount.c">
       <Filter>qemu\block\src</Filter>
     </ClCompile>
@@ -1259,9 +1253,6 @@
     </ClCompile>
     <ClCompile Include="qemu\check-qstring.c">
       <Filter>qemu\src</Filter>
-    </ClCompile>
-    <ClCompile Include="gettimeofday.c">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="qemu\qlist.c">
       <Filter>qemu\src</Filter>
@@ -1896,6 +1887,15 @@
     <ClCompile Include="qemu\slirp\arp_table.c">
       <Filter>qemu\slirp</Filter>
     </ClCompile>
+    <ClCompile Include="third_party\outside_qemu_tree_custom\XGetopt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\outside_qemu_tree_custom\clock_gettime.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\outside_qemu_tree_custom\gettimeofday.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="float80-port.h">
@@ -2442,9 +2442,6 @@
       <Filter>qemu\inc</Filter>
     </ClInclude>
     <ClInclude Include="qemu\qemu-option.h">
-      <Filter>qemu\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="outside_qemu_tree_custom\clock_gettime.h">
       <Filter>qemu\inc</Filter>
     </ClInclude>
     <ClInclude Include="qemu\block\qcow2.h">
