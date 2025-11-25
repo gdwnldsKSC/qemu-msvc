@@ -21,6 +21,8 @@ the main bios is, and -hda where the disk image is. small.ffs is NetBSD 1.2
 
 # Progress Updates
 
+11/25/25 - Introducing glib, which is required for more modern qemu versions.
+
 11/23/2025 - We're in qemu 0.15.x territory now, but there is a large outstanding issue with
 how TCG works post 0.12.5 that is only partially resolved, causing large issues for x86 guests.
 This will be resolved soon, however, until then, while it works for bios and partially booting
@@ -124,6 +126,8 @@ of sdl. This requirement will be fixed in the future by properly integrating the
 and upgrading to a far newer version. Switching to a 'release' build will remove this requirement
 and allow usage of only the regular VC++ Runtime redistributable, but until that time, the easiest route
 is to acquire MSVCR90D.dll separately or install Visual Studio 2008. 
+
+
 
 For a working debug environment, add to D:\Images\ (currently hard coded, can be overriden via 
 -L X:\Path on the for default image files on the commandline) vgabios-cirrus.bin, small.ffs, and bios.bin 
