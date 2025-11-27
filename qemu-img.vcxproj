@@ -80,7 +80,7 @@
       <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\third_party\zlib;.\third_party\SDL-1.2-main\include;.\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third_party\glib\include;$(SolutionDir)third_party\glib\include\glib-2.0;$(SolutionDir)third_party\glib\lib\glib-2.0\include;.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
@@ -89,8 +89,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Ws2_32.lib;zlib.lib;pxwc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>.\third_party\precompiled old winqemu libs\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glib-2.0.lib;gthread-2.0.lib;gobject-2.0.lib;gio-2.0.lib;Ws2_32.lib;zlib1.lib;pxwc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)third_party\glib\lib;.\third_party\precompiled old winqemu libs\Debug</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName).exe</OutputFile>
     </Link>
   </ItemDefinitionGroup>

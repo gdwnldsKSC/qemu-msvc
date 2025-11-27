@@ -1,0 +1,11 @@
+prefix=C:/gtk-build/gtk/Win32/debug
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: GThread
+Description: Thread support for GLib
+Version: 2.86.2
+Requires: glib-2.0
+Libs: -L${libdir} -lgthread-2.0
+Libs.private: -lintl
+Cflags: -I${includedir}

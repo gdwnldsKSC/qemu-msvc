@@ -1,0 +1,9 @@
+prefix=C:/gtk-build/gtk/Win32/debug
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: libpcre2-32
+Description: PCRE2 - Perl compatible regular expressions C library (2nd API) with 32 bit character support
+Version: 10.47
+Libs: -L${libdir} -lpcre2-32
+Cflags: -I${includedir}

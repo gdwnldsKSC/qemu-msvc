@@ -1,0 +1,12 @@
+# On windows, the prefix is automagically build from the location of the .pc file
+prefix=C:/gtk-build/gtk/Win32/debug
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: zlib
+Description: A Massively Spiffy Yet Delicately Unobtrusive Compression Library
+Version: 1.3.1
+
+Libs: -L${libdir} -lzlib1
+Cflags: -I${includedir}

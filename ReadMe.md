@@ -132,6 +132,36 @@ Integrated SDL. If wishing to update, unzip the SDL 1.2 source code over top of 
 Per VisualC.html "If you get an error about SDL_config.h being missing, you should copy  
 include/SDL_config.h.default to include/SDL_config.h and try again."  
 
+GLIB is now required as of 11/27/25 - for ease, I've included the x86 debug  
+build as of 11/27/25. However, if you wish to build it yourself or a newer  
+version, here are the instructions.
+
+Building glib is relatively easy, and most can probably skip git and python:  
+  
+Per official instructions at https://github.com/wingtk/gvsbuild  
+winget install --id Git.Git -e --source winget  
+winget install --id MSYS2.MSYS2 -e --source winget  
+winget install --id Python.Python.3.13 -e --source winget  
+py -3.13 -m pip install --user pipx  
+py -3.13 -m pipx ensurepath  
+pipx install gvsbuild  
+
+Now we must deviate and use custom flags for gvsbuild -   
+  
+gvsbuild build --platfrom x86 --configuration debug glib  
+  
+Other options are available, but this is the base needed. Change platfrom and  
+configuration as needed though right now we are only working with Debug/Win32.
+
+While we are now primarily working in VS2026, VS2022 is the latest supported  
+by gvsbuild as of this time. So both will need to be installed. Relevant  
+results will be located in C:\gtk-build\gtk\Win32\debug - Copy the contents  
+of the include and lib directories into third_party\glib\include and  
+third_party\glib\lib respectively.  
+
+As a side effect, we also gain a newer zlib too.  
+Projects have been updated and old version removed.  
+
 For a working debug environment, add to D:\Images\ (currently hard coded, can be overriden via 
 -L X:\Path on the for default image files on the commandline) vgabios-cirrus.bin, small.ffs, and bios.bin 
 from the qemu\pc-bios folder for a minimal x86 emulated system during debugging. 
