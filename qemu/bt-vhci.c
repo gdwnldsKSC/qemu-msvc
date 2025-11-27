@@ -17,16 +17,6 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
- 
 #include "qemu-common.h"
 #include "qemu-char.h"
 #include "net.h"
@@ -166,13 +156,9 @@ void bt_vhci_init(struct HCIInfo *info)
         exit(-1);
     }
 
-    s = qemu_mallocz(sizeof(struct bt_vhci_s));
+    s = g_malloc0(sizeof(struct bt_vhci_s));
     s->fd = fd;
-#ifndef _MSC_VER
-    s->info = info ?: qemu_next_hci();
-#else
-    s->info = info ?info: qemu_next_hci();
-#endif
+    s->info = info ? info : qemu_next_hci();
     s->info->opaque = s;
     s->info->evt_recv = vhci_out_hci_packet_event;
     s->info->acl_recv = vhci_out_hci_packet_acl;

@@ -190,11 +190,11 @@ static void vmdk_free_extents(BlockDriverState *bs)
     BDRVVmdkState *s = bs->opaque;
 
     for (i = 0; i < s->num_extents; i++) {
-        qemu_free(s->extents[i].l1_table);
-        qemu_free(s->extents[i].l2_cache);
-        qemu_free(s->extents[i].l1_backup_table);
+        g_free(s->extents[i].l1_table);
+        g_free(s->extents[i].l2_cache);
+        g_free(s->extents[i].l1_backup_table);
     }
-    qemu_free(s->extents);
+    g_free(s->extents);
 }
 
 static uint32_t vmdk_read_cid(BlockDriverState *bs, int parent)
@@ -312,7 +312,7 @@ static VmdkExtent *vmdk_add_extent(BlockDriverState *bs,
     VmdkExtent *extent;
     BDRVVmdkState *s = bs->opaque;
 
-    s->extents = qemu_realloc(s->extents,
+    s->extents = g_realloc(s->extents,
                               (s->num_extents + 1) * sizeof(VmdkExtent));
     extent = &s->extents[s->num_extents];
     s->num_extents++;
@@ -344,7 +344,7 @@ static int vmdk_init_tables(BlockDriverState *bs, VmdkExtent *extent)
 
     /* read the L1 table */
     l1_size = extent->l1_size * sizeof(uint32_t);
-    extent->l1_table = qemu_malloc(l1_size);
+    extent->l1_table = g_malloc(l1_size);
     ret = bdrv_pread(extent->file,
                     extent->l1_table_offset,
                     extent->l1_table,
@@ -357,7 +357,7 @@ static int vmdk_init_tables(BlockDriverState *bs, VmdkExtent *extent)
     }
 
     if (extent->l1_backup_table_offset) {
-        extent->l1_backup_table = qemu_malloc(l1_size);
+        extent->l1_backup_table = g_malloc(l1_size);
         ret = bdrv_pread(extent->file,
                         extent->l1_backup_table_offset,
                         extent->l1_backup_table,
@@ -371,12 +371,12 @@ static int vmdk_init_tables(BlockDriverState *bs, VmdkExtent *extent)
     }
 
     extent->l2_cache =
-        qemu_malloc(extent->l2_size * L2_CACHE_SIZE * sizeof(uint32_t));
+        g_malloc(extent->l2_size * L2_CACHE_SIZE * sizeof(uint32_t));
     return 0;
  fail_l1b:
-    qemu_free(extent->l1_backup_table);
+    g_free(extent->l1_backup_table);
  fail_l1:
-    qemu_free(extent->l1_table);
+    g_free(extent->l1_table);
     return ret;
 }
 
@@ -587,7 +587,7 @@ static int vmdk_open_desc_file(BlockDriverState *bs, int flags)
 
     /* try to open parent images, if exist */
     if (vmdk_parent_open(bs)) {
-        qemu_free(s->extents);
+        g_free(s->extents);
         return -EINVAL;
     }
     s->parent_cid = vmdk_read_cid(bs, 1);
@@ -622,7 +622,7 @@ static int get_whole_cluster(BlockDriverState *bs,
 #ifndef _MSC_VER
     uint8_t  whole_grain[extent->cluster_sectors*512];        // 128 sectors * 512 bytes each = grain size 64KB
 #else
-    uint8_t* whole_grain = qemu_malloc(extent->cluster_sectors * 512);
+    uint8_t* whole_grain = g_malloc(extent->cluster_sectors * 512);
     assert(whole_grain);
 #endif
 
@@ -633,7 +633,7 @@ static int get_whole_cluster(BlockDriverState *bs,
 
         if (!vmdk_is_cid_valid(bs)) {
 #ifdef _MSC_VER
-            qemu_free(whole_grain);
+            g_free(whole_grain);
 #endif
             return -1;
         }
@@ -644,7 +644,7 @@ static int get_whole_cluster(BlockDriverState *bs,
                 extent->cluster_sectors);
         if (ret < 0) {
 #ifdef _MSC_VER
-            free(whole_grain);
+            g_free(whole_grain);
 #endif
             return -1;
         }
@@ -654,13 +654,13 @@ static int get_whole_cluster(BlockDriverState *bs,
                 extent->cluster_sectors);
         if (ret < 0) {
 #ifdef _MSC_VER
-            free(whole_grain);
+            g_free(whole_grain);
 #endif
             return -1;
         }
     }
 #ifdef _MSC_VER
-    qemu_free(whole_grain);
+    g_free(whole_grain);
 #endif
     return 0;
 }

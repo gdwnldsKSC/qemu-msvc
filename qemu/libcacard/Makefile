@@ -8,17 +8,19 @@ libcacard_includedir=$(includedir)/cacard
 $(call set-vpath, $(SRC_PATH):$(libcacard_srcpath))
 
 # objects linked against normal qemu binaries, not compiled with libtool
-QEMU_OBJS=$(addprefix ../,$(oslib-obj-y) qemu-malloc.o qemu-timer-common.o $(trace-obj-y))
+QEMU_OBJS=$(addprefix ../,$(oslib-obj-y) qemu-timer-common.o $(trace-obj-y))
 
 # objects linked into a shared library, built with libtool with -fPIC if required
 QEMU_OBJS_LIB=$(addsuffix .lo,$(basename $(QEMU_OBJS)))
 
 QEMU_CFLAGS+=-I../
 
+QEMU_CFLAGS+=$(GLIB_CFLAGS)
+
 libcacard.lib-y=$(addsuffix .lo,$(basename $(libcacard-y)))
 
 vscclient: $(libcacard-y) $(QEMU_OBJS) vscclient.o
-	$(call quiet-command,$(CC) $(libcacard_libs) -lrt -o $@ $^,"  LINK  $@")
+	$(call quiet-command,$(CC) $(libcacard_libs) $(LIBS) -lrt -o $@ $^,"  LINK  $@")
 
 clean:
 	rm -f *.o */*.o *.d */*.d *.a */*.a *~ */*~ vscclient *.lo .libs/* *.la *.pc

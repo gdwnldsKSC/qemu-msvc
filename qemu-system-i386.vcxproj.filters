@@ -213,9 +213,6 @@
     <ClCompile Include="qemu\qemu-img.c">
       <Filter>qemu\src</Filter>
     </ClCompile>
-    <ClCompile Include="qemu\qemu-malloc.c">
-      <Filter>qemu\src</Filter>
-    </ClCompile>
     <ClCompile Include="qemu\qemu-nbd.c">
       <Filter>qemu\src</Filter>
     </ClCompile>

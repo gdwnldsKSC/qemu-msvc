@@ -207,7 +207,7 @@ static int socket_get_buffer(void *opaque, uint8_t *buf, int64_t pos, int size)
 static int socket_close(void *opaque)
 {
     QEMUFileSocket *s = opaque;
-    qemu_free(s);
+    g_free(s);
     return 0;
 }
 
@@ -235,7 +235,7 @@ static int stdio_pclose(void *opaque)
     QEMUFileStdio *s = opaque;
     int ret;
     ret = pclose(s->stdio_file);
-    qemu_free(s);
+    g_free(s);
     return ret;
 }
 
@@ -243,7 +243,7 @@ static int stdio_fclose(void *opaque)
 {
     QEMUFileStdio *s = opaque;
     fclose(s->stdio_file);
-    qemu_free(s);
+    g_free(s);
     return 0;
 }
 
@@ -256,7 +256,7 @@ QEMUFile *qemu_popen(FILE *stdio_file, const char *mode)
         return NULL;
     }
 
-    s = qemu_mallocz(sizeof(QEMUFileStdio));
+    s = g_malloc0(sizeof(QEMUFileStdio));
 
     s->stdio_file = stdio_file;
 
@@ -304,7 +304,7 @@ QEMUFile *qemu_fdopen(int fd, const char *mode)
         return NULL;
     }
 
-    s = qemu_mallocz(sizeof(QEMUFileStdio));
+    s = g_malloc0(sizeof(QEMUFileStdio));
     s->stdio_file = fdopen(fd, mode);
     if (!s->stdio_file)
         goto fail;
@@ -319,13 +319,13 @@ QEMUFile *qemu_fdopen(int fd, const char *mode)
     return s->file;
 
 fail:
-    qemu_free(s);
+    g_free(s);
     return NULL;
 }
 
 QEMUFile *qemu_fopen_socket(int fd)
 {
-    QEMUFileSocket *s = qemu_mallocz(sizeof(QEMUFileSocket));
+    QEMUFileSocket *s = g_malloc0(sizeof(QEMUFileSocket));
 
     s->fd = fd;
     s->file = qemu_fopen_ops(s, NULL, socket_get_buffer, socket_close, 
@@ -359,7 +359,7 @@ QEMUFile *qemu_fopen(const char *filename, const char *mode)
         return NULL;
     }
 
-    s = qemu_mallocz(sizeof(QEMUFileStdio));
+    s = g_malloc0(sizeof(QEMUFileStdio));
 
     s->stdio_file = fopen(filename, mode);
     if (!s->stdio_file)
@@ -374,7 +374,7 @@ QEMUFile *qemu_fopen(const char *filename, const char *mode)
     }
     return s->file;
 fail:
-    qemu_free(s);
+    g_free(s);
     return NULL;
 }
 
@@ -412,7 +412,7 @@ QEMUFile *qemu_fopen_ops(void *opaque, QEMUFilePutBufferFunc *put_buffer,
 {
     QEMUFile *f;
 
-    f = qemu_mallocz(sizeof(QEMUFile));
+    f = g_malloc0(sizeof(QEMUFile));
 
     f->opaque = opaque;
     f->put_buffer = put_buffer;
@@ -478,7 +478,7 @@ int qemu_fclose(QEMUFile *f)
     qemu_fflush(f);
     if (f->close)
         ret = f->close(f->opaque);
-    qemu_free(f);
+    g_free(f);
     return ret;
 }
 
@@ -1115,7 +1115,7 @@ int register_savevm_live(DeviceState *dev,
 {
     SaveStateEntry *se;
 
-    se = qemu_mallocz(sizeof(SaveStateEntry));
+    se = g_malloc0(sizeof(SaveStateEntry));
     se->version_id = version_id;
     se->section_id = global_section_id++;
     se->set_params = set_params;
@@ -1131,9 +1131,9 @@ int register_savevm_live(DeviceState *dev,
         if (id) {
             pstrcpy(se->idstr, sizeof(se->idstr), id);
             pstrcat(se->idstr, sizeof(se->idstr), "/");
-            qemu_free(id);
+            g_free(id);
 
-            se->compat = qemu_mallocz(sizeof(CompatEntry));
+            se->compat = g_malloc0(sizeof(CompatEntry));
             pstrcpy(se->compat->idstr, sizeof(se->compat->idstr), idstr);
             se->compat->instance_id = instance_id == -1 ?
                          calculate_compat_instance_id(idstr) : instance_id;
@@ -1175,7 +1175,7 @@ void unregister_savevm(DeviceState *dev, const char *idstr, void *opaque)
         if (path) {
             pstrcpy(id, sizeof(id), path);
             pstrcat(id, sizeof(id), "/");
-            qemu_free(path);
+            g_free(path);
         }
     }
     pstrcat(id, sizeof(id), idstr);
@@ -1184,9 +1184,9 @@ void unregister_savevm(DeviceState *dev, const char *idstr, void *opaque)
         if (strcmp(se->idstr, id) == 0 && se->opaque == opaque) {
             QTAILQ_REMOVE(&savevm_handlers, se, entry);
             if (se->compat) {
-                qemu_free(se->compat);
+                g_free(se->compat);
             }
-            qemu_free(se);
+            g_free(se);
         }
     }
 }
@@ -1204,7 +1204,7 @@ void register_device_unmigratable(DeviceState *dev, const char *idstr,
         if (path) {
             pstrcpy(id, sizeof(id), path);
             pstrcat(id, sizeof(id), "/");
-            qemu_free(path);
+            g_free(path);
         }
     }
     pstrcat(id, sizeof(id), idstr);
@@ -1226,7 +1226,7 @@ int vmstate_register_with_alias_id(DeviceState *dev, int instance_id,
     /* If this triggers, alias support can be dropped for the vmsd. */
     assert(alias_id == -1 || required_for_version >= vmsd->minimum_version_id);
 
-    se = qemu_mallocz(sizeof(SaveStateEntry));
+    se = g_malloc0(sizeof(SaveStateEntry));
     se->version_id = vmsd->version_id;
     se->section_id = global_section_id++;
     se->save_live_state = NULL;
@@ -1242,9 +1242,9 @@ int vmstate_register_with_alias_id(DeviceState *dev, int instance_id,
         if (id) {
             pstrcpy(se->idstr, sizeof(se->idstr), id);
             pstrcat(se->idstr, sizeof(se->idstr), "/");
-            qemu_free(id);
+            g_free(id);
 
-            se->compat = qemu_mallocz(sizeof(CompatEntry));
+            se->compat = g_malloc0(sizeof(CompatEntry));
             pstrcpy(se->compat->idstr, sizeof(se->compat->idstr), vmsd->name);
             se->compat->instance_id = instance_id == -1 ?
                          calculate_compat_instance_id(vmsd->name) : instance_id;
@@ -1280,9 +1280,9 @@ void vmstate_unregister(DeviceState *dev, const VMStateDescription *vmsd,
         if (se->vmsd == vmsd && se->opaque == opaque) {
             QTAILQ_REMOVE(&savevm_handlers, se, entry);
             if (se->compat) {
-                qemu_free(se->compat);
+                g_free(se->compat);
             }
-            qemu_free(se);
+            g_free(se);
         }
     }
 }
@@ -1786,7 +1786,7 @@ int qemu_loadvm_state(QEMUFile *f)
             }
 
             /* Add entry */
-            le = qemu_mallocz(sizeof(*le));
+            le = g_malloc0(sizeof(*le));
 
             le->se = se;
             le->section_id = section_id;
@@ -1836,7 +1836,7 @@ int qemu_loadvm_state(QEMUFile *f)
 out:
     QLIST_FOREACH_SAFE(le, &loadvm_handlers, entry, new_le) {
         QLIST_REMOVE(le, entry);
-        qemu_free(le);
+        g_free(le);
     }
 
     if (qemu_file_has_error(f))
@@ -1863,7 +1863,7 @@ static int bdrv_snapshot_find(BlockDriverState *bs, QEMUSnapshotInfo *sn_info,
             break;
         }
     }
-    qemu_free(sn_tab);
+    g_free(sn_tab);
     return ret;
 }
 
@@ -2142,7 +2142,7 @@ void do_info_snapshots(Monitor *mon)
         return;
     }
 
-    available_snapshots = qemu_mallocz(sizeof(int) * nb_sns);
+    available_snapshots = g_malloc0(sizeof(int) * nb_sns);
     total = 0;
     for (i = 0; i < nb_sns; i++) {
         sn = &sn_tab[i];
@@ -2175,7 +2175,7 @@ void do_info_snapshots(Monitor *mon)
         monitor_printf(mon, "There is no suitable snapshot available\n");
     }
 
-    qemu_free(sn_tab);
-    qemu_free(available_snapshots);
+    g_free(sn_tab);
+    g_free(available_snapshots);
 
 }

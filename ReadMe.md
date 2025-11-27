@@ -156,8 +156,17 @@ configuration as needed though right now we are only working with Debug/Win32.
 While we are now primarily working in VS2026, VS2022 is the latest supported  
 by gvsbuild as of this time. So both will need to be installed. Relevant  
 results will be located in C:\gtk-build\gtk\Win32\debug - Copy the contents  
-of the include and lib directories into third_party\glib\include and  
-third_party\glib\lib respectively.  
+of the include, bin, and lib directories into third_party\glib\include and  
+third_party\glib\lib respectively. You will need to copy the DLL files from
+bin into the build output with the executables for now. For debugging purposes,  
+the PDB files can also be copied into the output directory if desired.  
+
+Required GLIB DLLs so far:
+glib-2.0-0.dll
+zlib1.dll
+intl.dll
+pcre2-8-0.dll
+iconv.dll
 
 As a side effect, we also gain a newer zlib too.  
 Projects have been updated and old version removed.  

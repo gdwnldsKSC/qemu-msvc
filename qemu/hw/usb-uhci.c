@@ -178,7 +178,7 @@ typedef struct UHCI_QH {
 
 static UHCIAsync *uhci_async_alloc(UHCIState *s)
 {
-    UHCIAsync *async = qemu_malloc(sizeof(UHCIAsync));
+    UHCIAsync *async = g_malloc(sizeof(UHCIAsync));
 
     memset(&async->packet, 0, sizeof(async->packet));
     async->uhci  = s;
@@ -197,7 +197,7 @@ static void uhci_async_free(UHCIState *s, UHCIAsync *async)
 {
     usb_packet_cleanup(&async->packet);
     qemu_sglist_destroy(&async->sgl);
-    qemu_free(async);
+    g_free(async);
 }
 
 static void uhci_async_link(UHCIState *s, UHCIAsync *async)

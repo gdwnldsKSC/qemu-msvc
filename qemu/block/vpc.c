@@ -196,7 +196,7 @@ static int vpc_open(BlockDriverState *bs, int flags)
     s->bitmap_size = ((s->block_size / (8 * 512)) + 511) & ~511;
 
     s->max_table_entries = be32_to_cpu(dyndisk_header->max_table_entries);
-    s->pagetable = qemu_malloc(s->max_table_entries * 4);
+    s->pagetable = g_malloc(s->max_table_entries * 4);
 
     s->bat_offset = be64_to_cpu(dyndisk_header->table_offset);
     if (bdrv_pread(bs->file, s->bat_offset, s->pagetable,
@@ -220,7 +220,7 @@ static int vpc_open(BlockDriverState *bs, int flags)
     s->last_bitmap_offset = (int64_t) -1;
 
 #ifdef CACHE
-    s->pageentry_u8 = qemu_malloc(512);
+    s->pageentry_u8 = g_malloc(512);
     s->pageentry_u32 = s->pageentry_u8;
     s->pageentry_u16 = s->pageentry_u8;
     s->last_pagetable = -1;
@@ -264,7 +264,7 @@ static inline int64_t get_sector_offset(BlockDriverState *bs,
 #ifndef _MSC_VER
         uint8_t bitmap[s->bitmap_size];
 #else
-        uint8_t* bitmap = malloc(s->bitmap_size);
+        uint8_t* bitmap = g_malloc(s->bitmap_size);
         assert(bitmap);
 #endif
 
@@ -272,7 +272,7 @@ static inline int64_t get_sector_offset(BlockDriverState *bs,
         memset(bitmap, 0xff, s->bitmap_size);
         bdrv_pwrite_sync(bs->file, bitmap_offset, bitmap, s->bitmap_size);
 #ifdef _MSC_VER
-        free(bitmap);
+        g_free(bitmap);
 #endif
     }
 
@@ -346,14 +346,14 @@ static int64_t alloc_block(BlockDriverState* bs, int64_t sector_num)
 #ifndef _MSC_VER
     uint8_t bitmap[s->bitmap_size];
 #else
-    uint8_t* bitmap = malloc(s->bitmap_size);
+    uint8_t* bitmap = g_malloc(s->bitmap_size);
     assert(bitmap);
 #endif
 
     // Check if sector_num is valid
     if ((sector_num < 0) || (sector_num > bs->total_sectors))
 #ifdef _MSC_VER
-        free(bitmap);
+        g_free(bitmap);
 #endif
         return -1;
 
@@ -361,7 +361,7 @@ static int64_t alloc_block(BlockDriverState* bs, int64_t sector_num)
     index = (sector_num * 512) / s->block_size;
     if (s->pagetable[index] != 0xFFFFFFFF)
 #ifdef _MSC_VER
-        free(bitmap);
+        g_free(bitmap);
 #endif
         return -1;
 
@@ -385,13 +385,13 @@ static int64_t alloc_block(BlockDriverState* bs, int64_t sector_num)
     if (ret < 0)
         goto fail;
 #ifdef _MSC_VER
-    free(bitmap);
+    g_free(bitmap);
 #endif
     return get_sector_offset(bs, sector_num, 0);
 
 fail:
 #ifdef _MSC_VER
-    free(bitmap);
+    g_free(bitmap);
 #endif
     s->free_data_block_offset -= (s->block_size + s->bitmap_size);
     return -1;
@@ -643,9 +643,9 @@ static int vpc_create(const char *filename, QEMUOptionParameter *options)
 static void vpc_close(BlockDriverState *bs)
 {
     BDRVVPCState *s = bs->opaque;
-    qemu_free(s->pagetable);
+    g_free(s->pagetable);
 #ifdef CACHE
-    qemu_free(s->pageentry_u8);
+    g_free(s->pageentry_u8);
 #endif
 }
 

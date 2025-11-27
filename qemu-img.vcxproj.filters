@@ -141,9 +141,6 @@
     <ClCompile Include="qemu\qemu-img.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qemu\qemu-malloc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="qemu\qemu-option.c">
       <Filter>Source Files</Filter>
     </ClCompile>

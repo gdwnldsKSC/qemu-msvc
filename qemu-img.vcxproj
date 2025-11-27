@@ -183,7 +183,6 @@
     <ClCompile Include="qemu\qemu-coroutine.c" />
     <ClCompile Include="qemu\qemu-error.c" />
     <ClCompile Include="qemu\qemu-img.c" />
-    <ClCompile Include="qemu\qemu-malloc.c" />
     <ClCompile Include="qemu\qemu-option.c" />
     <ClCompile Include="qemu\qemu-progress.c" />
     <ClCompile Include="qemu\qemu-thread-win32.c" />
