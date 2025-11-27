@@ -129,8 +129,8 @@ Only Debug/Win32 is currently "fixed up" and working as of this time.
 
 Integrated SDL. If wishing to update, unzip the SDL 1.2 source code over top of it.  
 
-Per VisualC.html "If you get an error about SDL_config.h being missing, you should copy  
-include/SDL_config.h.default to include/SDL_config.h and try again."  
+Per VisualC.html - If you get an error about SDL_config.h being missing, you  
+should copy include/SDL_config.h.default to include/SDL_config.h and try again.  
 
 GLIB is now required as of 11/27/25 - for ease, I've included the x86 debug  
 build as of 11/27/25. However, if you wish to build it yourself or a newer  
@@ -157,16 +157,16 @@ While we are now primarily working in VS2026, VS2022 is the latest supported
 by gvsbuild as of this time. So both will need to be installed. Relevant  
 results will be located in C:\gtk-build\gtk\Win32\debug - Copy the contents  
 of the include, bin, and lib directories into third_party\glib\include and  
-third_party\glib\lib respectively. You will need to copy the DLL files from
+third_party\glib\lib respectively. You will need to copy the DLL files from  
 bin into the build output with the executables for now. For debugging purposes,  
 the PDB files can also be copied into the output directory if desired.  
 
-Required GLIB DLLs so far:
-glib-2.0-0.dll
-zlib1.dll
-intl.dll
-pcre2-8-0.dll
-iconv.dll
+Required GLIB DLLs so far:  
+glib-2.0-0.dll  
+zlib1.dll  
+intl.dll  
+pcre2-8-0.dll  
+iconv.dll  
 
 As a side effect, we also gain a newer zlib too.  
 Projects have been updated and old version removed.  
