@@ -112,6 +112,8 @@ int main(int argc, char **argv)
 #define main qemu_main
 #endif /* CONFIG_COCOA */
 
+#include <glib.h>
+
 #include "hw/hw.h"
 #include "hw/boards.h"
 #include "hw/usb.h"
@@ -1322,7 +1324,76 @@ void qemu_system_vmstop_request(int reason)
     qemu_notify_event();
 }
 
-void main_loop_wait(int nonblocking)
+static GPollFD poll_fds[1024 * 2]; /* this is probably overkill */
+static int n_poll_fds;
+static int max_priority;
+
+static void glib_select_fill(int *max_fd, fd_set *rfds, fd_set *wfds,
+                             fd_set *xfds, struct timeval *tv)
+{
+    GMainContext *context = g_main_context_default();
+    int i;
+    int timeout = 0, cur_timeout;
+
+    g_main_context_prepare(context, &max_priority);
+
+    n_poll_fds = g_main_context_query(context, max_priority, &timeout,
+                                      poll_fds, ARRAY_SIZE(poll_fds));
+    g_assert(n_poll_fds <= ARRAY_SIZE(poll_fds));
+
+    for (i = 0; i < n_poll_fds; i++) {
+        GPollFD *p = &poll_fds[i];
+
+        if ((p->events & G_IO_IN)) {
+            FD_SET(p->fd, rfds);
+            *max_fd = MAX(*max_fd, p->fd);
+        }
+        if ((p->events & G_IO_OUT)) {
+            FD_SET(p->fd, wfds);
+            *max_fd = MAX(*max_fd, p->fd);
+        }
+        if ((p->events & G_IO_ERR)) {
+            FD_SET(p->fd, xfds);
+            *max_fd = MAX(*max_fd, p->fd);
+        }
+    }
+
+    cur_timeout = (tv->tv_sec * 1000) + ((tv->tv_usec + 500) / 1000);
+    if (timeout >= 0 && timeout < cur_timeout) {
+        tv->tv_sec = timeout / 1000;
+        tv->tv_usec = (timeout % 1000) * 1000;
+    }
+}
+
+static void glib_select_poll(fd_set *rfds, fd_set *wfds, fd_set *xfds,
+                             bool err)
+{
+    GMainContext *context = g_main_context_default();
+
+    if (!err) {
+        int i;
+
+        for (i = 0; i < n_poll_fds; i++) {
+            GPollFD *p = &poll_fds[i];
+
+            if ((p->events & G_IO_IN) && FD_ISSET(p->fd, rfds)) {
+                p->revents |= G_IO_IN;
+            }
+            if ((p->events & G_IO_OUT) && FD_ISSET(p->fd, wfds)) {
+                p->revents |= G_IO_OUT;
+            }
+            if ((p->events & G_IO_ERR) && FD_ISSET(p->fd, xfds)) {
+                p->revents |= G_IO_ERR;
+            }
+        }
+    }
+
+    if (g_main_context_check(context, max_priority, poll_fds, n_poll_fds)) {
+        g_main_context_dispatch(context);
+    }
+}
+
+int main_loop_wait(int nonblocking)
 {
     fd_set rfds, wfds, xfds;
     int ret, nfds;
@@ -1347,15 +1418,24 @@ void main_loop_wait(int nonblocking)
     FD_ZERO(&rfds);
     FD_ZERO(&wfds);
     FD_ZERO(&xfds);
+
     qemu_iohandler_fill(&nfds, &rfds, &wfds, &xfds);
     slirp_select_fill(&nfds, &rfds, &wfds, &xfds);
+    glib_select_fill(&nfds, &rfds, &wfds, &xfds, &tv);
 
-    qemu_mutex_unlock_iothread();
+    if (timeout > 0) {
+        qemu_mutex_unlock_iothread();
+    }
+
     ret = select(nfds + 1, &rfds, &wfds, &xfds, &tv);
-    qemu_mutex_lock_iothread();
+
+    if (timeout > 0) {
+        qemu_mutex_lock_iothread();
+    }
 
     qemu_iohandler_poll(&rfds, &wfds, &xfds, ret);
     slirp_select_poll(&rfds, &wfds, &xfds, (ret < 0));
+    glib_select_poll(&rfds, &wfds, &xfds, (ret < 0));
 
     qemu_run_all_timers();
 
@@ -1363,6 +1443,7 @@ void main_loop_wait(int nonblocking)
        them.  */
     qemu_bh_poll();
 
+    return ret;
 }
 
 #ifndef CONFIG_IOTHREAD
@@ -1380,7 +1461,12 @@ qemu_irq qemu_system_powerdown;
 
 static void main_loop(void)
 {
-    bool nonblocking = false;
+    bool nonblocking;
+#ifndef _MSC_VER
+    int last_io __attribute__ ((unused)) = 0;
+#else
+    int last_io = 0;
+#endif
 #ifdef CONFIG_PROFILER
     int64_t ti;
 #endif
@@ -1389,7 +1475,9 @@ static void main_loop(void)
     qemu_main_loop_start();
 
     for (;;) {
-#ifndef CONFIG_IOTHREAD
+#ifdef CONFIG_IOTHREAD
+        nonblocking = !kvm_enabled() && last_io > 0;
+#else
         nonblocking = cpu_exec_all();
         if (vm_request_pending()) {
             nonblocking = true;
@@ -1398,7 +1486,7 @@ static void main_loop(void)
 #ifdef CONFIG_PROFILER
         ti = profile_getclock();
 #endif
-        main_loop_wait(nonblocking);
+        last_io = main_loop_wait(nonblocking);
 #ifdef CONFIG_PROFILER
         dev_time += profile_getclock() - ti;
 #endif
@@ -1690,7 +1778,7 @@ static int chardev_init_func(QemuOpts *opts, void *opaque)
 {
     CharDriverState *chr;
 
-    chr = qemu_chr_open_opts(opts, NULL);
+    chr = qemu_chr_new_from_opts(opts, NULL);
     if (!chr)
         return -1;
     return 0;
@@ -1829,7 +1917,7 @@ static int serial_parse(const char *devname)
         exit(1);
     }
     snprintf(label, sizeof(label), "serial%d", index);
-    serial_hds[index] = qemu_chr_open(label, devname, NULL);
+    serial_hds[index] = qemu_chr_new(label, devname, NULL);
     if (!serial_hds[index]) {
         fprintf(stderr, "qemu: could not open serial device '%s': %s\n",
                 devname, strerror(errno));
@@ -1851,7 +1939,7 @@ static int parallel_parse(const char *devname)
         exit(1);
     }
     snprintf(label, sizeof(label), "parallel%d", index);
-    parallel_hds[index] = qemu_chr_open(label, devname, NULL);
+    parallel_hds[index] = qemu_chr_new(label, devname, NULL);
     if (!parallel_hds[index]) {
         fprintf(stderr, "qemu: could not open parallel device '%s': %s\n",
                 devname, strerror(errno));
@@ -1882,7 +1970,7 @@ static int virtcon_parse(const char *devname)
     qemu_opt_set(dev_opts, "driver", "virtconsole");
 
     snprintf(label, sizeof(label), "virtcon%d", index);
-    virtcon_hds[index] = qemu_chr_open(label, devname, NULL);
+    virtcon_hds[index] = qemu_chr_new(label, devname, NULL);
     if (!virtcon_hds[index]) {
         fprintf(stderr, "qemu: could not open virtio console '%s': %s\n",
                 devname, strerror(errno));
@@ -1898,7 +1986,7 @@ static int debugcon_parse(const char *devname)
 {   
     QemuOpts *opts;
 
-    if (!qemu_chr_open("debugcon", devname, NULL)) {
+    if (!qemu_chr_new("debugcon", devname, NULL)) {
         exit(1);
     }
     opts = qemu_opts_create(qemu_find_opts("device"), "debugcon", 1);

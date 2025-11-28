@@ -23,14 +23,6 @@
  */
 
 #include "sysbus.h"
- /* WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
 #include "scsi.h"
 #include "esp.h"
 
@@ -64,8 +56,8 @@ struct ESPState {
     SysBusDevice busdev;
     uint8_t rregs[ESP_REGS];
     uint8_t wregs[ESP_REGS];
-    uint32_t it_shift;
     qemu_irq irq;
+    uint32_t it_shift;
     int32_t ti_size;
     uint32_t ti_rptr, ti_wptr;
     uint32_t status;
@@ -86,7 +78,7 @@ struct ESPState {
     int dma_enabled;
 
     uint32_t async_len;
-    uint8_t* async_buf;
+    uint8_t *async_buf;
 
     ESPDMAMemoryReadWriteFunc dma_memory_read;
     ESPDMAMemoryReadWriteFunc dma_memory_write;

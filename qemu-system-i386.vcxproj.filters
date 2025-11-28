@@ -31,9 +31,6 @@
     <Filter Include="qemu\hw">
       <UniqueIdentifier>{235ece8c-2ac3-4df3-b0ad-eb16e2b5ed48}</UniqueIdentifier>
     </Filter>
-    <Filter Include="qemu\hw\src">
-      <UniqueIdentifier>{afbd14fa-13cd-4831-b451-74396ee9f2a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="qemu\target-i386">
       <UniqueIdentifier>{a711231a-59ed-40e5-b3d5-c1a13ae92b97}</UniqueIdentifier>
     </Filter>
@@ -93,6 +90,9 @@
     </Filter>
     <Filter Include="qemu\qga">
       <UniqueIdentifier>{d6294da1-23cd-4824-a3a6-ac47a5b47825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="qemu\hw\src">
+      <UniqueIdentifier>{afbd14fa-13cd-4831-b451-74396ee9f2a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

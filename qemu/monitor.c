@@ -247,7 +247,7 @@ static int monitor_read_password(Monitor *mon, ReadLineFunc *readline_func,
 void monitor_flush(Monitor *mon)
 {
     if (mon && mon->outbuf_index != 0 && !mon->mux_out) {
-        qemu_chr_write(mon->chr, mon->outbuf, mon->outbuf_index);
+        qemu_chr_fe_write(mon->chr, mon->outbuf, mon->outbuf_index);
         mon->outbuf_index = 0;
     }
 }
@@ -1189,7 +1189,6 @@ static int add_graphics_client(Monitor *mon, const QDict *qdict, QObject **ret_d
 {
     const char *protocol  = qdict_get_str(qdict, "protocol");
     const char *fdname = qdict_get_str(qdict, "fdname");
-    int skipauth = qdict_get_try_bool(qdict, "skipauth", 0);
     CharDriverState *s;
 
     if (strcmp(protocol, "spice") == 0) {
@@ -1203,6 +1202,7 @@ static int add_graphics_client(Monitor *mon, const QDict *qdict, QObject **ret_d
 #ifdef CONFIG_VNC
     } else if (strcmp(protocol, "vnc") == 0) {
 	int fd = monitor_get_fd(mon, fdname);
+        int skipauth = qdict_get_try_bool(qdict, "skipauth", 0);
 	vnc_display_add_client(NULL, fd, skipauth);
 	return 0;
 #endif
@@ -2054,7 +2054,7 @@ static void print_pte(Monitor *mon, target_phys_addr_t addr,
 
 static void tlb_info_32(Monitor *mon, CPUState *env)
 {
-    unsigned l1, l2;
+    unsigned int l1, l2;
     uint32_t pgd, pde, pte;
 
     pgd = env->cr[3] & ~0xfff;
@@ -2082,7 +2082,7 @@ static void tlb_info_32(Monitor *mon, CPUState *env)
 
 static void tlb_info_pae32(Monitor *mon, CPUState *env)
 {
-    unsigned l1, l2, l3;
+    unsigned int l1, l2, l3;
     uint64_t pdpe, pde, pte;
     uint64_t pdp_addr, pd_addr, pt_addr;
 
@@ -2770,7 +2770,7 @@ static int do_getfd(Monitor *mon, const QDict *qdict, QObject **ret_data)
     mon_fd_t *monfd;
     int fd;
 
-    fd = qemu_chr_get_msgfd(mon->chr);
+    fd = qemu_chr_fe_get_msgfd(mon->chr);
     if (fd == -1) {
         qerror_report(QERR_FD_NOT_SUPPLIED);
         return -1;
@@ -5287,7 +5287,7 @@ void monitor_init(CharDriverState *chr, int flags)
         /* Control mode requires special handlers */
         qemu_chr_add_handlers(chr, monitor_can_read, monitor_control_read,
                               monitor_control_event, mon);
-        qemu_chr_set_echo(chr, true);
+        qemu_chr_fe_set_echo(chr, true);
     } else {
         qemu_chr_add_handlers(chr, monitor_can_read, monitor_read,
                               monitor_event, mon);

@@ -315,7 +315,10 @@ int qcow2_snapshot_create(BlockDriverState *bs, QEMUSnapshotInfo *sn_info)
     if (qcow2_write_snapshots(bs) < 0)
         goto fail;
 #ifdef DEBUG_ALLOC
-    qcow2_check_refcounts(bs);
+    {
+      BdrvCheckResult result = {0};
+      qcow2_check_refcounts(bs, &result);
+    }
 #endif
     return 0;
  fail:
@@ -365,7 +368,10 @@ int qcow2_snapshot_goto(BlockDriverState *bs, const char *snapshot_id)
         goto fail;
 
 #ifdef DEBUG_ALLOC
-    qcow2_check_refcounts(bs);
+    {
+        BdrvCheckResult result = {0};
+        qcow2_check_refcounts(bs, &result);
+    }
 #endif
     return 0;
  fail:
@@ -402,7 +408,10 @@ int qcow2_snapshot_delete(BlockDriverState *bs, const char *snapshot_id)
         return ret;
     }
 #ifdef DEBUG_ALLOC
-    qcow2_check_refcounts(bs);
+    {
+        BdrvCheckResult result = {0};
+        qcow2_check_refcounts(bs, &result);
+    }
 #endif
     return 0;
 }

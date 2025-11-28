@@ -100,9 +100,9 @@ struct sun4m_hwdef {
     uint64_t max_mem;
     const char * const default_cpu_model;
     uint32_t ecc_version;
-    uint8_t nvram_machine_id;
-    uint16_t machine_id;
     uint32_t iommu_version;
+    uint16_t machine_id;
+    uint8_t nvram_machine_id;
 };
 
 #define MAX_IOUNITS 5
@@ -117,9 +117,9 @@ struct sun4d_hwdef {
     target_phys_addr_t sbi_base;
     uint64_t max_mem;
     const char * const default_cpu_model;
-    uint8_t nvram_machine_id;
-    uint16_t machine_id;
     uint32_t iounit_version;
+    uint16_t machine_id;
+    uint8_t nvram_machine_id;
 };
 
 struct sun4c_hwdef {
@@ -130,9 +130,9 @@ struct sun4c_hwdef {
     target_phys_addr_t tcx_base, aux1_base;
     uint64_t max_mem;
     const char * const default_cpu_model;
-    uint8_t nvram_machine_id;
-    uint16_t machine_id;
     uint32_t iommu_version;
+    uint16_t machine_id;
+    uint8_t nvram_machine_id;
 };
 
 int DMA_get_channel_mode (int nchan)

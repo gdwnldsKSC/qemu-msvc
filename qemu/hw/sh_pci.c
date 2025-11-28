@@ -33,74 +33,61 @@ typedef struct SHPCIState {
     PCIBus *bus;
     PCIDevice *dev;
     qemu_irq irq[4];
-    int memconfig;
+    MemoryRegion memconfig_p4;
+    MemoryRegion memconfig_a7;
+    MemoryRegion isa;
     uint32_t par;
     uint32_t mbr;
     uint32_t iobr;
 } SHPCIState;
 
-static void sh_pci_reg_write (void *p, target_phys_addr_t addr, uint32_t val)
+static void sh_pci_reg_write (void *p, target_phys_addr_t addr, uint64_t val,
+                              unsigned size)
 {
     SHPCIState *pcic = p;
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+    if (addr >= 0 && addr <= 0xfc)
+        cpu_to_le32w((uint32_t*)(pcic->dev->config + addr), val);
+#endif
     switch(addr) {
+#ifndef _MSC_VER
     case 0 ... 0xfc:
         cpu_to_le32w((uint32_t*)(pcic->dev->config + addr), val);
         break;
-    case 0x1c0:
-        pcic->par = val;
-        break;
-    case 0x1c4:
-        pcic->mbr = val & 0xff000001;
-        break;
-    case 0x1c8:
-        if ((val & 0xfffc0000) != (pcic->iobr & 0xfffc0000)) {
-            cpu_register_physical_memory(pcic->iobr & 0xfffc0000, 0x40000,
-                                         IO_MEM_UNASSIGNED);
-            pcic->iobr = val & 0xfffc0001;
-            isa_mmio_init(pcic->iobr & 0xfffc0000, 0x40000);
-        }
-        break;
-    case 0x220:
-        pci_data_write(pcic->bus, pcic->par, val, 4);
-        break;
-    }
-#else
-	if (addr >= 0 && addr <= 0xfc)
-		cpu_to_le32w((uint32_t*)(pcic->dev->config + addr), val);
-	else
-	{
-		switch(addr) 
-		{
-    case 0x1c0:
-        pcic->par = val;
-        break;
-    case 0x1c4:
-        pcic->mbr = val & 0xff000001;
-        break;
-    case 0x1c8:
-        if ((val & 0xfffc0000) != (pcic->iobr & 0xfffc0000)) {
-            cpu_register_physical_memory(pcic->iobr & 0xfffc0000, 0x40000,
-                                         IO_MEM_UNASSIGNED);
-            pcic->iobr = val & 0xfffc0001;
-            isa_mmio_init(pcic->iobr & 0xfffc0000, 0x40000);
-        }
-        break;
-    case 0x220:
-        pci_data_write(pcic->bus, pcic->par, val, 4);
-        break;
-    }
-}
 #endif
+    case 0x1c0:
+        pcic->par = val;
+        break;
+    case 0x1c4:
+        pcic->mbr = val & 0xff000001;
+        break;
+    case 0x1c8:
+        if ((val & 0xfffc0000) != (pcic->iobr & 0xfffc0000)) {
+            memory_region_del_subregion(get_system_memory(), &pcic->isa);
+            pcic->iobr = val & 0xfffc0001;
+            memory_region_add_subregion(get_system_memory(),
+                                        pcic->iobr & 0xfffc0000, &pcic->isa);
+        }
+        break;
+    case 0x220:
+        pci_data_write(pcic->bus, pcic->par, val, 4);
+        break;
+    }
 }
 
-static uint32_t sh_pci_reg_read (void *p, target_phys_addr_t addr)
+static uint64_t sh_pci_reg_read (void *p, target_phys_addr_t addr,
+                                 unsigned size)
 {
     SHPCIState *pcic = p;
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+    if (addr >= 0 && addr <= 0xfc)
+		return le32_to_cpup((uint32_t*)(pcic->dev->config + addr));
+#endif
     switch(addr) {
+#ifndef _MSC_VER
     case 0 ... 0xfc:
         return le32_to_cpup((uint32_t*)(pcic->dev->config + addr));
+#endif
     case 0x1c0:
         return pcic->par;
     case 0x1c4:
@@ -110,34 +97,17 @@ static uint32_t sh_pci_reg_read (void *p, target_phys_addr_t addr)
     case 0x220:
         return pci_data_read(pcic->bus, pcic->par, 4);
     }
-#else
-    if (addr >= 0 && addr <= 0xfc)
-        return le32_to_cpup((uint32_t*)(pcic->dev->config + addr));
-    else
-    {
-        switch (addr) {
-        case 0x1c0:
-            return pcic->par;
-        case 0x1c4:
-            return pcic->mbr;
-        case 0x1c8:
-            return pcic->iobr;
-        case 0x220:
-            return pci_data_read(pcic->bus, pcic->par, 4);
-        }
-    }
-#endif
     return 0;
 }
 
-typedef struct {
-    CPUReadMemoryFunc * const r[3];
-    CPUWriteMemoryFunc * const w[3];
-} MemOp;
-
-static MemOp sh_pci_reg = {
-    { NULL, NULL, sh_pci_reg_read },
-    { NULL, NULL, sh_pci_reg_write },
+static const MemoryRegionOps sh_pci_reg_ops = {
+    .read = sh_pci_reg_read,
+    .write = sh_pci_reg_write,
+    .endianness = DEVICE_NATIVE_ENDIAN,
+    .valid = {
+        .min_access_size = 4,
+        .max_access_size = 4,
+    },
 };
 
 static int sh_pci_map_irq(PCIDevice *d, int irq_num)
@@ -156,11 +126,23 @@ static void sh_pci_map(SysBusDevice *dev, target_phys_addr_t base)
 {
     SHPCIState *s = FROM_SYSBUS(SHPCIState, dev);
 
-    cpu_register_physical_memory(P4ADDR(base), 0x224, s->memconfig);
-    cpu_register_physical_memory(A7ADDR(base), 0x224, s->memconfig);
-
+    memory_region_add_subregion(get_system_memory(),
+                                P4ADDR(base),
+                                &s->memconfig_p4);
+    memory_region_add_subregion(get_system_memory(),
+                                A7ADDR(base),
+                                &s->memconfig_a7);
     s->iobr = 0xfe240000;
-    isa_mmio_init(s->iobr, 0x40000);
+    memory_region_add_subregion(get_system_memory(), s->iobr, &s->isa);
+}
+
+static void sh_pci_unmap(SysBusDevice *dev, target_phys_addr_t base)
+{
+    SHPCIState *s = FROM_SYSBUS(SHPCIState, dev);
+
+    memory_region_del_subregion(get_system_memory(), &s->memconfig_p4);
+    memory_region_del_subregion(get_system_memory(), &s->memconfig_a7);
+    memory_region_del_subregion(get_system_memory(), &s->isa);
 }
 
 static int sh_pci_init_device(SysBusDevice *dev)
@@ -178,9 +160,14 @@ static int sh_pci_init_device(SysBusDevice *dev)
                               get_system_memory(),
                               get_system_io(),
                               PCI_DEVFN(0, 0), 4);
-    s->memconfig = cpu_register_io_memory(sh_pci_reg.r, sh_pci_reg.w,
-                                          s, DEVICE_NATIVE_ENDIAN);
-    sysbus_init_mmio_cb(dev, 0x224, sh_pci_map);
+    memory_region_init_io(&s->memconfig_p4, &sh_pci_reg_ops, s,
+                          "sh_pci", 0x224);
+    memory_region_init_alias(&s->memconfig_a7, "sh_pci.2", &s->memconfig_p4,
+                             0, 0x224);
+    isa_mmio_setup(&s->isa, 0x40000);
+    sysbus_init_mmio_cb2(dev, sh_pci_map, sh_pci_unmap);
+    sysbus_init_mmio_region(dev, &s->memconfig_a7);
+    sysbus_init_mmio_region(dev, &s->isa);
     s->dev = pci_create_simple(s->bus, PCI_DEVFN(0, 0), "sh_pci_host");
     return 0;
 }

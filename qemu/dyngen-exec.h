@@ -27,15 +27,6 @@
 #if !defined(__DYNGEN_EXEC_H__)
 #define __DYNGEN_EXEC_H__
 
-#include "qemu-common.h"
-
-#ifdef __OpenBSD__
-#include <sys/types.h>
-#endif
-
-/* XXX: This may be wrong for 64-bit ILP32 hosts.  */
-typedef void * host_reg_t;
-
 #if defined(__i386__)
 #define AREG0 "ebp"
 #elif defined(__x86_64__)
@@ -78,11 +69,6 @@ extern CPUX86State* cpu_single_env;
 #else
 register CPUState *env asm(AREG0);
 #endif
-
-#define xglue(x, y) x ## y
-#define glue(x, y) xglue(x, y)
-#define stringify(s)	tostring(s)
-#define tostring(s)	#s
 
 /* The return address may point to the start of the next instruction.
    Subtracting one gets us the call instruction itself.  */

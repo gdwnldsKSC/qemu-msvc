@@ -304,7 +304,7 @@ static void as_memory_range_add(AddressSpace *as, FlatRange *fr)
     }
 
     if (!fr->readable) {
-        phys_offset &= TARGET_PAGE_MASK;
+        phys_offset &= ~TARGET_PAGE_MASK & ~IO_MEM_ROMD;
     }
 
     cpu_register_physical_memory_log(fr->addr.start,
@@ -396,7 +396,7 @@ static void memory_region_iorange_read(IORange *iorange,
 
         *data = ((uint64_t)1 << (width * 8)) - 1;
         if (mrp) {
-            *data = mrp->read(mr->opaque, offset - mrp->offset);
+            *data = mrp->read(mr->opaque, offset);
         }
         return;
     }
@@ -418,7 +418,7 @@ static void memory_region_iorange_write(IORange *iorange,
         const MemoryRegionPortio *mrp = find_portio(mr, offset, width, true);
 
         if (mrp) {
-            mrp->write(mr->opaque, offset - mrp->offset, data);
+            mrp->write(mr->opaque, offset, data);
         }
         return;
     }
@@ -962,11 +962,14 @@ void memory_region_init_alias(MemoryRegion *mr,
 
 void memory_region_init_rom_device(MemoryRegion *mr,
                                    const MemoryRegionOps *ops,
+                                   void *opaque,
                                    DeviceState *dev,
                                    const char *name,
                                    uint64_t size)
 {
     memory_region_init(mr, name, size);
+    mr->ops = ops;
+    mr->opaque = opaque;
     mr->terminates = true;
     mr->destructor = memory_region_destructor_rom_device;
     mr->ram_addr = qemu_ram_alloc(dev, name, size);
@@ -1060,7 +1063,7 @@ void *memory_region_get_ram_ptr(MemoryRegion *mr)
 
     assert(mr->terminates);
 
-    return qemu_get_ram_ptr(mr->ram_addr);
+    return qemu_get_ram_ptr(mr->ram_addr & TARGET_PAGE_MASK);
 }
 
 static void memory_region_update_coalesced_range(MemoryRegion *mr)
@@ -1191,11 +1194,13 @@ static void memory_region_add_subregion_common(MemoryRegion *mr,
             || offset + subregion->size <= other->offset) {
             continue;
         }
+#if 0
         printf("warning: subregion collision %llx/%llx vs %llx/%llx\n",
                (unsigned long long)offset,
                (unsigned long long)subregion->size,
                (unsigned long long)other->offset,
                (unsigned long long)other->size);
+#endif
     }
     QTAILQ_FOREACH(other, &mr->subregions, subregions_link) {
         if (subregion->priority >= other->priority) {

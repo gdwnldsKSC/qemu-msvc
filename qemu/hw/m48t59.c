@@ -66,8 +66,8 @@ struct M48t59State {
     /* Model parameters */
     uint32_t type; /* 2 = m48t02, 8 = m48t08, 59 = m48t59 */
     /* NVRAM storage */
-    uint8_t  lock;
     uint16_t addr;
+    uint8_t  lock;
 };
 
 typedef struct M48t59ISAState {

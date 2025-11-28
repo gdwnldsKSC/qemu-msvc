@@ -165,7 +165,7 @@ static inline void trace_apic_local_deliver(int vector, uint32_t lvt)
 {
 }
 
-static inline void trace_apic_deliver_irq(uint8_t dest, uint8_t dest_mode, uint8_t delivery_mode, uint8_t vector_num, uint8_t polarity, uint8_t trigger_mode)
+static inline void trace_apic_deliver_irq(uint8_t dest, uint8_t dest_mode, uint8_t delivery_mode, uint8_t vector_num, uint8_t trigger_mode)
 {
 }
 
@@ -794,6 +794,14 @@ static inline void trace_qed_aio_write_postfill(void *s, void *acb, uint64_t sta
 }
 
 static inline void trace_qed_aio_write_main(void *s, void *acb, int ret, uint64_t offset, size_t len)
+{
+}
+
+static inline void trace_g364fb_read(uint64_t addr, uint32_t val)
+{
+}
+
+static inline void trace_g364fb_write(uint64_t addr, uint32_t new)
 {
 }
 

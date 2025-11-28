@@ -156,7 +156,7 @@ static void xencons_send(struct XenConsole *con)
 
     size = con->buffer.size - con->buffer.consumed;
     if (con->chr)
-        len = qemu_chr_write(con->chr, con->buffer.data + con->buffer.consumed,
+        len = qemu_chr_fe_write(con->chr, con->buffer.data + con->buffer.consumed,
                              size);
     else
         len = size;
@@ -202,7 +202,7 @@ static int con_init(struct XenDevice *xendev)
         con->chr = serial_hds[con->xendev.dev];
     } else {
         snprintf(label, sizeof(label), "xencons%d", con->xendev.dev);
-        con->chr = qemu_chr_open(label, output, NULL);
+        con->chr = qemu_chr_new(label, output, NULL);
     }
 
     xenstore_store_pv_console_info(con->xendev.dev, con->chr);
