@@ -1241,4 +1241,56 @@ static inline void trace_qemu_co_mutex_unlock_return(void *mutex, void *self)
 {
 }
 
+static inline void trace_escc_put_queue(char channel, int b)
+{
+}
+
+static inline void trace_escc_get_queue(char channel, int val)
+{
+}
+
+static inline void trace_escc_update_irq(int irq)
+{
+}
+
+static inline void trace_escc_update_parameters(char channel, int speed, int parity, int data_bits, int stop_bits)
+{
+}
+
+static inline void trace_escc_mem_writeb_ctrl(char channel, uint32_t reg, uint32_t val)
+{
+}
+
+static inline void trace_escc_mem_writeb_data(char channel, uint32_t val)
+{
+}
+
+static inline void trace_escc_mem_readb_ctrl(char channel, uint32_t reg, uint8_t val)
+{
+}
+
+static inline void trace_escc_mem_readb_data(char channel, uint32_t ret)
+{
+}
+
+static inline void trace_escc_serial_receive_byte(char channel, int ch)
+{
+}
+
+static inline void trace_escc_sunkbd_event_in(int ch)
+{
+}
+
+static inline void trace_escc_sunkbd_event_out(int ch)
+{
+}
+
+static inline void trace_escc_kbd_command(int val)
+{
+}
+
+static inline void trace_escc_sunmouse_event(int dx, int dy, int buttons_state)
+{
+}
+
 #endif /* TRACE_H */
