@@ -94,6 +94,9 @@
     <Filter Include="qemu\hw\src">
       <UniqueIdentifier>{afbd14fa-13cd-4831-b451-74396ee9f2a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="qemu\trace">
+      <UniqueIdentifier>{d618cb71-3b6c-4593-9c7c-e33ba3b5b8f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1578,9 +1581,6 @@
     <ClCompile Include="qemu\hw\ivshmem.c">
       <Filter>qemu\hw\src</Filter>
     </ClCompile>
-    <ClCompile Include="qemu\simpletrace.c">
-      <Filter>qemu\src</Filter>
-    </ClCompile>
     <ClCompile Include="qemu\trace.c">
       <Filter>qemu\src</Filter>
     </ClCompile>
@@ -1892,6 +1892,21 @@
     </ClCompile>
     <ClCompile Include="third_party\outside_qemu_tree_custom\gettimeofday.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\outside_qemu_tree_custom\msvc_compat_shims.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\trace\control.c">
+      <Filter>qemu\trace</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\trace\default.c">
+      <Filter>qemu\trace</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\trace\simple.c">
+      <Filter>qemu\trace</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\trace\stderr.c">
+      <Filter>qemu\trace</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2717,9 +2732,6 @@
     <ClInclude Include="qemu\ui\vnc-palette.h">
       <Filter>qemu\ui\inc</Filter>
     </ClInclude>
-    <ClInclude Include="qemu\simpletrace.h">
-      <Filter>qemu\inc</Filter>
-    </ClInclude>
     <ClInclude Include="qemu\trace.h">
       <Filter>qemu\inc</Filter>
     </ClInclude>
@@ -2911,6 +2923,15 @@
     </ClInclude>
     <ClInclude Include="qemu\hw\hid.h">
       <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\trace\control.h">
+      <Filter>qemu\trace</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\trace\simple.h">
+      <Filter>qemu\trace</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\trace\stderr.h">
+      <Filter>qemu\trace</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

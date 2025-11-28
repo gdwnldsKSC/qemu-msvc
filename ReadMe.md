@@ -182,35 +182,36 @@ of the qemu-system-i386 project to reproduce the 'test' environment or the paths
 that we can specify arbitrary paths. 
 
 From a bash shell (or WSL) run  
-./hxtool -h < qemu-options.hx > qemu-options.def  
-./hxtool -h < qemu-monitor.hx > qemu-monitor.h  
-./hxtool -h < hmp-commands.hx > hmp-commands.hx  
-./hxtool -h < hmp-commands.hx > hmp-commands.h  
-./hxtool -h < qemu-img-cmds.hx > qemu-img-cmds.h  
-./tracetool --nop -c < trace-events > trace.c   
-./tracetool --nop -h < trace-events > trace.h  
+./scripts/hxtool -h < qemu-options.hx > qemu-options.def  
+./scripts/hxtool -h < qemu-monitor.hx > qemu-monitor.h  
+./scripts/xtool -h < hmp-commands.hx > hmp-commands.hx  
+./scripts/hxtool -h < hmp-commands.hx > hmp-commands.h  
+./scritps/hxtool -h < qemu-img-cmds.hx > qemu-img-cmds.h  
+./scritps/tracetool --nop -c < trace-events > trace.c   
+./scripts/tracetool --nop -h < trace-events > trace.h  
 
-Rebaselined on upstream vl.c which now (as of a few iterations ago) uses that header
-instead of declaring all the enum and help files in source to allow them to remain in 
-sync and export of current version documentation easier.
+Rebaselined on upstream vl.c which now (as of a few iterations ago) uses that  
+header instead of declaring all the enum and help files in source to allow them   
+to remain in sync and export of current version documentation easier.  
 
-This will need to be re-done every time there is a change/feature added to these functions,
-but for ease of use I will be supplying a working version of qemu-options.h in my repository.
+This will need to be re-done every time there is a change/feature added to  
+these functions, but for ease of use I will be supplying a working version of  
+these files in my repository.  
 
 ## Note on qemu-options and MSVC C Preprocessor
-qemu-options generated QEMU_OPTIONS_net must be modified to avoid macro expansion issues
-in MSVC C Preprocessor currently. 
+qemu-options generated QEMU_OPTIONS_net must be modified to avoid macro  
+expansion issues in MSVC C Preprocessor currently.  
 
 # Included precompiled images/binaries - OUTDATED AS OF 11/23/2025
 
-Folder TESTFILES contains working bios image and 'small' BSD disk with not much on it
-but works with these. VGABIOS project for VGA BIOS, and a SeaBIOS image.
-
-QEMU BIOS - build: 09/22/09
-VGABIOS - "current-cvs 17 Dec 2008"
-
-Working startup commandline:
-
+Folder TESTFILES contains working bios image and 'small' BSD disk with not much  
+on it but works with these. VGABIOS project for VGA BIOS, and a SeaBIOS image.  
+  
+QEMU BIOS - build: 09/22/09  
+VGABIOS - "current-cvs 17 Dec 2008"  
+  
+Working startup commandline:  
+  
 winqemutest.exe -net none -cpu coreduo -m 512 -M pc -vga std -sdl -hda D:\Images\small.ffs -bios D:\Images\bios.bin -L D:\Images
 
 Adding alpha target bits on the side for OpenVMS, Tru64, and AXP Windows NT emulation over time. 

@@ -722,9 +722,6 @@
     <ClCompile Include="qemu\qlist.c" />
     <ClCompile Include="qemu\qstring.c" />
     <ClCompile Include="qemu\rwhandler.c" />
-    <ClCompile Include="qemu\simpletrace.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="qemu\slirp\arp_table.c" />
     <ClCompile Include="qemu\spice-qemu-char.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -772,6 +769,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="qemu\trace.c" />
+    <ClCompile Include="qemu\trace\control.c" />
+    <ClCompile Include="qemu\trace\default.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="qemu\trace\simple.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="qemu\trace\stderr.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="qemu\ui\curses.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -2062,6 +2069,7 @@
     <ClCompile Include="qemu\slirp\udp.c" />
     <ClCompile Include="third_party\outside_qemu_tree_custom\clock_gettime.c" />
     <ClCompile Include="third_party\outside_qemu_tree_custom\gettimeofday.c" />
+    <ClCompile Include="third_party\outside_qemu_tree_custom\msvc_compat_shims.c" />
     <ClCompile Include="third_party\outside_qemu_tree_custom\XGetopt.c" />
   </ItemGroup>
   <ItemGroup>
@@ -2221,7 +2229,6 @@
     <ClInclude Include="qemu\qstring.h" />
     <ClInclude Include="qemu\range.h" />
     <ClInclude Include="qemu\rwhandler.h" />
-    <ClInclude Include="qemu\simpletrace.h" />
     <ClInclude Include="qemu\tap-linux.h" />
     <ClInclude Include="qemu\target-alpha\cpu.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2254,6 +2261,9 @@
     <ClInclude Include="qemu\target-i386\svm.h" />
     <ClInclude Include="qemu\targphys.h" />
     <ClInclude Include="qemu\trace.h" />
+    <ClInclude Include="qemu\trace\control.h" />
+    <ClInclude Include="qemu\trace\simple.h" />
+    <ClInclude Include="qemu\trace\stderr.h" />
     <ClInclude Include="qemu\ui\curses_keys.h" />
     <ClInclude Include="qemu\ui\d3des.h" />
     <ClInclude Include="qemu\ui\keymaps.h" />

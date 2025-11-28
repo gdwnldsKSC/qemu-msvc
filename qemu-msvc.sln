@@ -3,36 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11205.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{9D72AF70-790F-4D24-9098-BB56ADD1D41F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Debug", "Debug", "{6FC37FE1-6383-426A-A60C-BCC0C5C39581}"
-	ProjectSection(SolutionItems) = preProject
-		libs\Debug\fmodvc.lib = libs\Debug\fmodvc.lib
-		libs\Debug\pxwc.lib = libs\Debug\pxwc.lib
-		libs\Debug\SDL.lib = libs\Debug\SDL.lib
-		libs\Debug\zlib.lib = libs\Debug\zlib.lib
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{867F01E8-6152-4618-B77E-048D684D10C0}"
-	ProjectSection(SolutionItems) = preProject
-		libs\Release\fmodvc.lib = libs\Release\fmodvc.lib
-		libs\Release\pxwc.lib = libs\Release\pxwc.lib
-		libs\Release\SDL.lib = libs\Release\SDL.lib
-		libs\Release\zlib.lib = libs\Release\zlib.lib
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ia32", "ia32", "{0039BCDC-C947-4DC0-84EA-1BF1F2BE05E9}"
-	ProjectSection(SolutionItems) = preProject
-		libs\ia32\libirc.lib = libs\ia32\libirc.lib
-		libs\ia32\libmmds.lib = libs\ia32\libmmds.lib
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "x64", "x64", "{3F9F847E-3014-4731-B112-C2D054D67D9C}"
-	ProjectSection(SolutionItems) = preProject
-		libs\x64\libirc.lib = libs\x64\libirc.lib
-		libs\x64\libmmds.lib = libs\x64\libmmds.lib
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pxwc", "pxwc", "{5C04660C-396B-4908-9866-3FE95CB355E5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "inc", "inc", "{C450D1D4-96C2-400E-9780-C91B811BC8B3}"
@@ -210,10 +180,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{6FC37FE1-6383-426A-A60C-BCC0C5C39581} = {9D72AF70-790F-4D24-9098-BB56ADD1D41F}
-		{867F01E8-6152-4618-B77E-048D684D10C0} = {9D72AF70-790F-4D24-9098-BB56ADD1D41F}
-		{0039BCDC-C947-4DC0-84EA-1BF1F2BE05E9} = {9D72AF70-790F-4D24-9098-BB56ADD1D41F}
-		{3F9F847E-3014-4731-B112-C2D054D67D9C} = {9D72AF70-790F-4D24-9098-BB56ADD1D41F}
 		{C450D1D4-96C2-400E-9780-C91B811BC8B3} = {5C04660C-396B-4908-9866-3FE95CB355E5}
 		{0ABD542B-B16C-4A71-BF48-9011C79674A6} = {C450D1D4-96C2-400E-9780-C91B811BC8B3}
 		{4FAB551C-1B51-487F-902E-3B45C7C93BE5} = {C450D1D4-96C2-400E-9780-C91B811BC8B3}

@@ -2,6 +2,9 @@
 // actually, in this case do modify and ignore the above. we do not yet
 // have config generation - gdwnldsKSC
 #define CONFIG_QEMU_DATADIR "D:\\Images"
+#define CONFIG_TRACE_NOP 1
+#define CONFIG_TRACE_DEFAULT 1
+#define CONFIG_TRACE_FILE "trace"
 #define HOST_I386 1
 #define HOST_LONG_BITS 32
 #define CONFIG_WIN32 1
