@@ -23,34 +23,14 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
- 
-#include <stdint.h> // msvc hack for 2015?
-#include <string.h> // MSVC hack for 2015?
+MSC_PACKED_BEGIN_1
 
- 
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
-
-#ifndef _MSC_VER // MSVC HACK
 /* BD Address */
 typedef struct {
     uint8_t b[6];
-} __attribute__((packed)) bdaddr_t;
-#else
-typedef struct {
-	uint8_t b[6];
-} bdaddr_t;
-#endif
+} QEMU_PACKED bdaddr_t;
+
+MSC_PACKED_END
 
 #define BDADDR_ANY	(&(bdaddr_t) {{0, 0, 0, 0, 0, 0}})
 #define BDADDR_ALL	(&(bdaddr_t) {{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}})
@@ -465,28 +445,20 @@ enum hci_link_mode {
 /* Link Control */
 #define OGF_LINK_CTL		0x01
 
+MSC_PACKED_BEGIN_1
+
 #define OCF_INQUIRY			0x0001
 typedef struct {
     uint8_t	lap[3];
     uint8_t	length;		/* 1.28s units */
     uint8_t	num_rsp;
-} 
-#ifndef _MSC_VER // MSCV 2015 hack
-__attribute__ ((packed)) inquiry_cp;
-#else
-inquiry_cp;
-#endif
+} QEMU_PACKED inquiry_cp;
 #define INQUIRY_CP_SIZE 5
 
 typedef struct {
     uint8_t		status;
     bdaddr_t	bdaddr;
-}
-#ifndef _MSC_VER // MSVC 2015 hack
-__attribute__ ((packed)) status_bdaddr_rp;
-#else
-status_bdaddr_rp;
-#endif
+} QEMU_PACKED status_bdaddr_rp;
 #define STATUS_BDADDR_RP_SIZE 7
 
 #define OCF_INQUIRY_CANCEL		0x0002
@@ -498,12 +470,7 @@ typedef struct {
     uint8_t	lap[3];
     uint8_t	length;		/* 1.28s units */
     uint8_t	num_rsp;
-}
-#ifndef _MSC_VER
-__attribute__ ((packed)) periodic_inquiry_cp;
-#else
-periodic_inquiry_cp;
-#endif
+} QEMU_PACKED periodic_inquiry_cp;
 #define PERIODIC_INQUIRY_CP_SIZE 9
 
 #define OCF_EXIT_PERIODIC_INQUIRY	0x0004
@@ -516,95 +483,55 @@ typedef struct {
     uint8_t	pscan_mode;
     uint16_t	clock_offset;
     uint8_t	role_switch;
-}
-#ifndef _MSC_VER
-__attribute__ ((packed)) create_conn_cp;
-#else
-create_conn_cp;
-#endif
+} QEMU_PACKED create_conn_cp;
 #define CREATE_CONN_CP_SIZE 13
 
 #define OCF_DISCONNECT			0x0006
 typedef struct {
     uint16_t	handle;
     uint8_t	reason;
-}
-#ifndef _MSC_VER
-__attribute__ ((packed)) disconnect_cp;
-#else
-disconnect_cp;
-#endif
+} QEMU_PACKED disconnect_cp;
 #define DISCONNECT_CP_SIZE 3
 
 #define OCF_ADD_SCO			0x0007
 typedef struct {
     uint16_t	handle;
     uint16_t	pkt_type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) add_sco_cp;
-#else
-add_scop_cp;
-#endif
+} QEMU_PACKED add_sco_cp;
 #define ADD_SCO_CP_SIZE 4
 
 #define OCF_CREATE_CONN_CANCEL		0x0008
 typedef struct {
     uint8_t	status;
     bdaddr_t	bdaddr;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) create_conn_cancel_cp;
-#else
-create_conn_cancel_cp;
-#endif
+} QEMU_PACKED create_conn_cancel_cp;
 #define CREATE_CONN_CANCEL_CP_SIZE 6
 
 typedef struct {
     uint8_t	status;
     bdaddr_t	bdaddr;
-}
-#ifndef _MSC_VER
-__attribute__ ((packed)) create_conn_cancel_rp;
-#else
-create_conn_cancel_rp;
-#endif
+} QEMU_PACKED create_conn_cancel_rp;
 #define CREATE_CONN_CANCEL_RP_SIZE 7
 
 #define OCF_ACCEPT_CONN_REQ		0x0009
 typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	role;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) accept_conn_req_cp;
-#else
-accept_conn_req_cp;
-#endif
+} QEMU_PACKED accept_conn_req_cp;
 #define ACCEPT_CONN_REQ_CP_SIZE	7
 
 #define OCF_REJECT_CONN_REQ		0x000A
 typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	reason;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) reject_conn_req_cp;
-#else
-reject_conn_req_cp;
-#endif
+} QEMU_PACKED reject_conn_req_cp;
 #define REJECT_CONN_REQ_CP_SIZE	7
 
 #define OCF_LINK_KEY_REPLY		0x000B
 typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	link_key[16];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) link_key_reply_cp;
-#else
-link_key_reply_cp;
-#endif
+} QEMU_PACKED link_key_reply_cp;
 #define LINK_KEY_REPLY_CP_SIZE 22
 
 #define OCF_LINK_KEY_NEG_REPLY		0x000C
@@ -614,12 +541,7 @@ typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	pin_len;
     uint8_t	pin_code[16];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) pin_code_reply_cp;
-#else
-pin_code_reply_cp;
-#endif
+} QEMU_PACKED pin_code_reply_cp;
 #define PIN_CODE_REPLY_CP_SIZE 23
 
 #define OCF_PIN_CODE_NEG_REPLY		0x000E
@@ -628,57 +550,32 @@ pin_code_reply_cp;
 typedef struct {
     uint16_t	 handle;
     uint16_t	 pkt_type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) set_conn_ptype_cp;
-#else
-set_conn_ptype_cp;
-#endif
+} QEMU_PACKED set_conn_ptype_cp;
 #define SET_CONN_PTYPE_CP_SIZE 4
 
 #define OCF_AUTH_REQUESTED		0x0011
 typedef struct {
     uint16_t	 handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) auth_requested_cp;
-#else
-auth_requested_cp;
-#endif
+} QEMU_PACKED auth_requested_cp;
 #define AUTH_REQUESTED_CP_SIZE 2
 
 #define OCF_SET_CONN_ENCRYPT		0x0013
 typedef struct {
     uint16_t	handle;
     uint8_t	encrypt;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) set_conn_encrypt_cp;
-#else
-set_conn_encrypt_cp;
-#endif
+} QEMU_PACKED set_conn_encrypt_cp;
 #define SET_CONN_ENCRYPT_CP_SIZE 3
 
 #define OCF_CHANGE_CONN_LINK_KEY	0x0015
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) change_conn_link_key_cp;
-#else
-change_conn_link_key_cp;
-#endif
+} QEMU_PACKED change_conn_link_key_cp;
 #define CHANGE_CONN_LINK_KEY_CP_SIZE 2
 
 #define OCF_MASTER_LINK_KEY		0x0017
 typedef struct {
     uint8_t	key_flag;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) master_link_key_cp;
-#else
-master_link_key_cp;
-#endif
+} QEMU_PACKED master_link_key_cp;
 #define MASTER_LINK_KEY_CP_SIZE 1
 
 #define OCF_REMOTE_NAME_REQ		0x0019
@@ -687,90 +584,50 @@ typedef struct {
     uint8_t	pscan_rep_mode;
     uint8_t	pscan_mode;
     uint16_t	clock_offset;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) remote_name_req_cp;
-#else
-remote_name_req_cp;
-#endif
+} QEMU_PACKED remote_name_req_cp;
 #define REMOTE_NAME_REQ_CP_SIZE 10
 
 #define OCF_REMOTE_NAME_REQ_CANCEL	0x001A
 typedef struct {
     bdaddr_t	bdaddr;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) remote_name_req_cancel_cp;
-#else
-remote_name_req_cancel_cp;
-#endif
+} QEMU_PACKED remote_name_req_cancel_cp;
 #define REMOTE_NAME_REQ_CANCEL_CP_SIZE 6
 
 typedef struct {
     uint8_t		status;
     bdaddr_t	bdaddr;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) remote_name_req_cancel_rp;
-#else
-remote_name_req_cancel_rp;
-#endif
+} QEMU_PACKED remote_name_req_cancel_rp;
 #define REMOTE_NAME_REQ_CANCEL_RP_SIZE 7
 
 #define OCF_READ_REMOTE_FEATURES	0x001B
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_remote_features_cp;
-#else
-read_remote_features_cp;
-#endif
+} QEMU_PACKED read_remote_features_cp;
 #define READ_REMOTE_FEATURES_CP_SIZE 2
 
 #define OCF_READ_REMOTE_EXT_FEATURES	0x001C
 typedef struct {
     uint16_t	handle;
     uint8_t	page_num;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_remote_ext_features_cp;
-#else
-read_remote_ext_features_cp;
-#endif
+} QEMU_PACKED read_remote_ext_features_cp;
 #define READ_REMOTE_EXT_FEATURES_CP_SIZE 3
 
 #define OCF_READ_REMOTE_VERSION		0x001D
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_remote_version_cp;
-#else
-read_remote_version_cp;
-#endif
+} QEMU_PACKED read_remote_version_cp;
 #define READ_REMOTE_VERSION_CP_SIZE 2
 
 #define OCF_READ_CLOCK_OFFSET		0x001F
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_clock_offset_cp;
-#else
-read_clock_offset_cp;
-#endif
+} QEMU_PACKED read_clock_offset_cp;
 #define READ_CLOCK_OFFSET_CP_SIZE 2
 
 #define OCF_READ_LMP_HANDLE		0x0020
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_lmp_handle_cp;
-#else
-read_lmp_handle_cp;
-#endif
+} QEMU_PACKED read_lmp_handle_cp;
 #define READ_LMP_HANDLE_CP_SIZE 2
 
 typedef struct {
@@ -778,12 +635,7 @@ typedef struct {
     uint16_t	handle;
     uint8_t	lmp_handle;
     uint32_t	reserved;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_lmp_handle_rp;
-#else
-read_lmp_handle_rp;
-#endif
+} QEMU_PACKED read_lmp_handle_rp;
 #define READ_LMP_HANDLE_RP_SIZE 8
 
 #define OCF_SETUP_SYNC_CONN		0x0028
@@ -795,12 +647,7 @@ typedef struct {
     uint16_t	voice_setting;
     uint8_t	retrans_effort;
     uint16_t	pkt_type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) setup_sync_conn_cp;
-#else
-setup_sync_conn_cp;
-#endif
+} QEMU_PACKED setup_sync_conn_cp;
 #define SETUP_SYNC_CONN_CP_SIZE 17
 
 #define OCF_ACCEPT_SYNC_CONN_REQ	0x0029
@@ -812,24 +659,14 @@ typedef struct {
     uint16_t	voice_setting;
     uint8_t	retrans_effort;
     uint16_t	pkt_type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) accept_sync_conn_req_cp;
-#else
-accept_sync_conn_req_cp;
-#endif
+} QEMU_PACKED accept_sync_conn_req_cp;
 #define ACCEPT_SYNC_CONN_REQ_CP_SIZE 21
 
 #define OCF_REJECT_SYNC_CONN_REQ	0x002A
 typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	reason;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) reject_sync_conn_req_cp;
-#else
-reject_sync_conn_req_cp;
-#endif
+} QEMU_PACKED reject_sync_conn_req_cp;
 #define REJECT_SYNC_CONN_REQ_CP_SIZE 7
 
 /* Link Policy */
@@ -840,12 +677,7 @@ typedef struct {
     uint16_t	handle;
     uint16_t	max_interval;
     uint16_t	min_interval;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) hold_mode_cp;
-#else
-hold_mode_cp;
-#endif
+} QEMU_PACKED hold_mode_cp;
 #define HOLD_MODE_CP_SIZE 6
 
 #define OCF_SNIFF_MODE			0x0003
@@ -855,23 +687,13 @@ typedef struct {
     uint16_t	min_interval;
     uint16_t	attempt;
     uint16_t	timeout;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) sniff_mode_cp;
-#else
-sniff_mode_cp;
-#endif
+} QEMU_PACKED sniff_mode_cp;
 #define SNIFF_MODE_CP_SIZE 10
 
 #define OCF_EXIT_SNIFF_MODE		0x0004
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) exit_sniff_mode_cp;
-#else
-exit_sniff_mode_cp;
-#endif
+} QEMU_PACKED exit_sniff_mode_cp;
 #define EXIT_SNIFF_MODE_CP_SIZE 2
 
 #define OCF_PARK_MODE			0x0005
@@ -879,23 +701,13 @@ typedef struct {
     uint16_t	handle;
     uint16_t	max_interval;
     uint16_t	min_interval;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) park_mode_cp;
-#else
-park_mode_cp;
-#endif
+} QEMU_PACKED park_mode_cp;
 #define PARK_MODE_CP_SIZE 6
 
 #define OCF_EXIT_PARK_MODE		0x0006
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) exit_park_mode_cp;
-#else
-exit_park_mode_cp;
-#endif
+} QEMU_PACKED exit_park_mode_cp;
 #define EXIT_PARK_MODE_CP_SIZE 2
 
 #define OCF_QOS_SETUP			0x0007
@@ -905,101 +717,56 @@ typedef struct {
     uint32_t	peak_bandwidth;		/* Byte per seconds */
     uint32_t	latency;		/* Microseconds */
     uint32_t	delay_variation;	/* Microseconds */
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) hci_qos;
-#else
-hci_qos;
-#endif
+} QEMU_PACKED hci_qos;
 #define HCI_QOS_CP_SIZE 17
 typedef struct {
     uint16_t 	handle;
     uint8_t 	flags;			/* Reserved */
     hci_qos 	qos;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) qos_setup_cp;
-#else
-qos_setup_cp;
-#endif
+} QEMU_PACKED qos_setup_cp;
 #define QOS_SETUP_CP_SIZE (3 + HCI_QOS_CP_SIZE)
 
 #define OCF_ROLE_DISCOVERY		0x0009
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) role_discovery_cp;
-#else
-role_discovery_cp;
-#endif
+} QEMU_PACKED role_discovery_cp;
 #define ROLE_DISCOVERY_CP_SIZE 2
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint8_t	role;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) role_discovery_rp;
-#else
-role_discovery_rp;
-#endif
+} QEMU_PACKED role_discovery_rp;
 #define ROLE_DISCOVERY_RP_SIZE 4
 
 #define OCF_SWITCH_ROLE			0x000B
 typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	role;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) switch_role_cp;
-#else
-switch_role_cp;
-#endif
+} QEMU_PACKED switch_role_cp;
 #define SWITCH_ROLE_CP_SIZE 7
 
 #define OCF_READ_LINK_POLICY		0x000C
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_link_policy_cp;
-#else
-read_link_policy_cp;
-#endif
+} QEMU_PACKED read_link_policy_cp;
 #define READ_LINK_POLICY_CP_SIZE 2
 typedef struct {
     uint8_t 	status;
     uint16_t	handle;
     uint16_t	policy;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_link_policy_rp;
-#else
-read_link_policy_rp;
-#endif
+} QEMU_PACKED read_link_policy_rp;
 #define READ_LINK_POLICY_RP_SIZE 5
 
 #define OCF_WRITE_LINK_POLICY		0x000D
 typedef struct {
     uint16_t	handle;
     uint16_t	policy;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_link_policy_cp;
-#else
-write_link_policy_cp;
-#endif
+} QEMU_PACKED write_link_policy_cp;
 #define WRITE_LINK_POLICY_CP_SIZE 4
 typedef struct {
     uint8_t 	status;
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_link_policy_rp;
-#else
-write_link_policy_rp;
-#endif
+} QEMU_PACKED write_link_policy_rp;
 #define WRITE_LINK_POLICY_RP_SIZE 3
 
 #define OCF_READ_DEFAULT_LINK_POLICY	0x000E
@@ -1015,12 +782,7 @@ typedef struct {
     uint16_t	max_local_latency;
     uint16_t	min_remote_timeout;
     uint16_t	min_local_timeout;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) sniff_subrate_cp;
-#else
-sniff_subrate_cp;
-#endif
+} QEMU_PACKED sniff_subrate_cp;
 #define SNIFF_SUBRATE_CP_SIZE 10
 
 /* Host Controller and Baseband */
@@ -1029,12 +791,7 @@ sniff_subrate_cp;
 #define OCF_SET_EVENT_MASK		0x0001
 typedef struct {
     uint8_t	mask[8];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) set_event_mask_cp;
-#else
-set_event_mask_cp;
-#endif
+} QEMU_PACKED set_event_mask_cp;
 #define SET_EVENT_MASK_CP_SIZE 8
 
 #define OCF_RESET			0x0003
@@ -1044,12 +801,7 @@ typedef struct {
     uint8_t	flt_type;
     uint8_t	cond_type;
     uint8_t	condition[0];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) set_event_flt_cp;
-#else
-set_event_flt_cp;
-#endif
+} QEMU_PACKED set_event_flt_cp;
 #define SET_EVENT_FLT_CP_SIZE 2
 
 enum bt_filter_type {
@@ -1075,46 +827,26 @@ enum conn_setup_cond {
 #define OCF_FLUSH			0x0008
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) flush_cp;
-#else
-flush_cp;
-#endif
+} QEMU_PACKED flush_cp;
 #define FLUSH_CP_SIZE 2
 
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) flush_rp;
-#else
-flush_rp;
-#endif
+} QEMU_PACKED flush_rp;
 #define FLUSH_RP_SIZE 3
 
 #define OCF_READ_PIN_TYPE		0x0009
 typedef struct {
     uint8_t	status;
     uint8_t	pin_type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_pin_type_rp;
-#else
-read_pin_type_rp;
-#endif
+} QEMU_PACKED read_pin_type_rp;
 #define READ_PIN_TYPE_RP_SIZE 2
 
 #define OCF_WRITE_PIN_TYPE		0x000A
 typedef struct {
     uint8_t	pin_type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_pin_type_cp;
-#else
-write_pin_type_cp;
-#endif
+} QEMU_PACKED write_pin_type_cp;
 #define WRITE_PIN_TYPE_CP_SIZE 1
 
 #define OCF_CREATE_NEW_UNIT_KEY		0x000B
@@ -1123,159 +855,89 @@ write_pin_type_cp;
 typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	read_all;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_stored_link_key_cp;
-#else
-read_stored_link_key_cp;
-#endif
+} QEMU_PACKED read_stored_link_key_cp;
 #define READ_STORED_LINK_KEY_CP_SIZE 7
 typedef struct {
     uint8_t	status;
     uint16_t	max_keys;
     uint16_t	num_keys;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_stored_link_key_rp;
-#else
-read_stored_link_key_rp;
-#endif
+} QEMU_PACKED read_stored_link_key_rp;
 #define READ_STORED_LINK_KEY_RP_SIZE 5
 
 #define OCF_WRITE_STORED_LINK_KEY	0x0011
 typedef struct {
     uint8_t	num_keys;
     /* variable length part */
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_stored_link_key_cp;
-#else
-write_stored_link_key_cp;
-#endif
+} QEMU_PACKED write_stored_link_key_cp;
 #define WRITE_STORED_LINK_KEY_CP_SIZE 1
 typedef struct {
     uint8_t	status;
     uint8_t	num_keys;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_stored_link_key_rp;
-#else
-write_stored_link_key_rp;
-#endif
+} QEMU_PACKED write_stored_link_key_rp;
 #define READ_WRITE_LINK_KEY_RP_SIZE 2
 
 #define OCF_DELETE_STORED_LINK_KEY	0x0012
 typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	delete_all;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) delete_stored_link_key_cp;
-#else
-delete_stored_link_key_cp;
-#endif
+} QEMU_PACKED delete_stored_link_key_cp;
 #define DELETE_STORED_LINK_KEY_CP_SIZE 7
 typedef struct {
     uint8_t	status;
     uint16_t	num_keys;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) delete_stored_link_key_rp;
-#else
-delete_stored_link_key_rp;
-#endif
+} QEMU_PACKED delete_stored_link_key_rp;
 #define DELETE_STORED_LINK_KEY_RP_SIZE 3
 
 #define OCF_CHANGE_LOCAL_NAME		0x0013
 typedef struct {
     char	name[248];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) change_local_name_cp;
-#else
-change_local_name_cp;
-#endif
+} QEMU_PACKED change_local_name_cp;
 #define CHANGE_LOCAL_NAME_CP_SIZE 248 
 
 #define OCF_READ_LOCAL_NAME		0x0014
 typedef struct {
     uint8_t	status;
     char	name[248];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_local_name_rp;
-#else
-read_local_name_rp;
-#endif
+} QEMU_PACKED read_local_name_rp;
 #define READ_LOCAL_NAME_RP_SIZE 249 
 
 #define OCF_READ_CONN_ACCEPT_TIMEOUT	0x0015
 typedef struct {
     uint8_t	status;
     uint16_t	timeout;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_conn_accept_timeout_rp;
-#else
-read_conn_accept_timeout_rp;
-#endif
+} QEMU_PACKED read_conn_accept_timeout_rp;
 #define READ_CONN_ACCEPT_TIMEOUT_RP_SIZE 3
 
 #define OCF_WRITE_CONN_ACCEPT_TIMEOUT	0x0016
 typedef struct {
     uint16_t	timeout;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_conn_accept_timeout_cp;
-#else
-write_conn_accept_timeout_cp;
-#endif
+} QEMU_PACKED write_conn_accept_timeout_cp;
 #define WRITE_CONN_ACCEPT_TIMEOUT_CP_SIZE 2
 
 #define OCF_READ_PAGE_TIMEOUT		0x0017
 typedef struct {
     uint8_t	status;
     uint16_t	timeout;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_page_timeout_rp;
-#else
-read_page_timeout_rp;
-#endif
+} QEMU_PACKED read_page_timeout_rp;
 #define READ_PAGE_TIMEOUT_RP_SIZE 3
 
 #define OCF_WRITE_PAGE_TIMEOUT		0x0018
 typedef struct {
     uint16_t	timeout;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_page_timeout_cp;
-#else
-write_page_timeout_cp;
-#endif
+} QEMU_PACKED write_page_timeout_cp;
 #define WRITE_PAGE_TIMEOUT_CP_SIZE 2
 
 #define OCF_READ_SCAN_ENABLE		0x0019
 typedef struct {
     uint8_t	status;
     uint8_t	enable;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_scan_enable_rp;
-#else
-read_scan_enable_rp;
-#endif
+} QEMU_PACKED read_scan_enable_rp;
 #define READ_SCAN_ENABLE_RP_SIZE 2
 
 #define OCF_WRITE_SCAN_ENABLE		0x001A
 typedef struct {
     uint8_t	scan_enable;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_scan_enable_cp;
-#else
-write_scan_enable_cp;
-#endif
+} QEMU_PACKED write_scan_enable_cp;
 #define WRITE_SCAN_ENABLE_CP_SIZE 1
 
 enum scan_enable_bits {
@@ -1289,24 +951,14 @@ typedef struct {
     uint8_t	status;
     uint16_t	interval;
     uint16_t	window;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_page_activity_rp;
-#else
-read_page_activity_rp;
-#endif
+} QEMU_PACKED read_page_activity_rp;
 #define READ_PAGE_ACTIVITY_RP_SIZE 5
 
 #define OCF_WRITE_PAGE_ACTIVITY		0x001C
 typedef struct {
     uint16_t	interval;
     uint16_t	window;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_page_activity_cp;
-#else
-write_page_activity_cp;
-#endif
+} QEMU_PACKED write_page_activity_cp;
 #define WRITE_PAGE_ACTIVITY_CP_SIZE 4
 
 #define OCF_READ_INQ_ACTIVITY		0x001D
@@ -1314,24 +966,14 @@ typedef struct {
     uint8_t	status;
     uint16_t	interval;
     uint16_t	window;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_inq_activity_rp;
-#else
-read_inq_activity_rp;
-#endif
+} QEMU_PACKED read_inq_activity_rp;
 #define READ_INQ_ACTIVITY_RP_SIZE 5
 
 #define OCF_WRITE_INQ_ACTIVITY		0x001E
 typedef struct {
     uint16_t	interval;
     uint16_t	window;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_inq_activity_cp;
-#else
-write_inq_activity_cp;
-#endif
+} QEMU_PACKED write_inq_activity_cp;
 #define WRITE_INQ_ACTIVITY_CP_SIZE 4
 
 #define OCF_READ_AUTH_ENABLE		0x001F
@@ -1353,46 +995,26 @@ write_inq_activity_cp;
 typedef struct {
     uint8_t	status;
     uint8_t	dev_class[3];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_class_of_dev_rp;
-#else
-read_class_of_dev_rp;
-#endif
+} QEMU_PACKED read_class_of_dev_rp;
 #define READ_CLASS_OF_DEV_RP_SIZE 4 
 
 #define OCF_WRITE_CLASS_OF_DEV		0x0024
 typedef struct {
     uint8_t	dev_class[3];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_class_of_dev_cp;
-#else
-write_class_of_dev_cp;
-#endif
+} QEMU_PACKED write_class_of_dev_cp;
 #define WRITE_CLASS_OF_DEV_CP_SIZE 3
 
 #define OCF_READ_VOICE_SETTING		0x0025
 typedef struct {
     uint8_t	status;
     uint16_t	voice_setting;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_voice_setting_rp;
-#else
-read_voice_setting_rp;
-#endif
+} QEMU_PACKED read_voice_setting_rp;
 #define READ_VOICE_SETTING_RP_SIZE 3
 
 #define OCF_WRITE_VOICE_SETTING		0x0026
 typedef struct {
     uint16_t	voice_setting;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_voice_setting_cp;
-#else
-write_voice_setting_cp;
-#endif
+} QEMU_PACKED write_voice_setting_cp;
 #define WRITE_VOICE_SETTING_CP_SIZE 2
 
 #define OCF_READ_AUTOMATIC_FLUSH_TIMEOUT	0x0027
@@ -1411,23 +1033,13 @@ write_voice_setting_cp;
 typedef struct {
     uint16_t	handle;
     uint8_t	type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_transmit_power_level_cp;
-#else
-read_transmit_power_level_cp;
-#endif
+} QEMU_PACKED read_transmit_power_level_cp;
 #define READ_TRANSMIT_POWER_LEVEL_CP_SIZE 3
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
     int8_t	level;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_transmit_power_level_rp;
-#else
-read_transmit_power_level_rp;
-#endif
+} QEMU_PACKED read_transmit_power_level_rp;
 #define READ_TRANSMIT_POWER_LEVEL_RP_SIZE 4
 
 #define OCF_HOST_BUFFER_SIZE		0x0033
@@ -1436,12 +1048,7 @@ typedef struct {
     uint8_t	sco_mtu;
     uint16_t	acl_max_pkt;
     uint16_t	sco_max_pkt;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) host_buffer_size_cp;
-#else
-host_buffer_size_cp;
-#endif
+} QEMU_PACKED host_buffer_size_cp;
 #define HOST_BUFFER_SIZE_CP_SIZE 7
 
 #define OCF_HOST_NUMBER_OF_COMPLETED_PACKETS	0x0035
@@ -1451,34 +1058,19 @@ typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint16_t	link_sup_to;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_link_supervision_timeout_rp;
-#else
-read_link_supervision_timeout_rp;
-#endif
+} QEMU_PACKED read_link_supervision_timeout_rp;
 #define READ_LINK_SUPERVISION_TIMEOUT_RP_SIZE 5
 
 #define OCF_WRITE_LINK_SUPERVISION_TIMEOUT	0x0037
 typedef struct {
     uint16_t	handle;
     uint16_t	link_sup_to;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_link_supervision_timeout_cp;
-#else
-write_link_supervision_timeout_cp;
-#endif
+} QEMU_PACKED write_link_supervision_timeout_cp;
 #define WRITE_LINK_SUPERVISION_TIMEOUT_CP_SIZE 4
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_link_supervision_timeout_rp;
-#else
-write_link_supervision_timeout_rp;
-#endif
+} QEMU_PACKED write_link_supervision_timeout_rp;
 #define WRITE_LINK_SUPERVISION_TIMEOUT_RP_SIZE 3
 
 #define OCF_READ_NUM_SUPPORTED_IAC	0x0038
@@ -1489,24 +1081,14 @@ typedef struct {
     uint8_t	status;
     uint8_t	num_current_iac;
     uint8_t	lap[MAX_IAC_LAP][3];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_current_iac_lap_rp;
-#else
-read_current_iac_lap_rp;
-#endif
+} QEMU_PACKED read_current_iac_lap_rp;
 #define READ_CURRENT_IAC_LAP_RP_SIZE 2+3*MAX_IAC_LAP
 
 #define OCF_WRITE_CURRENT_IAC_LAP	0x003A
 typedef struct {
     uint8_t	num_current_iac;
     uint8_t	lap[MAX_IAC_LAP][3];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_current_iac_lap_cp;
-#else
-write_current_iac_lap_cp;
-#endif
+} QEMU_PACKED write_current_iac_lap_cp;
 #define WRITE_CURRENT_IAC_LAP_CP_SIZE 1+3*MAX_IAC_LAP
 
 #define OCF_READ_PAGE_SCAN_PERIOD_MODE	0x003B
@@ -1520,85 +1102,45 @@ write_current_iac_lap_cp;
 #define OCF_SET_AFH_CLASSIFICATION	0x003F
 typedef struct {
     uint8_t	map[10];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) set_afh_classification_cp;
-#else
-set_afh_classification_cp;
-#endif
+} QEMU_PACKED set_afh_classification_cp;
 #define SET_AFH_CLASSIFICATION_CP_SIZE 10
 typedef struct {
     uint8_t	status;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) set_afh_classification_rp;
-#else
-set_afh_classification_rp;
-#endif
+} QEMU_PACKED set_afh_classification_rp;
 #define SET_AFH_CLASSIFICATION_RP_SIZE 1
 
 #define OCF_READ_INQUIRY_SCAN_TYPE	0x0042
 typedef struct {
     uint8_t	status;
     uint8_t	type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_inquiry_scan_type_rp;
-#else
-read_inquiry_scan_type_rp;
-#endif
+} QEMU_PACKED read_inquiry_scan_type_rp;
 #define READ_INQUIRY_SCAN_TYPE_RP_SIZE 2
 
 #define OCF_WRITE_INQUIRY_SCAN_TYPE	0x0043
 typedef struct {
     uint8_t	type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_inquiry_scan_type_cp;
-#else
-write_inquiry_scan_type_cp;
-#endif
+} QEMU_PACKED write_inquiry_scan_type_cp;
 #define WRITE_INQUIRY_SCAN_TYPE_CP_SIZE 1
 typedef struct {
     uint8_t	status;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_inquiry_scan_type_rp;
-#else
-write_inquiry_scan_type_rp;
-#endif
+} QEMU_PACKED write_inquiry_scan_type_rp;
 #define WRITE_INQUIRY_SCAN_TYPE_RP_SIZE 1
 
 #define OCF_READ_INQUIRY_MODE		0x0044
 typedef struct {
     uint8_t	status;
     uint8_t	mode;
-}
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_inquiry_mode_rp;
-#else
-read_inquiry_mode_rp;
-#endif
+} QEMU_PACKED read_inquiry_mode_rp;
 #define READ_INQUIRY_MODE_RP_SIZE 2
 
 #define OCF_WRITE_INQUIRY_MODE		0x0045
 typedef struct {
     uint8_t	mode;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_inquiry_mode_cp;
-#else
-write_inquiry_mode_cp;
-#endif
+} QEMU_PACKED write_inquiry_mode_cp;
 #define WRITE_INQUIRY_MODE_CP_SIZE 1
 typedef struct {
     uint8_t	status;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_inquiry_mode_rp;
-#else
-write_inquiry_mode_rp;
-#endif
+} QEMU_PACKED write_inquiry_mode_rp;
 #define WRITE_INQUIRY_MODE_RP_SIZE 1
 
 #define OCF_READ_PAGE_SCAN_TYPE		0x0046
@@ -1609,32 +1151,17 @@ write_inquiry_mode_rp;
 typedef struct {
     uint8_t	status;
     uint8_t	mode;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_afh_mode_rp;
-#else
-read_afh_mode_rp;
-#endif
+} QEMU_PACKED read_afh_mode_rp;
 #define READ_AFH_MODE_RP_SIZE 2
 
 #define OCF_WRITE_AFH_MODE		0x0049
 typedef struct {
     uint8_t	mode;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_afh_mode_cp;
-#else
-write_afh_mode_cp;
-#endif
+} QEMU_PACKED write_afh_mode_cp;
 #define WRITE_AFH_MODE_CP_SIZE 1
 typedef struct {
     uint8_t	status;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_afh_mode_rp;
-#else
-write_afh_mode_rp;
-#endif
+} QEMU_PACKED write_afh_mode_rp;
 #define WRITE_AFH_MODE_RP_SIZE 1
 
 #define OCF_READ_EXT_INQUIRY_RESPONSE	0x0051
@@ -1642,33 +1169,18 @@ typedef struct {
     uint8_t	status;
     uint8_t	fec;
     uint8_t	data[240];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_ext_inquiry_response_rp;
-#else
-read_ext_inquiry_response_rp;
-#endif
+} QEMU_PACKED read_ext_inquiry_response_rp;
 #define READ_EXT_INQUIRY_RESPONSE_RP_SIZE 242
 
 #define OCF_WRITE_EXT_INQUIRY_RESPONSE	0x0052
 typedef struct {
     uint8_t	fec;
     uint8_t	data[240];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_ext_inquiry_response_cp;
-#else
-write_ext_inquiry_response_cp;
-#endif
+} QEMU_PACKED write_ext_inquiry_response_cp;
 #define WRITE_EXT_INQUIRY_RESPONSE_CP_SIZE 241
 typedef struct {
     uint8_t	status;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) write_ext_inquiry_response_rp;
-#else
-write_ext_inquiry_response_rp;
-#endif
+} QEMU_PACKED write_ext_inquiry_response_rp;
 #define WRITE_EXT_INQUIRY_RESPONSE_RP_SIZE 1
 
 /* Informational Parameters */
@@ -1682,59 +1194,34 @@ typedef struct {
     uint8_t	lmp_ver;
     uint16_t	manufacturer;
     uint16_t	lmp_subver;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_local_version_rp;
-#else
-read_local_version_rp;
-#endif
+} QEMU_PACKED read_local_version_rp;
 #define READ_LOCAL_VERSION_RP_SIZE 9
 
 #define OCF_READ_LOCAL_COMMANDS		0x0002
 typedef struct {
     uint8_t	status;
     uint8_t	commands[64];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_local_commands_rp;
-#else
-read_local_commands_rp;
-#endif
+} QEMU_PACKED read_local_commands_rp;
 #define READ_LOCAL_COMMANDS_RP_SIZE 65
 
 #define OCF_READ_LOCAL_FEATURES		0x0003
 typedef struct {
     uint8_t	status;
     uint8_t	features[8];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_local_features_rp;
-#else
-read_local_features_rp;
-#endif
+} QEMU_PACKED read_local_features_rp;
 #define READ_LOCAL_FEATURES_RP_SIZE 9
 
 #define OCF_READ_LOCAL_EXT_FEATURES	0x0004
 typedef struct {
     uint8_t	page_num;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_local_ext_features_cp;
-#else
-read_local_ext_features_cp;
-#endif
+} QEMU_PACKED read_local_ext_features_cp;
 #define READ_LOCAL_EXT_FEATURES_CP_SIZE 1
 typedef struct {
     uint8_t	status;
     uint8_t	page_num;
     uint8_t	max_page_num;
     uint8_t	features[8];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_local_ext_features_rp;
-#else
-read_local_ext_features_rp;
-#endif
+} QEMU_PACKED read_local_ext_features_rp;
 #define READ_LOCAL_EXT_FEATURES_RP_SIZE 11
 
 #define OCF_READ_BUFFER_SIZE		0x0005
@@ -1744,36 +1231,21 @@ typedef struct {
     uint8_t	sco_mtu;
     uint16_t	acl_max_pkt;
     uint16_t	sco_max_pkt;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_buffer_size_rp;
-#else
-read_buffer_size_rp;
-#endif
+} QEMU_PACKED read_buffer_size_rp;
 #define READ_BUFFER_SIZE_RP_SIZE 8
 
 #define OCF_READ_COUNTRY_CODE		0x0007
 typedef struct {
     uint8_t	status;
     uint8_t	country_code;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_country_code_rp;
-#else
-read_country_code_rp;
-#endif
+} QEMU_PACKED read_country_code_rp;
 #define READ_COUNTRY_CODE_RP_SIZE 2
 
 #define OCF_READ_BD_ADDR		0x0009
 typedef struct {
     uint8_t	status;
     bdaddr_t	bdaddr;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_bd_addr_rp;
-#else
-read_bd_addr_rp;
-#endif
+} QEMU_PACKED read_bd_addr_rp;
 #define READ_BD_ADDR_RP_SIZE 7
 
 /* Status params */
@@ -1784,47 +1256,27 @@ typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint8_t	counter;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_failed_contact_counter_rp;
-#else
-read_failed_contact_counter_rp;
-#endif
+} QEMU_PACKED read_failed_contact_counter_rp;
 #define READ_FAILED_CONTACT_COUNTER_RP_SIZE 4
 
 #define OCF_RESET_FAILED_CONTACT_COUNTER	0x0002
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) reset_failed_contact_counter_rp;
-#else
-reset_failed_contact_counter_rp;
-#endif
+} QEMU_PACKED reset_failed_contact_counter_rp;
 #define RESET_FAILED_CONTACT_COUNTER_RP_SIZE 4
 
 #define OCF_READ_LINK_QUALITY		0x0003
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_link_quality_cp;
-#else
-read_link_quality_cp;
-#endif
+} QEMU_PACKED read_link_quality_cp;
 #define READ_LINK_QUALITY_CP_SIZE 4
 
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint8_t	link_quality;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_link_quality_rp;
-#else
-read_link_quality_rp;
-#endif
+} QEMU_PACKED read_link_quality_rp;
 #define READ_LINK_QUALITY_RP_SIZE 4
 
 #define OCF_READ_RSSI			0x0005
@@ -1832,12 +1284,7 @@ typedef struct {
     uint8_t	status;
     uint16_t	handle;
     int8_t	rssi;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_rssi_rp;
-#else
-read_rssi_rp;
-#endif
+} QEMU_PACKED read_rssi_rp;
 #define READ_RSSI_RP_SIZE 4
 
 #define OCF_READ_AFH_MAP		0x0006
@@ -1846,36 +1293,21 @@ typedef struct {
     uint16_t	handle;
     uint8_t	mode;
     uint8_t	map[10];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_afh_map_rp;
-#else
-read_afh_map_rp;
-#endif
+} QEMU_PACKED read_afh_map_rp;
 #define READ_AFH_MAP_RP_SIZE 14
 
 #define OCF_READ_CLOCK			0x0007
 typedef struct {
     uint16_t	handle;
     uint8_t	which_clock;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_clock_cp;
-#else
-read_clock_cp;
-#endif
+} QEMU_PACKED read_clock_cp;
 #define READ_CLOCK_CP_SIZE 3
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint32_t	clock;
     uint16_t	accuracy;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) read_clock_rp;
-#else
-read_clock_rp;
-#endif
+} QEMU_PACKED read_clock_rp;
 #define READ_CLOCK_RP_SIZE 9
 
 /* Testing commands */
@@ -1897,12 +1329,7 @@ typedef struct {
     uint8_t	pscan_mode;
     uint8_t	dev_class[3];
     uint16_t	clock_offset;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) inquiry_info;
-#else
-inquiry_info;
-#endif
+} QEMU_PACKED inquiry_info;
 #define INQUIRY_INFO_SIZE 14
 
 #define EVT_CONN_COMPLETE		0x03
@@ -1912,12 +1339,7 @@ typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	link_type;
     uint8_t	encr_mode;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_conn_complete;
-#else
-evt_conn_complete;
-#endif
+} QEMU_PACKED evt_conn_complete;
 #define EVT_CONN_COMPLETE_SIZE 11
 
 #define EVT_CONN_REQUEST		0x04
@@ -1925,12 +1347,7 @@ typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	dev_class[3];
     uint8_t	link_type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_conn_request;
-#else
-evt_conn_request;
-#endif
+} QEMU_PACKED evt_conn_request;
 #define EVT_CONN_REQUEST_SIZE 10
 
 #define EVT_DISCONN_COMPLETE		0x05
@@ -1938,24 +1355,14 @@ typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint8_t	reason;
-}
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_disconn_complete;
-#else
-evt_disconn_complete;
-#endif
+} QEMU_PACKED evt_disconn_complete;
 #define EVT_DISCONN_COMPLETE_SIZE 4
 
 #define EVT_AUTH_COMPLETE		0x06
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_auth_complete;
-#else
-evt_auth_complete;
-#endif
+} QEMU_PACKED evt_auth_complete;
 #define EVT_AUTH_COMPLETE_SIZE 3
 
 #define EVT_REMOTE_NAME_REQ_COMPLETE	0x07
@@ -1963,12 +1370,7 @@ typedef struct {
     uint8_t	status;
     bdaddr_t	bdaddr;
     char	name[248];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_remote_name_req_complete;
-#else
-evt_remote_name_req_complete;
-#endif
+} QEMU_PACKED evt_remote_name_req_complete;
 #define EVT_REMOTE_NAME_REQ_COMPLETE_SIZE 255
 
 #define EVT_ENCRYPT_CHANGE		0x08
@@ -1976,24 +1378,14 @@ typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint8_t	encrypt;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_encrypt_change;
-#else
-evt_encrypt_change;
-#endif
+} QEMU_PACKED evt_encrypt_change;
 #define EVT_ENCRYPT_CHANGE_SIZE 5
 
 #define EVT_CHANGE_CONN_LINK_KEY_COMPLETE	0x09
 typedef struct {
     uint8_t	status;
     uint16_t	handle;
-}  
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_change_conn_link_key_complete;
-#else
-evt_change_conn_link_key_complete;
-#endif
+}  QEMU_PACKED evt_change_conn_link_key_complete;
 #define EVT_CHANGE_CONN_LINK_KEY_COMPLETE_SIZE 3
 
 #define EVT_MASTER_LINK_KEY_COMPLETE		0x0A
@@ -2001,12 +1393,7 @@ typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint8_t	key_flag;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_master_link_key_complete;
-#else
-evt_master_link_key_complete;
-#endif
+} QEMU_PACKED evt_master_link_key_complete;
 #define EVT_MASTER_LINK_KEY_COMPLETE_SIZE 4
 
 #define EVT_READ_REMOTE_FEATURES_COMPLETE	0x0B
@@ -2014,12 +1401,7 @@ typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint8_t	features[8];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_read_remote_features_complete;
-#else
-evt_read_remote_features_complete;
-#endif
+} QEMU_PACKED evt_read_remote_features_complete;
 #define EVT_READ_REMOTE_FEATURES_COMPLETE_SIZE 11
 
 #define EVT_READ_REMOTE_VERSION_COMPLETE	0x0C
@@ -2029,12 +1411,7 @@ typedef struct {
     uint8_t	lmp_ver;
     uint16_t	manufacturer;
     uint16_t	lmp_subver;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_read_remote_version_complete;
-#else
-evt_read_remote_version_complete;
-#endif
+} QEMU_PACKED evt_read_remote_version_complete;
 #define EVT_READ_REMOTE_VERSION_COMPLETE_SIZE 8
 
 #define EVT_QOS_SETUP_COMPLETE		0x0D
@@ -2043,24 +1420,14 @@ typedef struct {
     uint16_t	handle;
     uint8_t	flags;			/* Reserved */
     hci_qos	qos;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_qos_setup_complete;
-#else
-evt_qos_setup_complete;
-#endif
+} QEMU_PACKED evt_qos_setup_complete;
 #define EVT_QOS_SETUP_COMPLETE_SIZE (4 + HCI_QOS_CP_SIZE)
 
 #define EVT_CMD_COMPLETE 		0x0E
 typedef struct {
     uint8_t	ncmd;
     uint16_t	opcode;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_cmd_complete;
-#else
-evt_cmd_complete;
-#endif
+} QEMU_PACKED evt_cmd_complete;
 #define EVT_CMD_COMPLETE_SIZE 3
 
 #define EVT_CMD_STATUS 			0x0F
@@ -2068,34 +1435,19 @@ typedef struct {
     uint8_t	status;
     uint8_t	ncmd;
     uint16_t	opcode;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_cmd_status;
-#else
-evt_cmd_status;
-#endif
+} QEMU_PACKED evt_cmd_status;
 #define EVT_CMD_STATUS_SIZE 4
 
 #define EVT_HARDWARE_ERROR		0x10
 typedef struct {
     uint8_t	code;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_hardware_error;
-#else
-evt_hardware_error;
-#endif
+} QEMU_PACKED evt_hardware_error;
 #define EVT_HARDWARE_ERROR_SIZE 1
 
 #define EVT_FLUSH_OCCURRED		0x11
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_flush_occured;
-#else
-evt_flush_occured;
-#endif
+} QEMU_PACKED evt_flush_occurred;
 #define EVT_FLUSH_OCCURRED_SIZE 2
 
 #define EVT_ROLE_CHANGE			0x12
@@ -2103,12 +1455,7 @@ typedef struct {
     uint8_t	status;
     bdaddr_t	bdaddr;
     uint8_t	role;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_role_change;
-#else
-evt_role_change;
-#endif
+} QEMU_PACKED evt_role_change;
 #define EVT_ROLE_CHANGE_SIZE 8
 
 #define EVT_NUM_COMP_PKTS		0x13
@@ -2118,12 +1465,7 @@ typedef struct {
         uint16_t handle;
         uint16_t num_packets;
     } connection[0];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_num_comp_pkts;
-#else
-evt_num_comp_pkts;
-#endif
+} QEMU_PACKED evt_num_comp_pkts;
 #define EVT_NUM_COMP_PKTS_SIZE(num_hndl) (1 + 4 * (num_hndl))
 
 #define EVT_MODE_CHANGE			0x14
@@ -2132,46 +1474,26 @@ typedef struct {
     uint16_t	handle;
     uint8_t	mode;
     uint16_t	interval;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_mode_change;
-#else
-evt_mode_change;
-#endif
+} QEMU_PACKED evt_mode_change;
 #define EVT_MODE_CHANGE_SIZE 6
 
 #define EVT_RETURN_LINK_KEYS		0x15
 typedef struct {
     uint8_t	num_keys;
     /* variable length part */
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_return_link_keys;
-#else
-evt_return_link_keys;
-#endif
+} QEMU_PACKED evt_return_link_keys;
 #define EVT_RETURN_LINK_KEYS_SIZE 1
 
 #define EVT_PIN_CODE_REQ		0x16
 typedef struct {
     bdaddr_t	bdaddr;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_pin_code_req;
-#else
-evt_pin_code_req;
-#endif
+} QEMU_PACKED evt_pin_code_req;
 #define EVT_PIN_CODE_REQ_SIZE 6
 
 #define EVT_LINK_KEY_REQ		0x17
 typedef struct {
     bdaddr_t	bdaddr;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_link_key_req;
-#else
-evt_link_key_req;
-#endif
+} QEMU_PACKED evt_link_key_req;
 #define EVT_LINK_KEY_REQ_SIZE 6
 
 #define EVT_LINK_KEY_NOTIFY		0x18
@@ -2179,12 +1501,7 @@ typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	link_key[16];
     uint8_t	key_type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_link_key_notify;
-#else
-evt_link_key_notify;
-#endif
+} QEMU_PACKED evt_link_key_notify;
 #define EVT_LINK_KEY_NOTIFY_SIZE 23
 
 #define EVT_LOOPBACK_COMMAND		0x19
@@ -2192,24 +1509,14 @@ evt_link_key_notify;
 #define EVT_DATA_BUFFER_OVERFLOW	0x1A
 typedef struct {
     uint8_t	link_type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_data_buffer_overflow;
-#else
-evt_data_buffer_overflow;
-#endif
+} QEMU_PACKED evt_data_buffer_overflow;
 #define EVT_DATA_BUFFER_OVERFLOW_SIZE 1
 
 #define EVT_MAX_SLOTS_CHANGE		0x1B
 typedef struct {
     uint16_t	handle;
     uint8_t	max_slots;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_max_slots_change;
-#else
-evt_max_slots_change;
-#endif
+} QEMU_PACKED evt_max_slots_change;
 #define EVT_MAX_SLOTS_CHANGE_SIZE 3
 
 #define EVT_READ_CLOCK_OFFSET_COMPLETE	0x1C
@@ -2217,12 +1524,7 @@ typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint16_t	clock_offset;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_read_clock_offset_complete;
-#else
-evt_read_clock_offset_complete;
-#endif
+} QEMU_PACKED evt_read_clock_offset_complete;
 #define EVT_READ_CLOCK_OFFSET_COMPLETE_SIZE 5
 
 #define EVT_CONN_PTYPE_CHANGED		0x1D
@@ -2230,35 +1532,20 @@ typedef struct {
     uint8_t	status;
     uint16_t	handle;
     uint16_t	ptype;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_conn_ptype_changed;
-#else
-evt_conn_ptype_changed;
-#endif
+} QEMU_PACKED evt_conn_ptype_changed;
 #define EVT_CONN_PTYPE_CHANGED_SIZE 5
 
 #define EVT_QOS_VIOLATION		0x1E
 typedef struct {
     uint16_t	handle;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_qos_violation;
-#else
-evt_qos_violation;
-#endif
+} QEMU_PACKED evt_qos_violation;
 #define EVT_QOS_VIOLATION_SIZE 2
 
 #define EVT_PSCAN_REP_MODE_CHANGE	0x20
 typedef struct {
     bdaddr_t	bdaddr;
     uint8_t	pscan_rep_mode;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_pscan_rep_mode_change;
-#else
-evt_pscan_rep_mode_change;
-#endif
+} QEMU_PACKED evt_pscan_rep_mode_change;
 #define EVT_PSCAN_REP_MODE_CHANGE_SIZE 7
 
 #define EVT_FLOW_SPEC_COMPLETE		0x21
@@ -2268,12 +1555,7 @@ typedef struct {
     uint8_t	flags;
     uint8_t	direction;
     hci_qos	qos;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_flow_spec_complete;
-#else
-evt_flow_spec_complete;
-#endif
+} QEMU_PACKED evt_flow_spec_complete;
 #define EVT_FLOW_SPEC_COMPLETE_SIZE (5 + HCI_QOS_CP_SIZE)
 
 #define EVT_INQUIRY_RESULT_WITH_RSSI	0x22
@@ -2285,12 +1567,7 @@ typedef struct {
     uint8_t	dev_class[3];
     uint16_t	clock_offset;
     int8_t	rssi;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) inquiry_info_with_rssi;
-#else
-inquiry_info_with_rssi;
-#endif
+} QEMU_PACKED inquiry_info_with_rssi;
 #define INQUIRY_INFO_WITH_RSSI_SIZE 15
 typedef struct {
     uint8_t	num_responses;
@@ -2301,12 +1578,7 @@ typedef struct {
     uint8_t	dev_class[3];
     uint16_t	clock_offset;
     int8_t	rssi;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) inquiry_info_with_rssi_and_pscan_mode;
-#else
-inquiry_info_with_rssi_and_pscan_mode;
-#endif
+} QEMU_PACKED inquiry_info_with_rssi_and_pscan_mode;
 #define INQUIRY_INFO_WITH_RSSI_AND_PSCAN_MODE_SIZE 16
 
 #define EVT_READ_REMOTE_EXT_FEATURES_COMPLETE	0x23
@@ -2316,12 +1588,7 @@ typedef struct {
     uint8_t	page_num;
     uint8_t	max_page_num;
     uint8_t	features[8];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_read_remote_ext_features_complete;
-#else
-evt_read_remote_ext_features_complete;
-#endif
+} QEMU_PACKED evt_read_remote_ext_features_complete;
 #define EVT_READ_REMOTE_EXT_FEATURES_COMPLETE_SIZE 13
 
 #define EVT_SYNC_CONN_COMPLETE		0x2C
@@ -2335,12 +1602,7 @@ typedef struct {
     uint16_t	rx_pkt_len;
     uint16_t	tx_pkt_len;
     uint8_t	air_mode;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_sync_conn_complete;
-#else
-evt_sync_conn_complete;
-#endif
+} QEMU_PACKED evt_sync_conn_complete;
 #define EVT_SYNC_CONN_COMPLETE_SIZE 17
 
 #define EVT_SYNC_CONN_CHANGED		0x2D
@@ -2351,12 +1613,7 @@ typedef struct {
     uint8_t	retrans_window;
     uint16_t	rx_pkt_len;
     uint16_t	tx_pkt_len;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_sync_conn_changed;
-#else
-evt_sync_conn_changed;
-#endif
+} QEMU_PACKED evt_sync_conn_changed;
 #define EVT_SYNC_CONN_CHANGED_SIZE 9
 
 #define EVT_SNIFF_SUBRATE		0x2E
@@ -2367,12 +1624,7 @@ typedef struct {
     uint16_t	max_local_latency;
     uint16_t	min_remote_timeout;
     uint16_t	min_local_timeout;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) evt_sniff_subrate;
-#else
-evt_sniff_subrate;
-#endif
+} QEMU_PACKED evt_sniff_subrate;
 #define EVT_SNIFF_SUBRATE_SIZE 11
 
 #define EVT_EXTENDED_INQUIRY_RESULT	0x2F
@@ -2384,12 +1636,7 @@ typedef struct {
     uint16_t	clock_offset;
     int8_t	rssi;
     uint8_t	data[240];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) extended_inquiry_info;
-#else
-extended_inquiry_info;
-#endif
+} QEMU_PACKED extended_inquiry_info;
 #define EXTENDED_INQUIRY_INFO_SIZE 254
 
 #define EVT_TESTING			0xFE
@@ -2415,42 +1662,22 @@ extended_inquiry_info;
 struct hci_command_hdr {
     uint16_t 	opcode;		/* OCF & OGF */
     uint8_t	plen;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed));
-#else
-;
-#endif
+} QEMU_PACKED;
 
 struct hci_event_hdr {
     uint8_t	evt;
     uint8_t	plen;
-} 
-#ifndef _MSC_VER
-__attribute__((packed));
-#else
-;
-#endif
+} QEMU_PACKED;
 
 struct hci_acl_hdr {
     uint16_t	handle;		/* Handle & Flags(PB, BC) */
     uint16_t	dlen;
-} 
-#ifndef _MSC_VER
-__attribute__((packed));
-#else
-;
-#endif
+} QEMU_PACKED;
 
 struct hci_sco_hdr {
     uint16_t	handle;
     uint8_t	dlen;
-} 
-#ifndef _MSC_VER
-__attribute__((packed));
-#else
-;
-#endif
+} QEMU_PACKED;
 
 /* L2CAP layer defines */
 
@@ -2497,45 +1724,25 @@ typedef struct {
     uint16_t	len;
     uint16_t	cid;
     uint8_t	data[0];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_hdr;
-#else
-l2cap_hdr;
-#endif
+} QEMU_PACKED l2cap_hdr;
 #define L2CAP_HDR_SIZE 4
 
 typedef struct {
     uint8_t	code;
     uint8_t	ident;
     uint16_t	len;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_cmd_hdr;
-#else
-l2cap_cmd_hdr;
-#endif
+} QEMU_PACKED l2cap_cmd_hdr;
 #define L2CAP_CMD_HDR_SIZE 4
 
 typedef struct {
     uint16_t	reason;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_cmd_rej;
-#else
-l2cap_cmd_rej;
-#endif
+} QEMU_PACKED l2cap_cmd_rej;
 #define L2CAP_CMD_REJ_SIZE 2
 
 typedef struct {
     uint16_t	dcid;
     uint16_t	scid;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_cmd_rej_cid;
-#else
-l2cap_cmd_rej_cid;
-#endif
+} QEMU_PACKED l2cap_cmd_rej_cid;
 #define L2CAP_CMD_REJ_CID_SIZE 4
 
 /* reject reason */
@@ -2548,12 +1755,7 @@ enum bt_l2cap_rej_reason {
 typedef struct {
     uint16_t	psm;
     uint16_t	scid;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_conn_req;
-#else
-l2cap_conn_req;
-#endif
+} QEMU_PACKED l2cap_conn_req;
 #define L2CAP_CONN_REQ_SIZE 4
 
 typedef struct {
@@ -2561,12 +1763,7 @@ typedef struct {
     uint16_t	scid;
     uint16_t	result;
     uint16_t	status;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_conn_rsp;
-#else
-l2cap_conn_rsp;
-#endif
+} QEMU_PACKED l2cap_conn_rsp;
 #define L2CAP_CONN_RSP_SIZE 8
 
 /* connect result */
@@ -2589,12 +1786,7 @@ typedef struct {
     uint16_t	dcid;
     uint16_t	flags;
     uint8_t	data[0];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_conf_req;
-#else
-l2cap_conf_req;
-#endif
+} QEMU_PACKED l2cap_conf_req;
 #define L2CAP_CONF_REQ_SIZE(datalen) (4 + (datalen))
 
 typedef struct {
@@ -2602,12 +1794,7 @@ typedef struct {
     uint16_t	flags;
     uint16_t	result;
     uint8_t	data[0];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_conf_rsp;
-#else
-l2cap_conf_rsp;
-#endif
+} QEMU_PACKED l2cap_conf_rsp;
 #define L2CAP_CONF_RSP_SIZE(datalen) (6 + datalen)
 
 enum bt_l2cap_conf_res {
@@ -2621,12 +1808,7 @@ typedef struct {
     uint8_t	type;
     uint8_t	len;
     uint8_t	val[0];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_conf_opt;
-#else
-l2cap_conf_opt;
-#endif
+} QEMU_PACKED l2cap_conf_opt;
 #define L2CAP_CONF_OPT_SIZE 2
 
 enum bt_l2cap_conf_val {
@@ -2645,12 +1827,7 @@ typedef struct {
     uint32_t	peak_bandwidth;
     uint32_t	latency;
     uint32_t	delay_variation;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_conf_opt_qos;
-#else
-l2cap_conf_opt_qos;
-#endif
+} QEMU_PACKED l2cap_conf_opt_qos;
 #define L2CAP_CONF_OPT_QOS_SIZE 22
 
 enum bt_l2cap_conf_opt_qos_st {
@@ -2670,46 +1847,28 @@ enum bt_l2cap_mode {
 typedef struct {
     uint16_t	dcid;
     uint16_t	scid;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_disconn_req;
-#else
-l2cap_disconn_req;
-#endif
+} QEMU_PACKED l2cap_disconn_req;
 #define L2CAP_DISCONN_REQ_SIZE 4
 
 typedef struct {
     uint16_t	dcid;
     uint16_t	scid;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_disconn_rsp;
-#else
-l2cap_disconn_rsp;
-#endif
+} QEMU_PACKED l2cap_disconn_rsp;
 #define L2CAP_DISCONN_RSP_SIZE 4
 
 typedef struct {
     uint16_t	type;
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_info_req;
-#else
-l2cap_info_req;
-#endif
+} QEMU_PACKED l2cap_info_req;
 #define L2CAP_INFO_REQ_SIZE 2
 
 typedef struct {
     uint16_t	type;
     uint16_t	result;
     uint8_t	data[0];
-} 
-#ifndef _MSC_VER
-__attribute__ ((packed)) l2cap_info_rsp;
-#else
-l2cap_info_rsp;
-#endif
+} QEMU_PACKED l2cap_info_rsp;
 #define L2CAP_INFO_RSP_SIZE 4
+
+MSC_PACKED_END
 
 /* info type */
 enum bt_l2cap_info_type {
@@ -3030,8 +2189,3 @@ enum bt_sdp_attribute_id {
     SDP_ATTR_NORMALLY_CONNECTABLE		= 0x020d,
     SDP_ATTR_BOOT_DEVICE			= 0x020e,
 };
-
-
-#ifdef _MSC_VER
-#pragma pack (pop)
-#endif

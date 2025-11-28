@@ -239,35 +239,22 @@ typedef struct AHCIPortRegs {
     uint32_t    reserved;
 } AHCIPortRegs;
 
-#ifdef _MSC_VER
-#pragma pack(push, 1)
+MSC_PACKED_BEGIN_1
+
 typedef struct AHCICmdHdr {
     uint32_t    opts;
     uint32_t    status;
     uint64_t    tbl_addr;
     uint32_t    reserved[4];
-} AHCICmdHdr;
+} QEMU_PACKED AHCICmdHdr;
 
 typedef struct AHCI_SG {
     uint64_t    addr;
     uint32_t    reserved;
     uint32_t    flags_size;
-} AHCI_SG;
-#pragma (pop)
-#else
-typedef struct AHCICmdHdr {
-    uint32_t    opts;
-    uint32_t    status;
-    uint64_t    tbl_addr;
-    uint32_t    reserved[4];
-} __attribute__ ((packed)) AHCICmdHdr;
+} QEMU_PACKED AHCI_SG;
 
-typedef struct AHCI_SG {
-    uint64_t    addr;
-    uint32_t    reserved;
-    uint32_t    flags_size;
-} __attribute__ ((packed)) AHCI_SG;
-#endif
+MSC_PACKED_END
 
 typedef struct AHCIDevice AHCIDevice;
 
@@ -317,8 +304,8 @@ typedef struct AHCIPCIState {
     AHCIState ahci;
 } AHCIPCIState;
 
-#ifdef _MSC_VER
-#pragma pack(push, 1)
+MSC_PACKED_BEGIN_1
+
 typedef struct NCQFrame {
     uint8_t fis_type;
     uint8_t c;
@@ -340,31 +327,9 @@ typedef struct NCQFrame {
     uint8_t reserved8;
     uint8_t reserved9;
     uint8_t reserved10;
-} NCQFrame;
-#else
-typedef struct NCQFrame {
-    uint8_t fis_type;
-    uint8_t c;
-    uint8_t command;
-    uint8_t sector_count_low;
-    uint8_t lba0;
-    uint8_t lba1;
-    uint8_t lba2;
-    uint8_t fua;
-    uint8_t lba3;
-    uint8_t lba4;
-    uint8_t lba5;
-    uint8_t sector_count_high;
-    uint8_t tag;
-    uint8_t reserved5;
-    uint8_t reserved6;
-    uint8_t control;
-    uint8_t reserved7;
-    uint8_t reserved8;
-    uint8_t reserved9;
-    uint8_t reserved10;
-} __attribute__ ((packed)) NCQFrame;
-#endif
+} QEMU_PACKED NCQFrame;
+
+MSC_PACKED_END
 
 void ahci_init(AHCIState *s, DeviceState *qdev, int ports);
 void ahci_uninit(AHCIState *s);

@@ -1446,17 +1446,6 @@ int main_loop_wait(int nonblocking)
     return ret;
 }
 
-#ifndef CONFIG_IOTHREAD
-static int vm_request_pending(void)
-{
-    return powerdown_requested ||
-           reset_requested ||
-           shutdown_requested ||
-           debug_requested ||
-           vmstop_requested;
-}
-#endif
-
 qemu_irq qemu_system_powerdown;
 
 static void main_loop(void)
@@ -1475,14 +1464,7 @@ static void main_loop(void)
     qemu_main_loop_start();
 
     for (;;) {
-#ifdef CONFIG_IOTHREAD
         nonblocking = !kvm_enabled() && last_io > 0;
-#else
-        nonblocking = cpu_exec_all();
-        if (vm_request_pending()) {
-            nonblocking = true;
-        }
-#endif
 #ifdef CONFIG_PROFILER
         ti = profile_getclock();
 #endif
@@ -2167,20 +2149,20 @@ static const QEMUOption *lookup_opt(int argc, char **argv,
 static gpointer malloc_and_trace(gsize n_bytes)
 {
     void *ptr = malloc(n_bytes);
-    trace_qemu_malloc(n_bytes, ptr);
+    trace_g_malloc(n_bytes, ptr);
     return ptr;
 }
 
 static gpointer realloc_and_trace(gpointer mem, gsize n_bytes)
 {
     void *ptr = realloc(mem, n_bytes);
-    trace_qemu_realloc(mem, n_bytes, ptr);
+    trace_g_realloc(mem, n_bytes, ptr);
     return ptr;
 }
 
 static void free_and_trace(gpointer mem)
 {
-    trace_qemu_free(mem);
+    trace_g_free(mem);
     free(mem);
 }
 

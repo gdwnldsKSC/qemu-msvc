@@ -23,16 +23,6 @@
  * THE SOFTWARE.
  */
 
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
- 
 #include "qemu-common.h"
 #include "block_int.h"
 #include "module.h"
@@ -53,9 +43,7 @@ typedef struct {
     uint32_t sectors_per_track;
 } VMDK3Header;
 
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
+MSC_PACKED_BEGIN_1
 
 typedef struct {
     uint32_t version;
@@ -70,16 +58,9 @@ typedef struct {
     int64_t grain_offset;
     char filler[1];
     char check_bytes[4];
-} 
-#ifndef _MSC_VER
-__attribute__((packed)) VMDK4Header;
-#else
-VMDK4Header;
-#endif
+} QEMU_PACKED VMDK4Header;
 
-#ifdef _MSC_VER
-#pragma pack (pop)
-#endif
+MSC_PACKED_END
 
 #define L2_CACHE_SIZE 16
 

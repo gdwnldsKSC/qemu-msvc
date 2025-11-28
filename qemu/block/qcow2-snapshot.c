@@ -26,15 +26,9 @@
 #include "block_int.h"
 #include "block/qcow2.h"
 
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
+MSC_PACKED_BEGIN_1
 
-#ifndef _MSC_VER
-typedef struct __attribute__((packed)) QCowSnapshotHeader {
-#else
-typedef struct QCowSnapshotHeader {
-#endif
+typedef struct QEMU_PACKED QCowSnapshotHeader {
     /* header is 8 byte aligned */
     uint64_t l1_table_offset;
 
@@ -54,9 +48,7 @@ typedef struct QCowSnapshotHeader {
     /* name follows  */
 } QCowSnapshotHeader;
 
-#ifdef _MSC_VER
-#pragma pack (pop)
-#endif
+MSC_PACKED_END
 
 void qcow2_free_snapshots(BlockDriverState *bs)
 {

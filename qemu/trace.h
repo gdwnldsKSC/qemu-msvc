@@ -5,15 +5,15 @@
 
 #include "qemu-common.h"
 
-static inline void trace_qemu_malloc(size_t size, void *ptr)
+static inline void trace_g_malloc(size_t size, void *ptr)
 {
 }
 
-static inline void trace_qemu_realloc(void *ptr, size_t size, void *newptr)
+static inline void trace_g_realloc(void *ptr, size_t size, void *newptr)
 {
 }
 
-static inline void trace_qemu_free(void *ptr)
+static inline void trace_g_free(void *ptr)
 {
 }
 
@@ -577,7 +577,7 @@ static inline void trace_usb_ehci_mmio_writel(uint32_t addr, const char *str, ui
 {
 }
 
-static inline void trace_usb_ehci_mmio_change(uint32_t addr, const char *str, uint32_t new, uint32_t old) 
+static inline void trace_usb_ehci_mmio_change(uint32_t addr, const char *str, uint32_t new, uint32_t old)
 {
 }
 

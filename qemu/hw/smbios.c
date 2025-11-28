@@ -15,48 +15,29 @@
 #include "smbios.h"
 #include "loader.h"
 
+MSC_PACKED_BEGIN_1
 
-#ifdef _MSC_VER
-#pragma pack(push, 1)
-#endif
 /*
  * Structures shared with the BIOS
  */
 struct smbios_header {
     uint16_t length;
     uint8_t type;
-}
-#ifndef _MSC_VER
-__attribute__((__packed__));
-#else
-;
-#endif
+} QEMU_PACKED;
 
 struct smbios_field {
     struct smbios_header header;
     uint8_t type;
     uint16_t offset;
     uint8_t data[];
-}
-#ifndef _MSC_VER
-__attribute__((__packed__));
-#else
-;
-#endif
+} QEMU_PACKED;
 
 struct smbios_table {
     struct smbios_header header;
     uint8_t data[];
-}
-#ifndef _MSC_VER
-__attribute__((__packed__));
-#else
-;
-#endif
+} QEMU_PACKED;
 
-#ifdef _MSC_VER
-#pragma pack(pop) // Reset packing to the previous state
-#endif
+MSC_PACKED_END
 
 #define SMBIOS_FIELD_ENTRY 0
 #define SMBIOS_TABLE_ENTRY 1

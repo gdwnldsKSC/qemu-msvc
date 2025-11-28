@@ -209,7 +209,7 @@ static void main_cpu_reset(void *opaque)
     env->pc = s->vector;
 }
 
-static struct __attribute__((__packed__))
+static struct QEMU_PACKED
 {
     int mount_root_rdonly;
     int ramdisk_flags;
@@ -267,7 +267,7 @@ static void r2d_init(ram_addr_t ram_size,
 
     /* onboard flash memory */
     dinfo = drive_get(IF_PFLASH, 0, 0);
-    pflash_cfi02_register(0x0, qemu_ram_alloc(NULL, "r2d.flash", FLASH_SIZE),
+    pflash_cfi02_register(0x0, NULL, "r2d.flash", FLASH_SIZE,
                           dinfo ? dinfo->bdrv : NULL, (16 * 1024),
                           FLASH_SIZE >> 16,
                           1, 4, 0x0000, 0x0000, 0x0000, 0x0000,

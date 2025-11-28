@@ -22,17 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
- 
 #include <sys/stat.h>
 #include <dirent.h>
 #include "qemu-common.h"
@@ -211,10 +200,9 @@ static int array_index(array_t* array, void* pointer)
 }
 
 /* These structures are used to fake a disk and the VFAT filesystem.
- * For this reason we need to use __attribute__((packed)). */
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
+ * For this reason we need to use QEMU_PACKED. */
+
+MSC_PACKED_BEGIN_1
 
 typedef struct bootsector_t {
     uint8_t jump[3];
@@ -238,12 +226,7 @@ typedef struct bootsector_t {
 	    uint8_t signature;
 	    uint32_t id;
 	    uint8_t volume_label[11];
-	} 
-#ifndef _MSC_VER
-		__attribute__((packed)) fat16;
-#else
-		fat16;
-#endif
+	} QEMU_PACKED fat16;
 	struct {
 	    uint32_t sectors_per_fat;
 	    uint16_t flags;
@@ -252,28 +235,22 @@ typedef struct bootsector_t {
 	    uint16_t info_sector;
 	    uint16_t backup_boot_sector;
 	    uint16_t ignored;
-	} 
-#ifndef _MSC_VER
-	__attribute__((packed)) fat32;
-#else
-	fat32;
-#endif
+	} QEMU_PACKED fat32;
     } u;
     uint8_t fat_type[8];
     uint8_t ignored[0x1c0];
     uint8_t magic[2];
-} 
-#ifndef _MSC_VER
-__attribute__((packed)) bootsector_t;
-#else
-bootsector_t;
-#endif
+} QEMU_PACKED bootsector_t;
+
+MSC_PACKED_END
 
 typedef struct {
     uint8_t head;
     uint8_t sector;
     uint8_t cylinder;
 } mbr_chs_t;
+
+MSC_PACKED_BEGIN_1
 
 typedef struct partition_t {
     uint8_t attributes; /* 0x80 = bootable */
@@ -282,12 +259,7 @@ typedef struct partition_t {
     mbr_chs_t end_CHS;
     uint32_t start_sector_long;
     uint32_t length_sector_long;
-} 
-#ifndef _MSC_VER
-__attribute__((packed)) partition_t;
-#else
-partition_t;
-#endif
+} QEMU_PACKED partition_t;
 
 typedef struct mbr_t {
     uint8_t ignored[0x1b8];
@@ -295,12 +267,7 @@ typedef struct mbr_t {
     uint8_t ignored2[2];
     partition_t partition[4];
     uint8_t magic[2];
-} 
-#ifndef _MSC_VER
-__attribute__((packed)) mbr_t;
-#else
-mbr_t;
-#endif
+} QEMU_PACKED mbr_t;
 
 typedef struct direntry_t {
     uint8_t name[8];
@@ -315,15 +282,10 @@ typedef struct direntry_t {
     uint16_t mdate;
     uint16_t begin;
     uint32_t size;
-} 
-#ifndef _MSC_VER
-__attribute__((packed)) direntry_t;
-#else
-direntry_t;
-#endif
-#ifdef _MSC_VER
-#pragma pack (pop)
-#endif
+} QEMU_PACKED direntry_t;
+
+MSC_PACKED_END
+
 /* this structure are used to transparently access the files */
 
 typedef struct mapping_t {

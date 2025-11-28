@@ -308,13 +308,20 @@ static int usb_wacom_handle_control(USBDevice *dev, USBPacket *p,
 static int usb_wacom_handle_data(USBDevice *dev, USBPacket *p)
 {
     USBWacomState *s = (USBWacomState *) dev;
-    uint8_t buf[sizeof(p->iov.size)];
+#ifndef _MSC_VER
+    uint8_t buf[p->iov.size];
+#else
+	uint8_t* buf = g_malloc(p->iov.size);
+#endif
     int ret = 0;
 
     switch (p->pid) {
     case USB_TOKEN_IN:
         if (p->devep == 1) {
             if (!(s->changed || s->idle))
+#ifdef _MSC_VER
+                g_free(buf);
+#endif
                 return USB_RET_NAK;
             s->changed = 0;
             if (s->mode == WACOM_MODE_HID)
@@ -330,6 +337,9 @@ static int usb_wacom_handle_data(USBDevice *dev, USBPacket *p)
         ret = USB_RET_STALL;
         break;
     }
+#ifdef _MSC_VER
+    g_free(buf);
+#endif
     return ret;
 }
 

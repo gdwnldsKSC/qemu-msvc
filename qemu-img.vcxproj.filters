@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\block">
+      <UniqueIdentifier>{4af6823d-2250-40a9-89f2-f2802da9e620}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="qemu\aes.c">
@@ -27,79 +30,7 @@
     <ClCompile Include="qemu\block.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qemu\block\blkdebug.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\blkverify.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\bochs.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\cloop.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\cow.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\dmg.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\parallels.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qcow.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qcow2-cache.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qcow2-cluster.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qcow2-refcount.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qcow2-snapshot.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qcow2.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qed-check.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qed-cluster.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qed-gencb.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qed-l2-cache.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qed-table.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\qed.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\raw-win32.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="qemu\block\raw.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\vdi.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\vmdk.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\vpc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qemu\block\vvfat.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="qemu\cutils.c">
@@ -185,6 +116,78 @@
     </ClCompile>
     <ClCompile Include="third_party\outside_qemu_tree_custom\XGetopt.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\blkdebug.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\blkverify.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\bochs.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\cloop.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\cow.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\dmg.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\parallels.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2-cache.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2-cluster.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2-refcount.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qcow2-snapshot.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-check.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-cluster.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-gencb.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-l2-cache.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\qed-table.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\raw-win32.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\vdi.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\vmdk.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\vpc.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\vvfat.c">
+      <Filter>Source Files\block</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

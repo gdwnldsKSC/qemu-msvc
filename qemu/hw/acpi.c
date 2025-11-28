@@ -15,26 +15,12 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>
  */
-
- /*
-  * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
-  * other than GPL is available it will apply instead, WinQEMU elects to use only the
-  * General Public License version 3 (GPLv3) at this time for any software where a choice of
-  * GPL license versions is made available with the language indicating that GPLv3 or any later
-  * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
-  *
-  * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
-  */
-
-
 #include "sysemu.h"
 #include "hw.h"
 #include "pc.h"
 #include "acpi.h"
 
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
+MSC_PACKED_BEGIN_1
 
 struct acpi_table_header {
     uint16_t _length;         /* our length, not actual part of the hdr */
@@ -48,12 +34,9 @@ struct acpi_table_header {
     uint32_t oem_revision;    /* OEM revision number */
     char asl_compiler_id[4];  /* ASL compiler vendor ID */
     uint32_t asl_compiler_revision; /* ASL compiler revision number */
-}
-#ifndef _MSC_VER
-__attribute__((packed));
-#else
-;
-#endif
+} QEMU_PACKED;
+
+MSC_PACKED_END
 
 #define ACPI_TABLE_HDR_SIZE sizeof(struct acpi_table_header)
 #define ACPI_TABLE_PFX_SIZE sizeof(uint16_t)  /* size of the extra prefix */

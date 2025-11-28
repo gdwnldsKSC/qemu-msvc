@@ -1,13 +1,3 @@
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
- 
 #ifndef __SVM_H
 #define __SVM_H
 
@@ -140,11 +130,9 @@
 
 #define SVM_CR0_SELECTIVE_MASK (1 << 3 | 1) /* TS and MP */
 
-#ifndef _MSC_VER
-struct __attribute__ ((__packed__)) vmcb_control_area {
-#else
-struct __declspec(align(8)) vmcb_control_area {
-#endif
+MSC_PACKED_BEGIN_1
+
+struct QEMU_PACKED vmcb_control_area {
 	uint16_t intercept_cr_read;
 	uint16_t intercept_cr_write;
 	uint16_t intercept_dr_read;
@@ -176,22 +164,14 @@ struct __declspec(align(8)) vmcb_control_area {
 	uint8_t reserved_5[832];
 };
 
-#ifndef _MSC_VER
-struct __attribute__ ((__packed__)) vmcb_seg {
-#else
-	struct __declspec(align(8)) vmcb_seg {
-#endif
+struct QEMU_PACKED vmcb_seg {
 	uint16_t selector;
 	uint16_t attrib;
 	uint32_t limit;
 	uint64_t base;
 };
 
-#ifndef _MSC_VER
-struct __attribute__ ((__packed__)) vmcb_save_area {
-#else
-	struct __declspec(align(8)) vmcb_save_area {
-#endif
+struct QEMU_PACKED vmcb_save_area {
 	struct vmcb_seg es;
 	struct vmcb_seg cs;
 	struct vmcb_seg ss;
@@ -236,13 +216,11 @@ struct __attribute__ ((__packed__)) vmcb_save_area {
 	uint64_t last_excp_to;
 };
 
-#ifndef _MSC_VER
-struct __attribute__ ((__packed__)) vmcb {
-#else
-	struct __declspec(align(8)) vmcb {
-#endif
+struct QEMU_PACKED vmcb {
 	struct vmcb_control_area control;
 	struct vmcb_save_area save;
 };
+
+MSC_PACKED_END
 
 #endif

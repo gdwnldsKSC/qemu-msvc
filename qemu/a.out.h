@@ -8,16 +8,6 @@ This software is a copyrighted work licensed under the terms of the
 Cygwin license.  Please consult the file "CYGWIN_LICENSE" for
 details. */
 
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
- 
 #ifndef _A_OUT_H_
 #define _A_OUT_H_
 
@@ -161,11 +151,9 @@ struct external_lineno {
 #define E_FILNMLEN	14	/* # characters in a file name		*/
 #define E_DIMNUM	4	/* # array dimensions in auxiliary entry */
 
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
+MSC_PACKED_BEGIN_1
 
-struct __attribute__((packed)) external_syment
+struct QEMU_PACKED external_syment
 {
   union {
     char e_name[E_SYMNMLEN];
@@ -181,11 +169,7 @@ struct __attribute__((packed)) external_syment
   char e_numaux[1];
 };
 
-
-#ifdef _MSC_VER
-#pragma pack (pop)
-#endif
-
+MSC_PACKED_END
 
 #define N_BTMASK	(0xf)
 #define N_TMASK		(0x30)

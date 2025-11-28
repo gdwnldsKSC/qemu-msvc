@@ -88,16 +88,16 @@
 },
 
 
-#ifdef CONFIG_SIMPLE_TRACE
 {
 .name       = "trace-event",
 .args_type  = "name:s,option:b",
 .params     = "name on|off",
 .help       = "changes status of a specific trace event",
-.mhandler.cmd = do_change_trace_event_state,
+.mhandler.cmd = do_trace_event_set_state,
 },
 
 
+#if defined(CONFIG_SIMPLE_TRACE)
 {
 .name       = "trace-file",
 .args_type  = "op:s?,arg:F?",
@@ -732,6 +732,7 @@
 },
 
 
-#ifdef CONFIG_SIMPLE_TRACE
+#ifdef CONFIG_TRACE_SIMPLE
 #endif
+
 

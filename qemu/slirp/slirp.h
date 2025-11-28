@@ -186,16 +186,14 @@ struct ethhdr {
     unsigned short h_proto;            /* packet type ID field */
 };
 
+MSC_PACKED_BEGIN_1
+
 struct arphdr {
     unsigned short ar_hrd;      /* format of hardware address */
     unsigned short ar_pro;      /* format of protocol address */
     unsigned char  ar_hln;      /* length of hardware address */
     unsigned char  ar_pln;      /* length of protocol address */
     unsigned short ar_op;       /* ARP opcode (command)       */
-
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
 
     /*
      *  Ethernet looks like this : This bit is variable sized however...
@@ -204,13 +202,9 @@ struct arphdr {
     uint32_t      ar_sip;           /* sender IP address       */
     unsigned char ar_tha[ETH_ALEN]; /* target hardware address */
     uint32_t      ar_tip;           /* target IP address       */
-} 
-#ifndef _MSC_VER
-__attribute__((packed));
-#else
-;
-#pragma pack (pop)
-#endif
+} QEMU_PACKED;
+
+MSC_PACKED_END
 
 #define ARP_TABLE_SIZE 16
 

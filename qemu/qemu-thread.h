@@ -1,6 +1,5 @@
 #ifndef __QEMU_THREAD_H
 #define __QEMU_THREAD_H 1
-#include "clock_gettime.h"
 
 #include <inttypes.h>
 

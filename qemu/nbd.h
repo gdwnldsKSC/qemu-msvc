@@ -25,37 +25,23 @@
 
 #include "block_int.h"
 
-#ifndef _MSC_VER
+MSC_PACKED_BEGIN_1
+
 struct nbd_request {
     uint32_t magic;
     uint32_t type;
     uint64_t handle;
     uint64_t from;
     uint32_t len;
-} __attribute__ ((__packed__));
+} QEMU_PACKED;
 
 struct nbd_reply {
     uint32_t magic;
     uint32_t error;
     uint64_t handle;
-} __attribute__ ((__packed__));
-#else
-#pragma pack(push, 1)
-struct nbd_request {
-	uint32_t magic;
-	uint32_t type;
-	uint64_t handle;
-	uint64_t from;
-	uint32_t len;
-};
+} QEMU_PACKED;
 
-struct nbd_reply {
-    uint32_t magic;
-    uint32_t error;
-    uint64_t handle;
-};
-#pragma pack(pop)
-#endif
+MSC_PACKED_END
 
 enum {
     NBD_CMD_READ = 0,

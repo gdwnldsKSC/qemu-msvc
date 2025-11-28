@@ -11,16 +11,6 @@
  *
  */
 
- /*
-  * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
-  * other than GPL is available it will apply instead, WinQEMU elects to use only the
-  * General Public License version 3 (GPLv3) at this time for any software where a choice of
-  * GPL license versions is made available with the language indicating that GPLv3 or any later
-  * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
-  *
-  * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
-  */
-
 #ifndef _QEMU_VIRTIO_BLK_H
 #define _QEMU_VIRTIO_BLK_H
 
@@ -46,9 +36,7 @@
 
 #define VIRTIO_BLK_ID_BYTES     20      /* ID string length */
 
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
+MSC_PACKED_BEGIN_1
 
 struct virtio_blk_config
 {
@@ -63,16 +51,9 @@ struct virtio_blk_config
     uint8_t alignment_offset;
     uint16_t min_io_size;
     uint32_t opt_io_size;
-}
-#ifndef _MSC_VER
-__attribute__((packed));
-#else
-;
-#endif
+} QEMU_PACKED;
 
-#ifdef _MSC_VER
-#pragma pack (pop)
-#endif
+MSC_PACKED_END
 
 /* These two define direction. */
 #define VIRTIO_BLK_T_IN         0

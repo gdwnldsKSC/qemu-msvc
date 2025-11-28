@@ -549,7 +549,8 @@ static void cmd_get_event_status_notification(IDEState *s,
 {
     const uint8_t *packet = buf;
 
-#ifndef _MSC_VER
+    MSC_PACKED_BEGIN_1
+
     struct {
         uint8_t opcode;
         uint8_t polled;        /* lsb bit is polled; others are reserved */
@@ -558,32 +559,15 @@ static void cmd_get_event_status_notification(IDEState *s,
         uint8_t reserved3[2];
         uint16_t len;
         uint8_t control;
-    } __attribute__((packed)) *gesn_cdb;
+    } QEMU_PACKED *gesn_cdb;
 
     struct {
         uint16_t len;
         uint8_t notification_class;
         uint8_t supported_events;
-    } __attribute((packed)) *gesn_event_header;
-#else
-#pragma pack(push, 1)
-    struct {
-        uint8_t opcode;
-        uint8_t polled;        /* lsb bit is polled; others are reserved */
-        uint8_t reserved2[2];
-        uint8_t class;
-        uint8_t reserved3[2];
-        uint16_t len;
-        uint8_t control;
-    } *gesn_cdb;;
+    } QEMU_PACKED *gesn_event_header;
 
-    struct {
-        uint16_t len;
-        uint8_t notification_class;
-        uint8_t supported_events;
-	} *gesn_event_header;
-#pragma pack(pop)
-#endif
+    MSC_PACKED_END
 
     enum notification_class_request_type {
         NCR_RESERVED1 = 1 << 0,

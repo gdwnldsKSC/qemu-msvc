@@ -22,16 +22,6 @@
  * THE SOFTWARE.
  */
 
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
- 
 #include "hw.h"
 #include "mips.h"
 #include "qemu-timer.h"
@@ -56,23 +46,15 @@ do { fprintf(stderr, "rc4030 ERROR: %s: " fmt, __func__ , ## __VA_ARGS__); } whi
 
 /********************************************************/
 /* rc4030 emulation                                     */
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
+
+MSC_PACKED_BEGIN_1
 
 typedef struct dma_pagetable_entry {
     int32_t frame;
     int32_t owner;
-} 
-#ifndef _MSC_VER
-__attribute__((packed)) dma_pagetable_entry;
-#else
-dma_pagetable_entry;
-#endif
+} QEMU_PACKED dma_pagetable_entry;
 
-#ifdef _MSC_VER
-#pragma pack (pop)
-#endif
+MSC_PACKED_END
 
 #define DMA_PAGESIZE    4096
 #define DMA_REG_ENABLE  1

@@ -81,15 +81,8 @@ struct vmsvga_state_s {
 
     union {
         uint32_t *fifo;
-
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
-#ifndef _MSC_VER
-        struct __attribute__((__packed__)) {
-#else
-		struct {
-#endif
+        MSC_PACKED_BEGIN_1
+        struct QEMU_PACKED {
             uint32_t min;
             uint32_t max;
             uint32_t next_cmd;
@@ -97,11 +90,7 @@ struct vmsvga_state_s {
             /* Add registers here when adding capabilities.  */
             uint32_t fifo[0];
         } *cmd;
-
-#ifdef _MSC_VER
-#pragma pack (pop)
-#endif
-
+        MSC_PACKED_END
     };
 
 #define REDRAW_FIFO_LEN	512
@@ -982,7 +971,7 @@ static void vmsvga_value_write(void *opaque, uint32_t address, uint32_t value)
     }
 }
 #endif
-}
+    }
 }
 
 static uint32_t vmsvga_bios_read(void *opaque, uint32_t address)

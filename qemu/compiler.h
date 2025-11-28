@@ -15,6 +15,14 @@
 #define QEMU_WARN_UNUSED_RESULT
 #endif
 
+#ifdef _MSC_VER
+# define QEMU_PACKED
+#elif defined(_WIN32)
+# define QEMU_PACKED __attribute__((gcc_struct, packed))
+#else
+# define QEMU_PACKED __attribute__((packed))
+#endif
+
 #define QEMU_BUILD_BUG_ON(x) \
     typedef char qemu_build_bug_on__##__LINE__[(x)?-1:1];
 
@@ -32,6 +40,14 @@
 #else
 #define GCC_ATTR /**/
 #define GCC_FMT_ATTR(n, m)
+#endif
+
+#ifdef _MSC_VER
+# define MSC_PACKED_BEGIN_1 __pragma(pack(push, 1))
+# define MSC_PACKED_END     __pragma(pack(pop))
+#else
+# define MSC_PACKED_BEGIN_1
+# define MSC_PACKED_END
 #endif
 
 #endif /* COMPILER_H */
