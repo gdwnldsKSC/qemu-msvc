@@ -1,14 +1,19 @@
 #include "config-host.h"
-#include "config-target.h"
+//#include "config-target.h"
 #define CONFIG_QEMU_PREFIX "D:/Images"
 #define CONFIG_QEMU_CONFDIR "D:/Images"
-#define TARGET_ARCH "i386"
-#define TARGET_I386 1
-//#define TARGET_ARCH "alpha"
-//#define TARGET_ALPHA 1
-//#define USE_KQEMU 1 // TODO
 #define CONFIG_SOFTMMU 1
 #define CONFIG_SDL 1
+
+#ifdef TARGET_I386
+#define TARGET_ARCH "i386"
+#define TARGET_I386 1
+#elif defined(TARGET_ALPHA)
+#define TARGET_ARCH "alpha"
+#define TARGET_ALPHA 1
+#define TARGET_LONG_BITS 64
+#define TARGET_PHYS_ADDR_SPACE_BITS 44
+#endif
 
 #define FLOATX80
 
@@ -18,5 +23,4 @@
 #define asm(X)
 
 #define private __private
-//#define snprintf _snprintf // not needed MSVC2015
 #endif

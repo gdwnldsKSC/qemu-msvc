@@ -120,7 +120,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\glib\include;$(SolutionDir)third_party\glib\include\glib-2.0;$(SolutionDir)third_party\glib\lib\glib-2.0\include;.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\third_party\SDL-1.2-main\include;.\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third_party\glib\include;$(SolutionDir)third_party\glib\include\glib-2.0;$(SolutionDir)third_party\glib\lib\glib-2.0\include;.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\third_party\SDL-1.2-main\include;$(SolutionDir)\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;NEED_CPU_H;__i386__;TARGET_I386;CONFIG_SOFTMMU;DATA_BITS=32;TARGET_PHYS_ADDR_BITS=32;DATA_SIZE=4;WIN32_AIO;HAS_AUDIO;CONFIG_PCSPK;CONFIG_CS4231A;CONFIG_ADLIB;CONFIG_GUS;CONFIG_AC97;CONFIG_ES1370;CONFIG_YMF262;HAS_AUDIO_CHOICE;CONFIG_VNC_THREAD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
