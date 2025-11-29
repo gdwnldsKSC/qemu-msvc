@@ -53,6 +53,10 @@ static inline void trace_virtio_notify(void *vdev, void *vq)
 {
 }
 
+static inline void trace_virtio_set_status(void *vdev, uint8_t val)
+{
+}
+
 static inline void trace_virtio_serial_send_control_event(unsigned int port, uint16_t event, uint16_t value)
 {
 }
@@ -109,7 +113,7 @@ static inline void trace_bdrv_aio_writev(void *bs, int64_t sector_num, int nb_se
 {
 }
 
-static inline void trace_bdrv_set_locked(void *bs, int locked)
+static inline void trace_bdrv_lock_medium(void *bs, bool locked)
 {
 }
 
@@ -565,6 +569,22 @@ static inline void trace_sun4m_iommu_bad_addr(uint64_t addr)
 {
 }
 
+static inline void trace_usb_port_claim(int bus, const char *port)
+{
+}
+
+static inline void trace_usb_port_attach(int bus, const char *port)
+{
+}
+
+static inline void trace_usb_port_detach(int bus, const char *port)
+{
+}
+
+static inline void trace_usb_port_release(int bus, const char *port)
+{
+}
+
 static inline void trace_usb_ehci_reset(void)
 {
 }
@@ -614,6 +634,10 @@ static inline void trace_usb_ehci_qtd_bits(uint32_t addr, int ioc, int active, i
 }
 
 static inline void trace_usb_ehci_itd(uint32_t addr, uint32_t nxt, uint32_t mplen, uint32_t mult, uint32_t ep, uint32_t devaddr)
+{
+}
+
+static inline void trace_usb_ehci_sitd(uint32_t addr, uint32_t nxt, uint32_t active)
 {
 }
 
@@ -670,6 +694,98 @@ static inline void trace_usb_clear_device_feature(int addr, int feature, int ret
 }
 
 static inline void trace_usb_set_device_feature(int addr, int feature, int ret)
+{
+}
+
+static inline void trace_usb_host_open_started(int bus, int addr)
+{
+}
+
+static inline void trace_usb_host_open_success(int bus, int addr)
+{
+}
+
+static inline void trace_usb_host_open_failure(int bus, int addr)
+{
+}
+
+static inline void trace_usb_host_disconnect(int bus, int addr)
+{
+}
+
+static inline void trace_usb_host_close(int bus, int addr)
+{
+}
+
+static inline void trace_usb_host_set_address(int bus, int addr, int config)
+{
+}
+
+static inline void trace_usb_host_set_config(int bus, int addr, int config)
+{
+}
+
+static inline void trace_usb_host_set_interface(int bus, int addr, int iterface, int alt)
+{
+}
+
+static inline void trace_usb_host_claim_interfaces(int bus, int addr, int config, int nif)
+{
+}
+
+static inline void trace_usb_host_release_interfaces(int bus, int addr)
+{
+}
+
+static inline void trace_usb_host_req_control(int bus, int addr, int req, int value, int index)
+{
+}
+
+static inline void trace_usb_host_req_data(int bus, int addr, int in, int ep, int size)
+{
+}
+
+static inline void trace_usb_host_req_complete(int bus, int addr, int status)
+{
+}
+
+static inline void trace_usb_host_urb_submit(int bus, int addr, void *aurb, int length, int more)
+{
+}
+
+static inline void trace_usb_host_urb_complete(int bus, int addr, void *aurb, int status, int length, int more)
+{
+}
+
+static inline void trace_usb_host_ep_set_halt(int bus, int addr, int ep)
+{
+}
+
+static inline void trace_usb_host_ep_clear_halt(int bus, int addr, int ep)
+{
+}
+
+static inline void trace_usb_host_ep_start_iso(int bus, int addr, int ep)
+{
+}
+
+static inline void trace_usb_host_ep_stop_iso(int bus, int addr, int ep)
+{
+}
+
+static inline void trace_usb_host_reset(int bus, int addr)
+{
+}
+
+static inline void trace_usb_host_auto_scan_enabled(void)
+{
+}
+
+static inline void trace_usb_host_auto_scan_disabled(void)
+{
+}
+
+static inline void trace_usb_host_claim_port(int bus, int hub, int port)
 {
 }
 
@@ -1174,6 +1290,26 @@ static inline void trace_milkymist_vgafb_memory_read(uint32_t addr, uint32_t val
 }
 
 static inline void trace_milkymist_vgafb_memory_write(uint32_t addr, uint32_t value)
+{
+}
+
+static inline void trace_mipsnet_send(uint32_t size)
+{
+}
+
+static inline void trace_mipsnet_receive(uint32_t size)
+{
+}
+
+static inline void trace_mipsnet_read(uint64_t addr, uint32_t val)
+{
+}
+
+static inline void trace_mipsnet_write(uint64_t addr, uint64_t val)
+{
+}
+
+static inline void trace_mipsnet_irq(uint32_t isr, uint32_t intctl)
 {
 }
 

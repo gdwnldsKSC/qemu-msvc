@@ -855,6 +855,7 @@ if [ "$softmmu" = "yes" ] ; then
     default_target_list="\
 i386-softmmu \
 x86_64-softmmu \
+alpha-softmmu \
 arm-softmmu \
 cris-softmmu \
 lm32-softmmu \
@@ -873,6 +874,8 @@ sh4eb-softmmu \
 sparc-softmmu \
 sparc64-softmmu \
 s390x-softmmu \
+xtensa-softmmu \
+xtensaeb-softmmu \
 "
 fi
 # the following are Linux specific
@@ -1025,7 +1028,6 @@ echo "  --disable-linux-aio      disable Linux AIO support"
 echo "  --enable-linux-aio       enable Linux AIO support"
 echo "  --disable-attr           disables attr and xattr support"
 echo "  --enable-attr            enable attr and xattr support"
-echo "  --enable-io-thread       enable IO thread"
 echo "  --disable-blobs          disable installing provided firmware blobs"
 echo "  --enable-docs            enable documentation build"
 echo "  --disable-docs           disable documentation build"
@@ -1071,7 +1073,7 @@ cat > $TMPC << EOF
 int main(void) { return 0; }
 EOF
 for flag in $gcc_flags; do
-    if compile_prog "-Werror $QEMU_CFLAGS" "-Werror $flag" ; then
+    if compile_prog "$flag -Werror" "" ; then
 	QEMU_CFLAGS="$QEMU_CFLAGS $flag"
     fi
 done
@@ -1338,8 +1340,8 @@ fi
 # pkg-config probe
 
 if ! has $pkg_config; then
-  echo warning: proceeding without "$pkg_config" >&2
-  pkg_config=/bin/false
+  echo "Error: pkg-config binary '$pkg_config' not found"
+  exit 1
 fi
 
 ##########################################
@@ -2357,23 +2359,6 @@ if compile_prog "" "" ; then
     need_offsetof=no
 fi
 
-##########################################
-# check if the compiler understands attribute warn_unused_result
-#
-# This could be smarter, but gcc -Werror does not error out even when warning
-# about attribute warn_unused_result
-
-gcc_attribute_warn_unused_result=no
-cat > $TMPC << EOF
-#if defined(__GNUC__) && (__GNUC__ < 4) && defined(__GNUC_MINOR__) && (__GNUC__ < 4)
-#error gcc 3.3 or older
-#endif
-int main(void) { return 0;}
-EOF
-if compile_prog "" ""; then
-    gcc_attribute_warn_unused_result=yes
-fi
-
 # spice probe
 if test "$spice" != "no" ; then
   cat > $TMPC << EOF
@@ -2996,9 +2981,6 @@ fi
 if test "$need_offsetof" = "yes" ; then
   echo "CONFIG_NEED_OFFSETOF=y" >> $config_host_mak
 fi
-if test "$gcc_attribute_warn_unused_result" = "yes" ; then
-  echo "CONFIG_GCC_ATTRIBUTE_WARN_UNUSED_RESULT=y" >> $config_host_mak
-fi
 if test "$fdatasync" = "yes" ; then
   echo "CONFIG_FDATASYNC=y" >> $config_host_mak
 fi
@@ -3151,7 +3133,7 @@ target_arch2=`echo $target | cut -d '-' -f 1`
 target_bigendian="no"
 
 case "$target_arch2" in
-  armeb|lm32|m68k|microblaze|mips|mipsn32|mips64|ppc|ppcemb|ppc64|ppc64abi32|s390x|sh4eb|sparc|sparc64|sparc32plus)
+  armeb|lm32|m68k|microblaze|mips|mipsn32|mips64|ppc|ppcemb|ppc64|ppc64abi32|s390x|sh4eb|sparc|sparc64|sparc32plus|xtensaeb)
   target_bigendian=yes
   ;;
 esac
@@ -3346,6 +3328,10 @@ case "$target_arch2" in
   unicore32)
     target_phys_bits=32
   ;;
+  xtensa|xtensaeb)
+    TARGET_ARCH=xtensa
+    target_phys_bits=32
+  ;;
   *)
     echo "Unsupported target CPU"
     exit 1
@@ -3520,6 +3506,10 @@ for i in $ARCH $TARGET_BASE_ARCH ; do
     echo "CONFIG_SPARC_DIS=y"  >> $config_target_mak
     echo "CONFIG_SPARC_DIS=y"  >> $libdis_config_mak
   ;;
+  xtensa*)
+    echo "CONFIG_XTENSA_DIS=y"  >> $config_target_mak
+    echo "CONFIG_XTENSA_DIS=y"  >> $libdis_config_mak
+  ;;
   esac
 done
 
@@ -3612,9 +3602,9 @@ DIRS="tests tests/cris slirp audio block net pc-bios/optionrom"
 DIRS="$DIRS pc-bios/spapr-rtas"
 DIRS="$DIRS roms/seabios roms/vgabios"
 DIRS="$DIRS fsdev ui"
-DIRS="$DIRS qapi"
+DIRS="$DIRS qapi qapi-generated"
 DIRS="$DIRS qga trace"
-FILES="Makefile tests/Makefile"
+FILES="Makefile tests/Makefile qdict-test-data.txt"
 FILES="$FILES tests/cris/Makefile tests/cris/.gdbinit"
 FILES="$FILES pc-bios/optionrom/Makefile pc-bios/keymaps"
 FILES="$FILES pc-bios/spapr-rtas/Makefile"
@@ -3660,6 +3650,7 @@ fi
 
 d=libuser
 mkdir -p $d
+mkdir -p $d/trace
 symlink $source_path/Makefile.user $d/Makefile
 if test "$static" = "no" -a "$user_pie" = "yes" ; then
   echo "QEMU_CFLAGS+=-fpie" > $d/config.mak

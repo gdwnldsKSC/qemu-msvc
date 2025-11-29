@@ -118,7 +118,7 @@ void vmmouse_set_data(const uint32_t *data);
 
 void i8042_init(qemu_irq kbd_irq, qemu_irq mouse_irq, uint32_t io_base);
 void i8042_mm_init(qemu_irq kbd_irq, qemu_irq mouse_irq,
-                   target_phys_addr_t base, ram_addr_t size,
+                   MemoryRegion *region, ram_addr_t size,
                    target_phys_addr_t mask);
 void i8042_isa_mouse_fake_event(void *opaque);
 void i8042_setup_a20_line(ISADevice *dev, qemu_irq *a20_out);
@@ -137,7 +137,7 @@ void pc_memory_init(MemoryRegion *system_memory,
                     const char *initrd_filename,
                     ram_addr_t below_4g_mem_size,
                     ram_addr_t above_4g_mem_size,
-                    MemoryRegion *pci_memory,
+                    MemoryRegion *rom_memory,
                     MemoryRegion **ram_memory);
 qemu_irq *pc_allocate_cpu_irq(void);
 void pc_vga_init(PCIBus *pci_bus);

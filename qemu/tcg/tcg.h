@@ -116,23 +116,15 @@ typedef struct TCGLabel {
     } u;
 } TCGLabel;
 
-#ifdef _MSC_VER
-#pragma pack (push, 1)
-#endif
-
 typedef struct TCGPool {
     struct TCGPool *next;
     int size;
 #ifndef _MSC_VER
-    uint8_t data[0] __attribute__((aligned));
+    uint8_t data[0] __attribute__ ((aligned));
 #else
-    uint8_t data[]; // fancy C99 declaration instead of zero length array we can use in VS now!
+	__declspec(align(16)) uint8_t data[0];
 #endif
 } TCGPool;
-
-#ifdef _MSC_VER
-#pragma pack (pop)
-#endif
 
 #define TCG_POOL_CHUNK_SIZE 32768
 

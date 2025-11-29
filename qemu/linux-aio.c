@@ -68,15 +68,6 @@ static void qemu_laio_process_completion(struct qemu_laio_state *s,
     qemu_aio_release(laiocb);
 }
 
-/*
- * All requests are directly processed when they complete, so there's nothing
- * left to do during qemu_aio_wait().
- */
-static int qemu_laio_process_requests(void *opaque)
-{
-    return 0;
-}
-
 static void qemu_laio_completion_cb(void *opaque)
 {
     struct qemu_laio_state *s = opaque;
@@ -181,6 +172,7 @@ BlockDriverAIOCB *laio_submit(BlockDriverState *bs, void *aio_ctx, int fd,
     case QEMU_AIO_READ:
         io_prep_preadv(iocbs, fd, qiov->iov, qiov->niov, offset);
 	break;
+    /* Currently Linux kernel does not support other operations */
     default:
         fprintf(stderr, "%s: invalid AIO request type 0x%x.\n",
                         __func__, type);
@@ -214,7 +206,7 @@ void *laio_init(void)
         goto out_close_efd;
 
     qemu_aio_set_fd_handler(s->efd, qemu_laio_completion_cb, NULL,
-        qemu_laio_flush_cb, qemu_laio_process_requests, s);
+        qemu_laio_flush_cb, NULL, s);
 
     return s;
 

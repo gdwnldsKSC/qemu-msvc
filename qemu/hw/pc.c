@@ -74,37 +74,20 @@
 
 #define E820_NR_ENTRIES		16
 
-#ifdef _MSC_VER
-
-#pragma pack(push, 4)
-struct e820_entry {
-    uint64_t address;
-    uint64_t length;
-    uint32_t type;
-};
-#pragma pack(pop)
-
-#pragma pack(push, 4)
-struct e820_table {
-    uint32_t count;
-    struct e820_entry entry[E820_NR_ENTRIES];
-};
-#pragma pack(pop)
-
-#else  /* ! _MSC_VER */
+MSC_PACKED_BEGIN_4
 
 struct e820_entry {
     uint64_t address;
     uint64_t length;
     uint32_t type;
-} __attribute__((__packed__, __aligned__(4)));
+} QEMU_PACKED __attribute((__aligned__(4)));
 
 struct e820_table {
     uint32_t count;
     struct e820_entry entry[E820_NR_ENTRIES];
-} __attribute__((__packed__, __aligned__(4)));
+} QEMU_PACKED __attribute((__aligned__(4)));
 
-#endif
+MSC_PACKED_END
 
 static struct e820_table e820_table;
 struct hpet_fw_config hpet_cfg = {.count = UINT8_MAX};
@@ -986,7 +969,7 @@ void pc_memory_init(MemoryRegion *system_memory,
                     const char *initrd_filename,
                     ram_addr_t below_4g_mem_size,
                     ram_addr_t above_4g_mem_size,
-                    MemoryRegion *pci_memory,
+                    MemoryRegion *rom_memory,
                     MemoryRegion **ram_memory)
 {
     char *filename;
@@ -1050,7 +1033,7 @@ void pc_memory_init(MemoryRegion *system_memory,
     isa_bios = g_malloc(sizeof(*isa_bios));
     memory_region_init_alias(isa_bios, "isa-bios", bios,
                              bios_size - isa_bios_size, isa_bios_size);
-    memory_region_add_subregion_overlap(pci_memory,
+    memory_region_add_subregion_overlap(rom_memory,
                                         0x100000 - isa_bios_size,
                                         isa_bios,
                                         1);
@@ -1058,13 +1041,13 @@ void pc_memory_init(MemoryRegion *system_memory,
 
     option_rom_mr = g_malloc(sizeof(*option_rom_mr));
     memory_region_init_ram(option_rom_mr, NULL, "pc.rom", PC_ROM_SIZE);
-    memory_region_add_subregion_overlap(pci_memory,
+    memory_region_add_subregion_overlap(rom_memory,
                                         PC_ROM_MIN_VGA,
                                         option_rom_mr,
                                         1);
 
     /* map all the bios at the top of memory */
-    memory_region_add_subregion(pci_memory,
+    memory_region_add_subregion(rom_memory,
                                 (uint32_t)(-bios_size),
                                 bios);
 

@@ -1,18 +1,46 @@
 #ifndef __QEMU_BARRIER_H
 #define __QEMU_BARRIER_H 1
 
-#ifndef _MSC_VER
-/* FIXME: arch dependant, x86 version */
-#define smp_wmb()   asm volatile("" ::: "memory")
-
 /* Compiler barrier */
+#ifndef _MSC_VER
 #define barrier()   asm volatile("" ::: "memory")
 #else
-/* FIXME: arch dependant, x86 version */
-#define smp_wmb()   _ReadWriteBarrier()
-
-/* Compiler barrier */
 #define barrier()   _ReadWriteBarrier()
+#endif
+
+#if defined(__i386__) || defined(__x86_64__)
+
+/*
+ * Because of the strongly ordered x86 storage model, wmb() is a nop
+ * on x86(well, a compiler barrier only).  Well, at least as long as
+ * qemu doesn't do accesses to write-combining memory or non-temporal
+ * load/stores from C code.
+ */
+#ifndef _MSC_VER
+#define smp_wmb()   barrier()
+#else
+#define smp_wmb()   _ReadWriteBarrier()
+#endif
+
+#elif defined(__powerpc__)
+
+/*
+ * We use an eieio() for a wmb() on powerpc.  This assumes we don't
+ * need to order cacheable and non-cacheable stores with respect to
+ * each other
+ */
+#define smp_wmb()   asm volatile("eieio" ::: "memory")
+
+#else
+
+/*
+ * For (host) platforms we don't have explicit barrier definitions
+ * for, we use the gcc __sync_synchronize() primitive to generate a
+ * full barrier.  This should be safe on all platforms, though it may
+ * be overkill.
+ */
+#define smp_wmb()   __sync_synchronize()
+
 #endif
 
 #endif

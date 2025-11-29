@@ -284,7 +284,7 @@ obj-lm32-y += framebuffer.o
 obj-mips-y = mips_r4k.o mips_jazz.o mips_malta.o mips_mipssim.o
 obj-mips-y += mips_addr.o mips_timer.o mips_int.o
 obj-mips-y += vga.o i8259.o
-obj-mips-y += g364fb.o jazz_led.o
+obj-mips-y += jazz_led.o
 obj-mips-y += gt64xxx.o mc146818rtc.o
 obj-mips-y += cirrus_vga.o
 obj-mips-$(CONFIG_FULONG) += bonito.o vt82c686.o mips_fulong2e.o
@@ -368,6 +368,11 @@ obj-s390x-y = s390-virtio-bus.o s390-virtio.o
 obj-alpha-y = i8259.o mc146818rtc.o
 obj-alpha-y += vga.o cirrus_vga.o
 
+obj-xtensa-y += xtensa_pic.o
+obj-xtensa-y += xtensa_sample.o
+obj-xtensa-y += xtensa_dc232b.o
+obj-xtensa-y += xtensa-semi.o
+
 main.o: QEMU_CFLAGS+=$(GPROF_CFLAGS)
 
 monitor.o: hmp-commands.h qmp-commands.h
@@ -378,6 +383,7 @@ obj-y += $(addprefix ../, $(common-obj-y))
 obj-y += $(addprefix ../libdis/, $(libdis-y))
 obj-y += $(libobj-y)
 obj-y += $(addprefix $(HWDIR)/, $(hw-obj-y))
+obj-y += $(addprefix ../, $(trace-obj-y))
 
 endif # CONFIG_SOFTMMU
 
@@ -389,7 +395,6 @@ obj-$(CONFIG_SMARTCARD_NSS) += $(addprefix ../libcacard/, $(libcacard-y))
 endif # CONFIG_BSD_USER
 endif # CONFIG_LINUX_USER
 
-obj-y += $(addprefix ../, $(trace-obj-y))
 obj-$(CONFIG_GDBSTUB_XML) += gdbstub-xml.o
 
 $(QEMU_PROG): $(obj-y) $(obj-$(TARGET_BASE_ARCH)-y)

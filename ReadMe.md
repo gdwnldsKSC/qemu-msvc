@@ -167,6 +167,7 @@ zlib1.dll
 intl.dll  
 pcre2-8-0.dll  
 iconv.dll  
+gthread-2.0-0.dll  
 
 As a side effect, we also gain a newer zlib too.  
 Projects have been updated and old version removed.  

@@ -236,6 +236,10 @@ static int raw_open_common(BlockDriverState *bs, const char *filename,
     }
 
 #ifdef CONFIG_LINUX_AIO
+    /*
+     * Currently Linux do AIO only for files opened with O_DIRECT
+     * specified so check NOCACHE flag too
+     */
     if ((bdrv_flags & (BDRV_O_NOCACHE|BDRV_O_NATIVE_AIO)) ==
                       (BDRV_O_NOCACHE|BDRV_O_NATIVE_AIO)) {
 
@@ -835,7 +839,14 @@ static int raw_create(const char *filename, QEMUOptionParameter *options)
 static int raw_flush(BlockDriverState *bs)
 {
     BDRVRawState *s = bs->opaque;
-    return qemu_fdatasync(s->fd);
+    int ret;
+
+    ret = qemu_fdatasync(s->fd);
+    if (ret < 0) {
+        return -errno;
+    }
+
+    return 0;
 }
 
 #ifdef CONFIG_XFS
@@ -1358,7 +1369,7 @@ static void cdrom_eject(BlockDriverState *bs, int eject_flag)
     }
 }
 
-static void cdrom_set_locked(BlockDriverState *bs, int locked)
+static void cdrom_lock_medium(BlockDriverState *bs, bool locked)
 {
     BDRVRawState *s = bs->opaque;
 
@@ -1396,7 +1407,7 @@ static BlockDriver bdrv_host_cdrom = {
     /* removable device support */
     .bdrv_is_inserted   = cdrom_is_inserted,
     .bdrv_eject         = cdrom_eject,
-    .bdrv_set_locked    = cdrom_set_locked,
+    .bdrv_lock_medium   = cdrom_lock_medium,
 
     /* generic scsi device */
     .bdrv_ioctl         = hdev_ioctl,
@@ -1477,7 +1488,7 @@ static void cdrom_eject(BlockDriverState *bs, int eject_flag)
     cdrom_reopen(bs);
 }
 
-static void cdrom_set_locked(BlockDriverState *bs, int locked)
+static void cdrom_lock_medium(BlockDriverState *bs, bool locked)
 {
     BDRVRawState *s = bs->opaque;
 
@@ -1517,7 +1528,7 @@ static BlockDriver bdrv_host_cdrom = {
     /* removable device support */
     .bdrv_is_inserted   = cdrom_is_inserted,
     .bdrv_eject         = cdrom_eject,
-    .bdrv_set_locked    = cdrom_set_locked,
+    .bdrv_lock_medium   = cdrom_lock_medium,
 };
 #endif /* __FreeBSD__ */
 

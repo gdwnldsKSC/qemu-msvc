@@ -44,6 +44,7 @@
 #include <windows.h>
 #endif
 
+static void bdrv_dev_change_media_cb(BlockDriverState *bs, bool load);
 static BlockDriverAIOCB *bdrv_aio_readv_em(BlockDriverState *bs,
         int64_t sector_num, QEMUIOVector *qiov, int nb_sectors,
         BlockDriverCompletionFunc *cb, void *opaque);
@@ -479,7 +480,6 @@ static int bdrv_open_common(BlockDriverState *bs, const char *filename,
     bs->encrypted = 0;
     bs->valid_key = 0;
     bs->open_flags = flags;
-    /* buffer_alignment defaulted to 512, drivers can change this value */
     bs->buffer_alignment = 512;
 
     pstrcpy(bs->filename, sizeof(bs->filename), filename);
@@ -688,10 +688,7 @@ int bdrv_open(BlockDriverState *bs, const char *filename, int flags,
     }
 
     if (!bdrv_key_required(bs)) {
-        /* call the change callback */
-        bs->media_changed = 1;
-        if (bs->change_cb)
-            bs->change_cb(bs->change_opaque, CHANGE_MEDIA);
+        bdrv_dev_change_media_cb(bs, true);
     }
 
     return 0;
@@ -727,10 +724,7 @@ void bdrv_close(BlockDriverState *bs)
             bdrv_close(bs->file);
         }
 
-        /* call the change callback */
-        bs->media_changed = 1;
-        if (bs->change_cb)
-            bs->change_cb(bs->change_opaque, CHANGE_MEDIA);
+        bdrv_dev_change_media_cb(bs, false);
     }
 }
 
@@ -755,7 +749,7 @@ void bdrv_make_anon(BlockDriverState *bs)
 
 void bdrv_delete(BlockDriverState *bs)
 {
-    assert(!bs->peer);
+    assert(!bs->dev);
 
     /* remove from list, if necessary */
     bdrv_make_anon(bs);
@@ -769,26 +763,83 @@ void bdrv_delete(BlockDriverState *bs)
     g_free(bs);
 }
 
-int bdrv_attach(BlockDriverState *bs, DeviceState *qdev)
+int bdrv_attach_dev(BlockDriverState *bs, void *dev)
+/* TODO change to DeviceState *dev when all users are qdevified */
 {
-    if (bs->peer) {
+    if (bs->dev) {
         return -EBUSY;
     }
-    bs->peer = qdev;
+    bs->dev = dev;
     return 0;
 }
 
-void bdrv_detach(BlockDriverState *bs, DeviceState *qdev)
+/* TODO qdevified devices don't use this, remove when devices are qdevified */
+void bdrv_attach_dev_nofail(BlockDriverState *bs, void *dev)
 {
-    assert(bs->peer == qdev);
-    bs->peer = NULL;
-    bs->change_cb = NULL;
-    bs->change_opaque = NULL;
+    if (bdrv_attach_dev(bs, dev) < 0) {
+        abort();
+    }
 }
 
-DeviceState *bdrv_get_attached(BlockDriverState *bs)
+void bdrv_detach_dev(BlockDriverState *bs, void *dev)
+/* TODO change to DeviceState *dev when all users are qdevified */
 {
-    return bs->peer;
+    assert(bs->dev == dev);
+    bs->dev = NULL;
+    bs->dev_ops = NULL;
+    bs->dev_opaque = NULL;
+    bs->buffer_alignment = 512;
+}
+
+/* TODO change to return DeviceState * when all users are qdevified */
+void *bdrv_get_attached_dev(BlockDriverState *bs)
+{
+    return bs->dev;
+}
+
+void bdrv_set_dev_ops(BlockDriverState *bs, const BlockDevOps *ops,
+                      void *opaque)
+{
+    bs->dev_ops = ops;
+    bs->dev_opaque = opaque;
+    if (bdrv_dev_has_removable_media(bs) && bs == bs_snapshots) {
+        bs_snapshots = NULL;
+    }
+}
+
+static void bdrv_dev_change_media_cb(BlockDriverState *bs, bool load)
+{
+    if (bs->dev_ops && bs->dev_ops->change_media_cb) {
+        bs->dev_ops->change_media_cb(bs->dev_opaque, load);
+    }
+}
+
+bool bdrv_dev_has_removable_media(BlockDriverState *bs)
+{
+    return !bs->dev || (bs->dev_ops && bs->dev_ops->change_media_cb);
+}
+
+bool bdrv_dev_is_tray_open(BlockDriverState *bs)
+{
+    if (bs->dev_ops && bs->dev_ops->is_tray_open) {
+        return bs->dev_ops->is_tray_open(bs->dev_opaque);
+    }
+    return false;
+}
+
+static void bdrv_dev_resize_cb(BlockDriverState *bs)
+{
+    if (bs->dev_ops && bs->dev_ops->resize_cb) {
+        bs->dev_ops->resize_cb(bs->dev_opaque);
+    }
+}
+
+bool bdrv_dev_is_medium_locked(BlockDriverState *bs)
+{
+    if (bs->dev_ops && bs->dev_ops->is_medium_locked) {
+        return bs->dev_ops->is_medium_locked(bs->dev_opaque);
+    }
+    return false;
 }
 
 /*
@@ -1261,9 +1312,7 @@ int bdrv_truncate(BlockDriverState *bs, int64_t offset)
     ret = drv->bdrv_truncate(bs, offset);
     if (ret == 0) {
         ret = refresh_total_sectors(bs, offset >> BDRV_SECTOR_BITS);
-        if (bs->change_cb) {
-            bs->change_cb(bs->change_opaque, CHANGE_SIZE);
-        }
+        bdrv_dev_resize_cb(bs);
     }
     return ret;
 }
@@ -1296,7 +1345,7 @@ int64_t bdrv_getlength(BlockDriverState *bs)
     if (!drv)
         return -ENOMEDIUM;
 
-    if (bs->growable || bs->removable) {
+    if (bs->growable || bdrv_dev_has_removable_media(bs)) {
         if (drv->bdrv_getlength) {
             return drv->bdrv_getlength(bs);
         }
@@ -1577,19 +1626,6 @@ BlockErrorAction bdrv_get_on_error(BlockDriverState *bs, int is_read)
     return is_read ? bs->on_read_error : bs->on_write_error;
 }
 
-void bdrv_set_removable(BlockDriverState *bs, int removable)
-{
-    bs->removable = removable;
-    if (removable && bs == bs_snapshots) {
-        bs_snapshots = NULL;
-    }
-}
-
-int bdrv_is_removable(BlockDriverState *bs)
-{
-    return bs->removable;
-}
-
 int bdrv_is_read_only(BlockDriverState *bs)
 {
     return bs->read_only;
@@ -1603,15 +1639,6 @@ int bdrv_is_sg(BlockDriverState *bs)
 int bdrv_enable_write_cache(BlockDriverState *bs)
 {
     return bs->enable_write_cache;
-}
-
-/* XXX: no longer used */
-void bdrv_set_change_cb(BlockDriverState *bs,
-                        void (*change_cb)(void *opaque, int reason),
-                        void *opaque)
-{
-    bs->change_cb = change_cb;
-    bs->change_opaque = opaque;
 }
 
 int bdrv_is_encrypted(BlockDriverState *bs)
@@ -1651,9 +1678,7 @@ int bdrv_set_key(BlockDriverState *bs, const char *key)
     } else if (!bs->valid_key) {
         bs->valid_key = 1;
         /* call the change callback now, we skipped it on open */
-        bs->media_changed = 1;
-        if (bs->change_cb)
-            bs->change_cb(bs->change_opaque, CHANGE_MEDIA);
+        bdrv_dev_change_media_cb(bs, true);
     }
     return ret;
 }
@@ -1743,8 +1768,7 @@ void bdrv_flush_all(void)
     BlockDriverState *bs;
 
     QTAILQ_FOREACH(bs, &bdrv_states, list) {
-        if (bs->drv && !bdrv_is_read_only(bs) &&
-            (!bdrv_is_removable(bs) || bdrv_is_inserted(bs))) {
+        if (!bdrv_is_read_only(bs) && bdrv_is_inserted(bs)) {
             bdrv_flush(bs);
         }
     }
@@ -1841,8 +1865,9 @@ static void bdrv_print_dict(QObject *obj, void *opaque)
 
     if (qdict_get_bool(bs_dict, "removable")) {
         monitor_printf(mon, " locked=%d", qdict_get_bool(bs_dict, "locked"));
+        monitor_printf(mon, " tray-open=%d",
+                       qdict_get_bool(bs_dict, "tray-open"));
     }
-
     if (qdict_haskey(bs_dict, "inserted")) {
         QDict *qdict = qobject_to_qdict(qdict_get(bs_dict, "inserted"));
 
@@ -1877,15 +1902,21 @@ void bdrv_info(Monitor *mon, QObject **ret_data)
 
     QTAILQ_FOREACH(bs, &bdrv_states, list) {
         QObject *bs_obj;
+        QDict *bs_dict;
 
         bs_obj = qobject_from_jsonf("{ 'device': %s, 'type': 'unknown', "
                                     "'removable': %i, 'locked': %i }",
-                                    bs->device_name, bs->removable,
-                                    bs->locked);
+                                    bs->device_name,
+                                    bdrv_dev_has_removable_media(bs),
+                                    bdrv_dev_is_medium_locked(bs));
+        bs_dict = qobject_to_qdict(bs_obj);
 
+        if (bdrv_dev_has_removable_media(bs)) {
+            qdict_put(bs_dict, "tray-open",
+                      qbool_from_int(bdrv_dev_is_tray_open(bs)));
+        }
         if (bs->drv) {
             QObject *obj;
-            QDict *bs_dict = qobject_to_qdict(bs_obj);
 
             obj = qobject_from_jsonf("{ 'file': %s, 'ro': %i, 'drv': %s, "
                                      "'encrypted': %i }",
@@ -2088,7 +2119,7 @@ void bdrv_debug_event(BlockDriverState *bs, BlkDebugEvent event)
 int bdrv_can_snapshot(BlockDriverState *bs)
 {
     BlockDriver *drv = bs->drv;
-    if (!drv || bdrv_is_removable(bs) || bdrv_is_read_only(bs)) {
+    if (!drv || !bdrv_is_inserted(bs) || bdrv_is_read_only(bs)) {
         return 0;
     }
 
@@ -3017,70 +3048,52 @@ static int coroutine_fn bdrv_co_flush_em(BlockDriverState *bs)
 int bdrv_is_inserted(BlockDriverState *bs)
 {
     BlockDriver *drv = bs->drv;
-    int ret;
+
     if (!drv)
         return 0;
     if (!drv->bdrv_is_inserted)
-        return !bs->tray_open;
-    ret = drv->bdrv_is_inserted(bs);
-    return ret;
+        return 1;
+    return drv->bdrv_is_inserted(bs);
 }
 
 /**
- * Return TRUE if the media changed since the last call to this
- * function. It is currently only used for floppy disks
+ * Return whether the media changed since the last call to this
+ * function, or -ENOTSUP if we don't know.  Most drivers don't know.
  */
 int bdrv_media_changed(BlockDriverState *bs)
 {
     BlockDriver *drv = bs->drv;
-    int ret;
 
-    if (!drv || !drv->bdrv_media_changed)
-        ret = -ENOTSUP;
-    else
-        ret = drv->bdrv_media_changed(bs);
-    if (ret == -ENOTSUP)
-        ret = bs->media_changed;
-    bs->media_changed = 0;
-    return ret;
+    if (drv && drv->bdrv_media_changed) {
+        return drv->bdrv_media_changed(bs);
+    }
+    return -ENOTSUP;
 }
 
 /**
  * If eject_flag is TRUE, eject the media. Otherwise, close the tray
  */
-int bdrv_eject(BlockDriverState *bs, int eject_flag)
+void bdrv_eject(BlockDriverState *bs, int eject_flag)
 {
     BlockDriver *drv = bs->drv;
-
-    if (eject_flag && bs->locked) {
-        return -EBUSY;
-    }
 
     if (drv && drv->bdrv_eject) {
         drv->bdrv_eject(bs, eject_flag);
     }
-    bs->tray_open = eject_flag;
-    return 0;
-}
-
-int bdrv_is_locked(BlockDriverState *bs)
-{
-    return bs->locked;
 }
 
 /**
  * Lock or unlock the media (if it is locked, the user won't be able
  * to eject it manually).
  */
-void bdrv_set_locked(BlockDriverState *bs, int locked)
+void bdrv_lock_medium(BlockDriverState *bs, bool locked)
 {
     BlockDriver *drv = bs->drv;
 
-    trace_bdrv_set_locked(bs, locked);
+    trace_bdrv_lock_medium(bs, locked);
 
-    bs->locked = locked;
-    if (drv && drv->bdrv_set_locked) {
-        drv->bdrv_set_locked(bs, locked);
+    if (drv && drv->bdrv_lock_medium) {
+        drv->bdrv_lock_medium(bs, locked);
     }
 }
 
@@ -3106,7 +3119,10 @@ BlockDriverAIOCB *bdrv_aio_ioctl(BlockDriverState *bs,
     return NULL;
 }
 
-
+void bdrv_set_buffer_alignment(BlockDriverState *bs, int align)
+{
+    bs->buffer_alignment = align;
+}
 
 void *qemu_blockalign(BlockDriverState *bs, size_t size)
 {

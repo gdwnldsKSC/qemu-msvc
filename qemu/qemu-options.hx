@@ -1412,7 +1412,7 @@ qemu linux.img -net nic,macaddr=52:54:00:12:34:56 \
 Connect VLAN @var{n} to PORT @var{n} of a vde switch running on host and
 listening for incoming connections on @var{socketpath}. Use GROUP @var{groupname}
 and MODE @var{octalmode} to change default ownership and permissions for
-communication port. This option is available only if QEMU has been compiled
+communication port. This option is only available if QEMU has been compiled
 with vde support enabled.
 
 Example:
@@ -2396,11 +2396,11 @@ STEXI
 Set OpenBIOS nvram @var{variable} to given @var{value} (PPC, SPARC only).
 ETEXI
 DEF("semihosting", 0, QEMU_OPTION_semihosting,
-    "-semihosting    semihosting mode\n", QEMU_ARCH_ARM | QEMU_ARCH_M68K)
+    "-semihosting    semihosting mode\n", QEMU_ARCH_ARM | QEMU_ARCH_M68K | QEMU_ARCH_XTENSA)
 STEXI
 @item -semihosting
 @findex -semihosting
-Semihosting mode (ARM, M68K only).
+Semihosting mode (ARM, M68K, Xtensa only).
 ETEXI
 DEF("old-param", 0, QEMU_OPTION_old_param,
     "-old-param      old param mode\n", QEMU_ARCH_ARM)
@@ -2453,13 +2453,13 @@ Specify tracing options.
 Immediately enable events listed in @var{file}.
 The file must contain one event name (as listed in the @var{trace-events} file)
 per line.
-
-This option is only available when using the @var{simple} and @var{stderr}
-tracing backends.
+This option is only available if QEMU has been compiled with
+either @var{simple} or @var{stderr} tracing backend.
 @item file=@var{file}
 Log output traces to @var{file}.
 
-This option is only available when using the @var{simple} tracing backend.
+This option is only available if QEMU has been compiled with
+the @var{simple} tracing backend.
 @end table
 ETEXI
 

@@ -49,6 +49,7 @@ static int vga_initfn(ISADevice *dev)
     MemoryRegion *vga_io_memory;
 
     vga_common_init(s, VGA_RAM_SIZE);
+    s->legacy_address_space = isa_address_space(dev);
     vga_io_memory = vga_init_io(s);
     memory_region_add_subregion_overlap(isa_address_space(dev),
                                         isa_mem_base + 0x000a0000,
@@ -85,4 +86,4 @@ static void vga_register(void)
 {
     isa_qdev_register(&vga_info);
 }
-device_init(vga_register);
+device_init(vga_register)

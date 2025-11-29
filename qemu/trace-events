@@ -42,6 +42,7 @@ virtqueue_pop(void *vq, void *elem, unsigned int in_num, unsigned int out_num) "
 virtio_queue_notify(void *vdev, int n, void *vq) "vdev %p n %d vq %p"
 virtio_irq(void *vq) "vq %p"
 virtio_notify(void *vdev, void *vq) "vdev %p vq %p"
+virtio_set_status(void *vdev, uint8_t val) "vdev %p val %u"
 
 # hw/virtio-serial-bus.c
 virtio_serial_send_control_event(unsigned int port, uint16_t event, uint16_t value) "port %u, event %u, value %u"
@@ -62,7 +63,7 @@ bdrv_aio_multiwrite_latefail(void *mcb, int i) "mcb %p i %d"
 bdrv_aio_flush(void *bs, void *opaque) "bs %p opaque %p"
 bdrv_aio_readv(void *bs, int64_t sector_num, int nb_sectors, void *opaque) "bs %p sector_num %"PRId64" nb_sectors %d opaque %p"
 bdrv_aio_writev(void *bs, int64_t sector_num, int nb_sectors, void *opaque) "bs %p sector_num %"PRId64" nb_sectors %d opaque %p"
-bdrv_set_locked(void *bs, int locked) "bs %p locked %d"
+bdrv_lock_medium(void *bs, bool locked) "bs %p locked %d"
 bdrv_co_readv(void *bs, int64_t sector_num, int nb_sector) "bs %p sector_num %"PRId64" nb_sectors %d"
 bdrv_co_writev(void *bs, int64_t sector_num, int nb_sector) "bs %p sector_num %"PRId64" nb_sectors %d"
 bdrv_co_io(int is_write, void *acb) "is_write %d acb %p"
@@ -88,8 +89,8 @@ balloon_event(void *opaque, unsigned long addr) "opaque %p addr %lu"
 # hw/apic.c
 apic_local_deliver(int vector, uint32_t lvt) "vector %d delivery mode %d"
 apic_deliver_irq(uint8_t dest, uint8_t dest_mode, uint8_t delivery_mode, uint8_t vector_num, uint8_t trigger_mode) "dest %d dest_mode %d delivery_mode %d vector %d trigger_mode %d"
-cpu_set_apic_base(uint64_t val) "%016"PRIx64""
-cpu_get_apic_base(uint64_t val) "%016"PRIx64""
+cpu_set_apic_base(uint64_t val) "%016"PRIx64
+cpu_get_apic_base(uint64_t val) "%016"PRIx64
 apic_mem_readl(uint64_t addr, uint32_t val)  "%"PRIx64" = %08x"
 apic_mem_writel(uint64_t addr, uint32_t val) "%"PRIx64" = %08x"
 # coalescing
@@ -169,21 +170,21 @@ slavio_led_mem_readw(uint32_t ret) "Read diagnostic LED %04x"
 # hw/slavio_timer.c
 slavio_timer_get_out(uint64_t limit, uint32_t counthigh, uint32_t count) "limit %"PRIx64" count %x%08x"
 slavio_timer_irq(uint32_t counthigh, uint32_t count) "callback: count %x%08x"
-slavio_timer_mem_readl_invalid(uint64_t addr) "invalid read address %"PRIx64""
+slavio_timer_mem_readl_invalid(uint64_t addr) "invalid read address %"PRIx64
 slavio_timer_mem_readl(uint64_t addr, uint32_t ret) "read %"PRIx64" = %08x"
 slavio_timer_mem_writel(uint64_t addr, uint32_t val) "write %"PRIx64" = %08x"
-slavio_timer_mem_writel_limit(unsigned int timer_index, uint64_t count) "processor %d user timer set to %016"PRIx64""
+slavio_timer_mem_writel_limit(unsigned int timer_index, uint64_t count) "processor %d user timer set to %016"PRIx64
 slavio_timer_mem_writel_counter_invalid(void) "not user timer"
 slavio_timer_mem_writel_status_start(unsigned int timer_index) "processor %d user timer started"
 slavio_timer_mem_writel_status_stop(unsigned int timer_index) "processor %d user timer stopped"
 slavio_timer_mem_writel_mode_user(unsigned int timer_index) "processor %d changed from counter to user timer"
 slavio_timer_mem_writel_mode_counter(unsigned int timer_index) "processor %d changed from user timer to counter"
 slavio_timer_mem_writel_mode_invalid(void) "not system timer"
-slavio_timer_mem_writel_invalid(uint64_t addr) "invalid write address %"PRIx64""
+slavio_timer_mem_writel_invalid(uint64_t addr) "invalid write address %"PRIx64
 
 # hw/sparc32_dma.c
-ledma_memory_read(uint64_t addr) "DMA read addr 0x%"PRIx64""
-ledma_memory_write(uint64_t addr) "DMA write addr 0x%"PRIx64""
+ledma_memory_read(uint64_t addr) "DMA read addr 0x%"PRIx64
+ledma_memory_write(uint64_t addr) "DMA write addr 0x%"PRIx64
 sparc32_dma_set_irq_raise(void) "Raise IRQ"
 sparc32_dma_set_irq_lower(void) "Lower IRQ"
 espdma_memory_read(uint32_t addr) "DMA read addr 0x%08x"
@@ -202,12 +203,18 @@ sun4m_cpu_set_irq_lower(int level) "Lower CPU IRQ %d"
 # hw/sun4m_iommu.c
 sun4m_iommu_mem_readl(uint64_t addr, uint32_t ret) "read reg[%"PRIx64"] = %x"
 sun4m_iommu_mem_writel(uint64_t addr, uint32_t val) "write reg[%"PRIx64"] = %x"
-sun4m_iommu_mem_writel_ctrl(uint64_t iostart) "iostart = %"PRIx64""
+sun4m_iommu_mem_writel_ctrl(uint64_t iostart) "iostart = %"PRIx64
 sun4m_iommu_mem_writel_tlbflush(uint32_t val) "tlb flush %x"
 sun4m_iommu_mem_writel_pgflush(uint32_t val) "page flush %x"
 sun4m_iommu_page_get_flags(uint64_t pa, uint64_t iopte, uint32_t ret) "get flags addr %"PRIx64" => pte %"PRIx64", *pte = %x"
 sun4m_iommu_translate_pa(uint64_t addr, uint64_t pa, uint32_t iopte) "xlate dva %"PRIx64" => pa %"PRIx64" iopte = %x"
-sun4m_iommu_bad_addr(uint64_t addr) "bad addr %"PRIx64""
+sun4m_iommu_bad_addr(uint64_t addr) "bad addr %"PRIx64
+
+# hw/usb-bus.c
+usb_port_claim(int bus, const char *port) "bus %d, port %s"
+usb_port_attach(int bus, const char *port) "bus %d, port %s"
+usb_port_detach(int bus, const char *port) "bus %d, port %s"
+usb_port_release(int bus, const char *port) "bus %d, port %s"
 
 # hw/usb-ehci.c
 usb_ehci_reset(void) "=== RESET ==="
@@ -223,6 +230,7 @@ usb_ehci_qtd_ptrs(void *q, uint32_t addr, uint32_t nxt, uint32_t altnext) "q %p 
 usb_ehci_qtd_fields(uint32_t addr, int tbytes, int cpage, int cerr, int pid) "QTD @ %08x - tbytes %d, cpage %d, cerr %d, pid %d"
 usb_ehci_qtd_bits(uint32_t addr, int ioc, int active, int halt, int babble, int xacterr) "QTD @ %08x - ioc %d, active %d, halt %d, babble %d, xacterr %d"
 usb_ehci_itd(uint32_t addr, uint32_t nxt, uint32_t mplen, uint32_t mult, uint32_t ep, uint32_t devaddr) "ITD @ %08x: next %08x - mplen %d, mult %d, ep %d, dev %d"
+usb_ehci_sitd(uint32_t addr, uint32_t nxt, uint32_t active) "ITD @ %08x: next %08x - active %d"
 usb_ehci_port_attach(uint32_t port, const char *device) "attach port #%d - %s"
 usb_ehci_port_detach(uint32_t port) "detach port #%d"
 usb_ehci_port_reset(uint32_t port, int enable) "reset port #%d - %d"
@@ -240,13 +248,38 @@ usb_set_config(int addr, int config, int ret) "dev %d, config %d, ret %d"
 usb_clear_device_feature(int addr, int feature, int ret) "dev %d, feature %d, ret %d"
 usb_set_device_feature(int addr, int feature, int ret) "dev %d, feature %d, ret %d"
 
+# usb-linux.c
+usb_host_open_started(int bus, int addr) "dev %d:%d"
+usb_host_open_success(int bus, int addr) "dev %d:%d"
+usb_host_open_failure(int bus, int addr) "dev %d:%d"
+usb_host_disconnect(int bus, int addr) "dev %d:%d"
+usb_host_close(int bus, int addr) "dev %d:%d"
+usb_host_set_address(int bus, int addr, int config) "dev %d:%d, address %d"
+usb_host_set_config(int bus, int addr, int config) "dev %d:%d, config %d"
+usb_host_set_interface(int bus, int addr, int iterface, int alt) "dev %d:%d, interface %d, alt %d"
+usb_host_claim_interfaces(int bus, int addr, int config, int nif) "dev %d:%d, config %d, nif %d"
+usb_host_release_interfaces(int bus, int addr) "dev %d:%d"
+usb_host_req_control(int bus, int addr, int req, int value, int index) "dev %d:%d, req 0x%x, value %d, index %d"
+usb_host_req_data(int bus, int addr, int in, int ep, int size) "dev %d:%d, in %d, ep %d, size %d"
+usb_host_req_complete(int bus, int addr, int status) "dev %d:%d, status %d"
+usb_host_urb_submit(int bus, int addr, void *aurb, int length, int more) "dev %d:%d, aurb %p, length %d, more %d"
+usb_host_urb_complete(int bus, int addr, void *aurb, int status, int length, int more) "dev %d:%d, aurb %p, status %d, length %d, more %d"
+usb_host_ep_set_halt(int bus, int addr, int ep) "dev %d:%d, ep %d"
+usb_host_ep_clear_halt(int bus, int addr, int ep) "dev %d:%d, ep %d"
+usb_host_ep_start_iso(int bus, int addr, int ep) "dev %d:%d, ep %d"
+usb_host_ep_stop_iso(int bus, int addr, int ep) "dev %d:%d, ep %d"
+usb_host_reset(int bus, int addr) "dev %d:%d"
+usb_host_auto_scan_enabled(void)
+usb_host_auto_scan_disabled(void)
+usb_host_claim_port(int bus, int hub, int port) "bus %d, hub addr %d, port %d"
+
 # hw/scsi-bus.c
 scsi_req_alloc(int target, int lun, int tag) "target %d lun %d tag %d"
 scsi_req_data(int target, int lun, int tag, int len) "target %d lun %d tag %d len %d"
 scsi_req_dequeue(int target, int lun, int tag) "target %d lun %d tag %d"
 scsi_req_continue(int target, int lun, int tag) "target %d lun %d tag %d"
 scsi_req_parsed(int target, int lun, int tag, int cmd, int mode, int xfer) "target %d lun %d tag %d command %d dir %d length %d"
-scsi_req_parsed_lba(int target, int lun, int tag, int cmd, uint64_t lba) "target %d lun %d tag %d command %d lba %"PRIu64""
+scsi_req_parsed_lba(int target, int lun, int tag, int cmd, uint64_t lba) "target %d lun %d tag %d command %d lba %"PRIu64
 scsi_req_parse_bad(int target, int lun, int tag, int cmd) "target %d lun %d tag %d command %d"
 scsi_req_build_sense(int target, int lun, int tag, int key, int asc, int ascq) "target %d lun %d tag %d key %#02x asc %#02x ascq %#02x"
 scsi_report_luns(int target, int lun, int tag) "target %d lun %d tag %d"
@@ -274,11 +307,11 @@ qed_start_need_check_timer(void *s) "s %p"
 qed_cancel_need_check_timer(void *s) "s %p"
 qed_aio_complete(void *s, void *acb, int ret) "s %p acb %p ret %d"
 qed_aio_setup(void *s, void *acb, int64_t sector_num, int nb_sectors, void *opaque, int is_write) "s %p acb %p sector_num %"PRId64" nb_sectors %d opaque %p is_write %d"
-qed_aio_next_io(void *s, void *acb, int ret, uint64_t cur_pos) "s %p acb %p ret %d cur_pos %"PRIu64""
+qed_aio_next_io(void *s, void *acb, int ret, uint64_t cur_pos) "s %p acb %p ret %d cur_pos %"PRIu64
 qed_aio_read_data(void *s, void *acb, int ret, uint64_t offset, size_t len) "s %p acb %p ret %d offset %"PRIu64" len %zu"
 qed_aio_write_data(void *s, void *acb, int ret, uint64_t offset, size_t len) "s %p acb %p ret %d offset %"PRIu64" len %zu"
-qed_aio_write_prefill(void *s, void *acb, uint64_t start, size_t len, uint64_t offset) "s %p acb %p start %"PRIu64" len %zu offset %"PRIu64""
-qed_aio_write_postfill(void *s, void *acb, uint64_t start, size_t len, uint64_t offset) "s %p acb %p start %"PRIu64" len %zu offset %"PRIu64""
+qed_aio_write_prefill(void *s, void *acb, uint64_t start, size_t len, uint64_t offset) "s %p acb %p start %"PRIu64" len %zu offset %"PRIu64
+qed_aio_write_postfill(void *s, void *acb, uint64_t start, size_t len, uint64_t offset) "s %p acb %p start %"PRIu64" len %zu offset %"PRIu64
 qed_aio_write_main(void *s, void *acb, int ret, uint64_t offset, size_t len) "s %p acb %p ret %d offset %"PRIu64" len %zu"
 
 # hw/g364fb.c
@@ -295,10 +328,10 @@ grlib_gptimer_readl(int id, uint64_t addr, uint32_t val) "timer:%d addr 0x%"PRIx
 grlib_gptimer_writel(int id, uint64_t addr, uint32_t val) "timer:%d addr 0x%"PRIx64" 0x%x"
 
 # hw/grlib_irqmp.c
-grlib_irqmp_check_irqs(uint32_t pend, uint32_t force, uint32_t mask, uint32_t lvl1, uint32_t lvl2) "pend:0x%04x force:0x%04x mask:0x%04x lvl1:0x%04x lvl0:0x%04x\n"
+grlib_irqmp_check_irqs(uint32_t pend, uint32_t force, uint32_t mask, uint32_t lvl1, uint32_t lvl2) "pend:0x%04x force:0x%04x mask:0x%04x lvl1:0x%04x lvl0:0x%04x"
 grlib_irqmp_ack(int intno) "interrupt:%d"
 grlib_irqmp_set_irq(int irq) "Raise CPU IRQ %d"
-grlib_irqmp_readl_unknown(uint64_t addr) "addr 0x%"PRIx64""
+grlib_irqmp_readl_unknown(uint64_t addr) "addr 0x%"PRIx64
 grlib_irqmp_writel_unknown(uint64_t addr, uint32_t value) "addr 0x%"PRIx64" value 0x%x"
 
 # hw/grlib_apbuart.c
@@ -418,15 +451,22 @@ milkymist_uart_pulse_irq_tx(void) "Pulse IRQ TX"
 milkymist_vgafb_memory_read(uint32_t addr, uint32_t value) "addr %08x value %08x"
 milkymist_vgafb_memory_write(uint32_t addr, uint32_t value) "addr %08x value %08x"
 
+# hw/mipsnet.c
+mipsnet_send(uint32_t size) "sending len=%u"
+mipsnet_receive(uint32_t size) "receiving len=%u"
+mipsnet_read(uint64_t addr, uint32_t val) "read addr=0x%" PRIx64 " val=0x%x"
+mipsnet_write(uint64_t addr, uint64_t val) "write addr=0x%" PRIx64 " val=0x%" PRIx64 ""
+mipsnet_irq(uint32_t isr, uint32_t intctl) "set irq to %d (%02x)"
+
 # xen-all.c
 xen_ram_alloc(unsigned long ram_addr, unsigned long size) "requested: %#lx, size %#lx"
 xen_client_set_memory(uint64_t start_addr, unsigned long size, unsigned long phys_offset, bool log_dirty) "%#"PRIx64" size %#lx, offset %#lx, log_dirty %i"
 
 # xen-mapcache.c
-xen_map_cache(uint64_t phys_addr) "want %#"PRIx64""
-xen_remap_bucket(uint64_t index) "index %#"PRIx64""
+xen_map_cache(uint64_t phys_addr) "want %#"PRIx64
+xen_remap_bucket(uint64_t index) "index %#"PRIx64
 xen_map_cache_return(void* ptr) "%p"
-xen_map_block(uint64_t phys_addr, uint64_t size) "%#"PRIx64", size %#"PRIx64""
+xen_map_block(uint64_t phys_addr, uint64_t size) "%#"PRIx64", size %#"PRIx64
 xen_unmap_block(void* addr, unsigned long size) "%p, size %#lx"
 
 # exec.c

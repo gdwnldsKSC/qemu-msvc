@@ -1603,8 +1603,8 @@ static int qemu_savevm_state(Monitor *mon, QEMUFile *f)
     int saved_vm_running;
     int ret;
 
-    saved_vm_running = vm_running;
-    vm_stop(VMSTOP_SAVEVM);
+    saved_vm_running = runstate_is_running();
+    vm_stop(RSTATE_SAVEVM);
 
     if (qemu_savevm_state_blocked(mon)) {
         ret = -EINVAL;
@@ -1915,7 +1915,7 @@ void do_savevm(Monitor *mon, const QDict *qdict)
     bs = NULL;
     while ((bs = bdrv_next(bs))) {
 
-        if (bdrv_is_removable(bs) || bdrv_is_read_only(bs)) {
+        if (!bdrv_is_inserted(bs) || bdrv_is_read_only(bs)) {
             continue;
         }
 
@@ -1932,8 +1932,8 @@ void do_savevm(Monitor *mon, const QDict *qdict)
         return;
     }
 
-    saved_vm_running = vm_running;
-    vm_stop(VMSTOP_SAVEVM);
+    saved_vm_running = runstate_is_running();
+    vm_stop(RSTATE_SAVEVM);
 
     memset(sn, 0, sizeof(*sn));
 
@@ -2035,7 +2035,7 @@ int load_vmstate(const char *name)
     bs = NULL;
     while ((bs = bdrv_next(bs))) {
 
-        if (bdrv_is_removable(bs) || bdrv_is_read_only(bs)) {
+        if (!bdrv_is_inserted(bs) || bdrv_is_read_only(bs)) {
             continue;
         }
 

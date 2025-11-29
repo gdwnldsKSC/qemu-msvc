@@ -260,9 +260,7 @@ typedef struct {
 #ifndef _MSC_VER
     uint8_t mem[PCI_MEM_SIZE] __attribute__((aligned(8)));;
 #else
-#pragma pack(push, 8)
-	uint8_t mem[PCI_MEM_SIZE];
-#pragma pack(pop)
+	__declspec(align(8)) uint8_t mem[PCI_MEM_SIZE];
 #endif
 
     /* Configuration bytes. */
