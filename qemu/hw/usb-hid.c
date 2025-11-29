@@ -465,7 +465,11 @@ static int usb_hid_handle_data(USBDevice *dev, USBPacket *p)
 {
     USBHIDState *us = DO_UPCAST(USBHIDState, dev, dev);
     HIDState *hs = &us->hid;
-    uint8_t buf[sizeof(p->iov.size)];
+#ifndef _MSC_VER
+    uint8_t buf[p->iov.size];
+#else
+	uint8_t* buf = g_malloc(p->iov.size);
+#endif
     int ret = 0;
 
     switch (p->pid) {
@@ -474,6 +478,9 @@ static int usb_hid_handle_data(USBDevice *dev, USBPacket *p)
             int64_t curtime = qemu_get_clock_ns(vm_clock);
             if (!hid_has_events(hs) &&
                 (!hs->idle || hs->next_idle_clock - curtime > 0)) {
+#ifdef _MSC_VER
+				g_free(buf);
+#endif
                 return USB_RET_NAK;
             }
             hid_set_next_idle(hs, curtime);
@@ -493,6 +500,9 @@ static int usb_hid_handle_data(USBDevice *dev, USBPacket *p)
         ret = USB_RET_STALL;
         break;
     }
+#ifdef _MSC_VER
+	g_free(buf);
+#endif
     return ret;
 }
 
@@ -527,10 +537,21 @@ static int usb_keyboard_initfn(USBDevice *dev)
     return usb_hid_initfn(dev, HID_KEYBOARD);
 }
 
+static int usb_ptr_post_load(void *opaque, int version_id)
+{
+    USBHIDState *s = opaque;
+
+    if (s->dev.remote_wakeup) {
+        hid_pointer_activate(&s->hid);
+    }
+    return 0;
+}
+
 static const VMStateDescription vmstate_usb_ptr = {
     .name = "usb-ptr",
     .version_id = 1,
     .minimum_version_id = 1,
+    .post_load = usb_ptr_post_load,
     .fields = (VMStateField []) {
         VMSTATE_USB_DEVICE(dev, USBHIDState),
         VMSTATE_HID_POINTER_DEVICE(hid, USBHIDState),

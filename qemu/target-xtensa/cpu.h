@@ -113,6 +113,9 @@ enum {
     BR = 4,
     LITBASE = 5,
     SCOMPARE1 = 12,
+    ACCLO = 16,
+    ACCHI = 17,
+    MR = 32,
     WINDOW_BASE = 72,
     WINDOW_START = 73,
     PTEVADDR = 83,
@@ -313,6 +316,7 @@ void check_interrupts(CPUXtensaState *s);
 void xtensa_irq_init(CPUState *env);
 void xtensa_advance_ccount(CPUState *env, uint32_t d);
 void xtensa_timer_irq(CPUState *env, uint32_t id, uint32_t active);
+void xtensa_rearm_ccompare_timer(CPUState *env);
 int cpu_xtensa_signal_handler(int host_signum, void *pinfo, void *puc);
 void xtensa_cpu_list(FILE *f, fprintf_function cpu_fprintf);
 void xtensa_sync_window_from_phys(CPUState *env);

@@ -123,7 +123,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\glib\include;$(SolutionDir)third_party\glib\include\glib-2.0;$(SolutionDir)third_party\glib\lib\glib-2.0\include;.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\third_party\SDL-1.2-main\include;$(SolutionDir)\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)qemu\qapi;$(SolutionDir)third_party\glib\include;$(SolutionDir)third_party\glib\include\glib-2.0;$(SolutionDir)third_party\glib\lib\glib-2.0\include;.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\third_party\SDL-1.2-main\include;$(SolutionDir)\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;NEED_CPU_H;__i386__;TARGET_I386;CONFIG_SOFTMMU;DATA_BITS=32;TARGET_PHYS_ADDR_BITS=32;DATA_SIZE=4;WIN32_AIO;HAS_AUDIO;CONFIG_PCSPK;CONFIG_CS4231A;CONFIG_ADLIB;CONFIG_GUS;CONFIG_AC97;CONFIG_ES1370;CONFIG_YMF262;HAS_AUDIO_CHOICE;CONFIG_VNC_THREAD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -376,6 +376,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="qemu\gdbstub.c" />
+    <ClCompile Include="qemu\hmp.c" />
     <ClCompile Include="qemu\hw\9pfs\virtio-9p-debug.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -670,24 +671,14 @@
     </ClCompile>
     <ClCompile Include="qemu\oslib-win32.c" />
     <ClCompile Include="qemu\pflib.c" />
-    <ClCompile Include="qemu\qapi\qapi-dealloc-visitor.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="qemu\qapi\qapi-visit-core.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="qemu\qapi\qmp-dispatch.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="qemu\qapi\qmp-input-visitor.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="qemu\qapi\qmp-output-visitor.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="qemu\qapi\qmp-registry.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="qemu\qapi-types.c" />
+    <ClCompile Include="qemu\qapi-visit.c" />
+    <ClCompile Include="qemu\qapi\qapi-dealloc-visitor.c" />
+    <ClCompile Include="qemu\qapi\qapi-visit-core.c" />
+    <ClCompile Include="qemu\qapi\qmp-dispatch.c" />
+    <ClCompile Include="qemu\qapi\qmp-input-visitor.c" />
+    <ClCompile Include="qemu\qapi\qmp-output-visitor.c" />
+    <ClCompile Include="qemu\qapi\qmp-registry.c" />
     <ClCompile Include="qemu\qbool.c" />
     <ClCompile Include="qemu\qdict.c" />
     <ClCompile Include="qemu\qemu-config.c" />
@@ -723,6 +714,8 @@
     <ClCompile Include="qemu\qint.c" />
     <ClCompile Include="qemu\qjson.c" />
     <ClCompile Include="qemu\qlist.c" />
+    <ClCompile Include="qemu\qmp-marshal.c" />
+    <ClCompile Include="qemu\qmp.c" />
     <ClCompile Include="qemu\qstring.c" />
     <ClCompile Include="qemu\rwhandler.c" />
     <ClCompile Include="qemu\slirp\arp_table.c" />
@@ -2100,11 +2093,13 @@
     <ClInclude Include="qemu\exec-memory.h" />
     <ClInclude Include="qemu\fsdev\file-op-9p.h" />
     <ClInclude Include="qemu\fsdev\qemu-fsdev.h" />
+    <ClInclude Include="qemu\hmp.h" />
     <ClInclude Include="qemu\hw\9p.h" />
     <ClInclude Include="qemu\hw\9pfs\virtio-9p-debug.h" />
     <ClInclude Include="qemu\hw\9pfs\virtio-9p-xattr.h" />
     <ClInclude Include="qemu\hw\9pfs\virtio-9p.h" />
     <ClInclude Include="qemu\hw\acpi.h" />
+    <ClInclude Include="qemu\hw\adb.h" />
     <ClInclude Include="qemu\hw\apb_pci.h" />
     <ClInclude Include="qemu\hw\apic.h" />
     <ClInclude Include="qemu\hw\apm.h" />
@@ -2186,24 +2181,14 @@
     <ClInclude Include="qemu\net\vde.h" />
     <ClInclude Include="qemu\notify.h" />
     <ClInclude Include="qemu\pflib.h" />
-    <ClInclude Include="qemu\qapi\qapi-dealloc-visitor.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="qemu\qapi\qapi-types-core.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="qemu\qapi\qapi-visit-core.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="qemu\qapi\qmp-core.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="qemu\qapi\qmp-input-visitor.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="qemu\qapi\qmp-output-visitor.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="qemu\qapi-types.h" />
+    <ClInclude Include="qemu\qapi-visit.h" />
+    <ClInclude Include="qemu\qapi\qapi-dealloc-visitor.h" />
+    <ClInclude Include="qemu\qapi\qapi-types-core.h" />
+    <ClInclude Include="qemu\qapi\qapi-visit-core.h" />
+    <ClInclude Include="qemu\qapi\qmp-core.h" />
+    <ClInclude Include="qemu\qapi\qmp-input-visitor.h" />
+    <ClInclude Include="qemu\qapi\qmp-output-visitor.h" />
     <ClInclude Include="qemu\qbool.h" />
     <ClInclude Include="qemu\qdict.h" />
     <ClInclude Include="qemu\qemu-barrier.h" />
@@ -2227,6 +2212,7 @@
     <ClInclude Include="qemu\qint.h" />
     <ClInclude Include="qemu\qjson.h" />
     <ClInclude Include="qemu\qlist.h" />
+    <ClInclude Include="qemu\qmp-commands-old.h" />
     <ClInclude Include="qemu\qmp-commands.h" />
     <ClInclude Include="qemu\qobject.h" />
     <ClInclude Include="qemu\qstring.h" />

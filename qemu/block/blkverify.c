@@ -201,7 +201,12 @@ static int sortelem_cmp_src_index(const void *a, const void *b)
 static void blkverify_iovec_clone(QEMUIOVector *dest, const QEMUIOVector *src,
                                   void *buf)
 {
-    IOVectorSortElem sortelems[sizeof(src->niov)];
+#ifndef _MSC_VER
+    IOVectorSortElem sortelems[src->niov];
+#else
+    IOVectorSortElem* sortelems = g_malloc(src->niov);
+#endif
+
     void *last_end;
     int i;
 
@@ -233,6 +238,10 @@ static void blkverify_iovec_clone(QEMUIOVector *dest, const QEMUIOVector *src,
     for (i = 0; i < src->niov; i++) {
         qemu_iovec_add(dest, sortelems[i].dest_base, src->iov[i].iov_len);
     }
+
+#ifdef _MSC_VER
+	g_free(sortelems);
+#endif
 }
 
 static BlkverifyAIOCB *blkverify_aio_get(BlockDriverState *bs, bool is_write,

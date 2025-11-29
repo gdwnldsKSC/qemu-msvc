@@ -182,14 +182,25 @@ With all this, in the 'debug' configuration add this to the command line argumen
 of the qemu-system-i386 project to reproduce the 'test' environment or the paths of your choosing now 
 that we can specify arbitrary paths. 
 
-From a bash shell (or WSL) run  
+From a bash shell (I use WSL for simplicity)  
+Note: Python scripts currently require Python 2.x to run correctly.  
+Note: trace-events requires modification currently, in function  
+usb_host_set_interface(  modify interface to something else, such as intrface,  
+exact modification doesn't matter. Just the first one in the function prototype  
+This is due to a windows.h/msvc define somewhere.  
+
+run:  
 ./scripts/hxtool -h < qemu-options.hx > qemu-options.def  
-./scripts/hxtool -h < qemu-monitor.hx > qemu-monitor.h  
-./scripts/xtool -h < hmp-commands.hx > hmp-commands.hx  
+./scripts/hxtool -h < qemu-monitor.hx > qemu-monitor.h   
 ./scripts/hxtool -h < hmp-commands.hx > hmp-commands.h  
 ./scritps/hxtool -h < qemu-img-cmds.hx > qemu-img-cmds.h  
+./scripts/hxtool -h < qmp-commands.hx > qmp-commands-old.h  
+./scripts/hxtool -q < qmp-commands.hx > qmp-commands.txt  
 ./scritps/tracetool --nop -c < trace-events > trace.c   
 ./scripts/tracetool --nop -h < trace-events > trace.h  
+python ./scripts/qapi-types.py -o . < qapi-schema.json  
+python ./scripts/qapi-visit.py -o . < qapi-schema.json  
+python ./scripts/qapi-commands.py -o . < qapi-schema.json  
 
 Rebaselined on upstream vl.c which now (as of a few iterations ago) uses that  
 header instead of declaring all the enum and help files in source to allow them   

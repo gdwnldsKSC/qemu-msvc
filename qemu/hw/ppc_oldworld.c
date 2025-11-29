@@ -26,6 +26,7 @@
 #include "hw.h"
 #include "ppc.h"
 #include "ppc_mac.h"
+#include "adb.h"
 #include "mac_dbdma.h"
 #include "nvram.h"
 #include "pc.h"
@@ -237,7 +238,7 @@ static void ppc_heathrow_init (ram_addr_t ram_size,
                                get_system_io());
     pci_vga_init(pci_bus);
 
-    escc_mem = escc_init(0x80013000, pic[0x0f], pic[0x10], serial_hds[0],
+    escc_mem = escc_init(0, pic[0x0f], pic[0x10], serial_hds[0],
                                serial_hds[1], ESCC_CLOCK, 4);
     memory_region_init_alias(escc_bar, "escc-bar",
                              escc_mem, 0, memory_region_size(escc_mem));

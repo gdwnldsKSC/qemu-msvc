@@ -15,10 +15,10 @@
 
 SerialState *serial_init(int base, qemu_irq irq, int baudbase,
                          CharDriverState *chr);
-SerialState *serial_mm_init (target_phys_addr_t base, int it_shift,
-                             qemu_irq irq, int baudbase,
-                             CharDriverState *chr, int ioregister,
-                             int be);
+SerialState *serial_mm_init(MemoryRegion *address_space,
+                            target_phys_addr_t base, int it_shift,
+                            qemu_irq irq, int baudbase,
+                            CharDriverState *chr, enum device_endian);
 static inline bool serial_isa_init(int index, CharDriverState *chr)
 {
     ISADevice *dev;

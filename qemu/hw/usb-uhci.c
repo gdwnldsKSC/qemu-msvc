@@ -351,7 +351,7 @@ static void uhci_reset(void *opaque)
         port = &s->ports[i];
         port->ctrl = 0x0080;
         if (port->port.dev && port->port.dev->attached) {
-            usb_attach(&port->port);
+            usb_reset(&port->port);
         }
     }
 

@@ -85,6 +85,10 @@ static inline void trace_virtio_console_chr_event(unsigned int port, int event)
 {
 }
 
+static inline void trace_bdrv_open_common(void *bs, const char *filename, int flags, const char *format_name)
+{
+}
+
 static inline void trace_multiwrite_cb(void *mcb, int ret)
 {
 }
@@ -125,7 +129,7 @@ static inline void trace_bdrv_co_writev(void *bs, int64_t sector_num, int nb_sec
 {
 }
 
-static inline void trace_bdrv_co_io(int is_write, void *acb)
+static inline void trace_bdrv_co_io_em(void *bs, int64_t sector_num, int nb_sectors, int is_write, void *acb)
 {
 }
 
@@ -725,7 +729,7 @@ static inline void trace_usb_host_set_config(int bus, int addr, int config)
 {
 }
 
-static inline void trace_usb_host_set_interface(int bus, int addr, int iterface, int alt)
+static inline void trace_usb_host_set_interface(int bus, int addr, int intrface, int alt)
 {
 }
 
@@ -1277,11 +1281,11 @@ static inline void trace_milkymist_uart_memory_write(uint32_t addr, uint32_t val
 {
 }
 
-static inline void trace_milkymist_uart_pulse_irq_rx(void)
+static inline void trace_milkymist_uart_raise_irq(void)
 {
 }
 
-static inline void trace_milkymist_uart_pulse_irq_tx(void)
+static inline void trace_milkymist_uart_lower_irq(void)
 {
 }
 
@@ -1434,6 +1438,130 @@ static inline void trace_escc_kbd_command(int val)
 }
 
 static inline void trace_escc_sunmouse_event(int dx, int dy, int buttons_state)
+{
+}
+
+static inline void trace_esp_raise_irq(void)
+{
+}
+
+static inline void trace_esp_lower_irq(void)
+{
+}
+
+static inline void trace_esp_dma_enable(void)
+{
+}
+
+static inline void trace_esp_dma_disable(void)
+{
+}
+
+static inline void trace_esp_get_cmd(uint32_t dmalen, int target)
+{
+}
+
+static inline void trace_esp_do_busid_cmd(uint8_t busid)
+{
+}
+
+static inline void trace_esp_handle_satn_stop(uint32_t cmdlen)
+{
+}
+
+static inline void trace_esp_write_response(uint32_t status)
+{
+}
+
+static inline void trace_esp_do_dma(uint32_t cmdlen, uint32_t len)
+{
+}
+
+static inline void trace_esp_command_complete(void)
+{
+}
+
+static inline void trace_esp_command_complete_unexpected(void)
+{
+}
+
+static inline void trace_esp_command_complete_fail(void)
+{
+}
+
+static inline void trace_esp_transfer_data(uint32_t dma_left, int32_t ti_size)
+{
+}
+
+static inline void trace_esp_handle_ti(uint32_t minlen)
+{
+}
+
+static inline void trace_esp_handle_ti_cmd(uint32_t cmdlen)
+{
+}
+
+static inline void trace_esp_mem_readb(uint32_t saddr, uint8_t reg)
+{
+}
+
+static inline void trace_esp_mem_writeb(uint32_t saddr, uint8_t reg, uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_nop(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_flush(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_reset(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_bus_reset(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_iccs(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_msgacc(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_pad(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_satn(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_sel(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_selatn(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_selatns(uint32_t val)
+{
+}
+
+static inline void trace_esp_mem_writeb_cmd_ensel(uint32_t val)
+{
+}
+
+static inline void trace_handle_qmp_command(void *mon, const char *cmd_name)
+{
+}
+
+static inline void trace_monitor_protocol_emitter(void *mon)
 {
 }
 
