@@ -94,10 +94,7 @@
 {
 .name       = "cpu",
 .args_type  = "index:i",
-.params     = "index",
-.help       = "set the default CPU",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_cpu_set,
+.mhandler.cmd_new = qmp_marshal_input_cpu,
 },
 
 
@@ -181,7 +178,8 @@
 .params     = "protocol hostname port tls-port cert-subject",
 .help       = "send migration info to spice/vnc client",
 .user_print = monitor_user_noop,
-.mhandler.cmd_new = client_migrate_info,
+.mhandler.cmd_async = client_migrate_info,
+.flags      = MONITOR_CMD_ASYNC,
 },
 
 
@@ -346,8 +344,32 @@
 },
 
 
+{
+.name       = "query-block",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_query_block,
+},
 
 
+{
+.name       = "query-blockstats",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_query_blockstats,
+},
+
+
+{
+.name       = "query-cpus",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_query_cpus,
+},
+
+
+{
+.name       = "query-pci",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_query_pci,
+},
 
 
 {
@@ -364,7 +386,27 @@
 },
 
 
+{
+.name       = "query-mice",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_query_mice,
+},
 
+
+{
+.name       = "query-vnc",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_query_vnc,
+},
+
+
+#if defined(CONFIG_SPICE)
+{
+.name       = "query-spice",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_query_spice,
+},
+#endif
 
 
 {
@@ -381,4 +423,15 @@
 },
 
 
+{
+.name       = "query-migrate",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_query_migrate,
+},
 
+
+{
+.name       = "query-balloon",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_query_balloon,
+},

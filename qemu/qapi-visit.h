@@ -42,4 +42,60 @@ void visit_type_ChardevInfoList(Visitor *m, ChardevInfoList ** obj, const char *
 void visit_type_CommandInfo(Visitor *m, CommandInfo ** obj, const char *name, Error **errp);
 void visit_type_CommandInfoList(Visitor *m, CommandInfoList ** obj, const char *name, Error **errp);
 
+void visit_type_MigrationStats(Visitor *m, MigrationStats ** obj, const char *name, Error **errp);
+void visit_type_MigrationStatsList(Visitor *m, MigrationStatsList ** obj, const char *name, Error **errp);
+
+void visit_type_MigrationInfo(Visitor *m, MigrationInfo ** obj, const char *name, Error **errp);
+void visit_type_MigrationInfoList(Visitor *m, MigrationInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_MouseInfo(Visitor *m, MouseInfo ** obj, const char *name, Error **errp);
+void visit_type_MouseInfoList(Visitor *m, MouseInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_CpuInfo(Visitor *m, CpuInfo ** obj, const char *name, Error **errp);
+void visit_type_CpuInfoList(Visitor *m, CpuInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_BlockDeviceInfo(Visitor *m, BlockDeviceInfo ** obj, const char *name, Error **errp);
+void visit_type_BlockDeviceInfoList(Visitor *m, BlockDeviceInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_BlockDeviceIoStatus(Visitor *m, BlockDeviceIoStatus * obj, const char *name, Error **errp);
+
+void visit_type_BlockInfo(Visitor *m, BlockInfo ** obj, const char *name, Error **errp);
+void visit_type_BlockInfoList(Visitor *m, BlockInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_BlockDeviceStats(Visitor *m, BlockDeviceStats ** obj, const char *name, Error **errp);
+void visit_type_BlockDeviceStatsList(Visitor *m, BlockDeviceStatsList ** obj, const char *name, Error **errp);
+
+void visit_type_BlockStats(Visitor *m, BlockStats ** obj, const char *name, Error **errp);
+void visit_type_BlockStatsList(Visitor *m, BlockStatsList ** obj, const char *name, Error **errp);
+
+void visit_type_VncClientInfo(Visitor *m, VncClientInfo ** obj, const char *name, Error **errp);
+void visit_type_VncClientInfoList(Visitor *m, VncClientInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_VncInfo(Visitor *m, VncInfo ** obj, const char *name, Error **errp);
+void visit_type_VncInfoList(Visitor *m, VncInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_SpiceChannel(Visitor *m, SpiceChannel ** obj, const char *name, Error **errp);
+void visit_type_SpiceChannelList(Visitor *m, SpiceChannelList ** obj, const char *name, Error **errp);
+
+void visit_type_SpiceInfo(Visitor *m, SpiceInfo ** obj, const char *name, Error **errp);
+void visit_type_SpiceInfoList(Visitor *m, SpiceInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_BalloonInfo(Visitor *m, BalloonInfo ** obj, const char *name, Error **errp);
+void visit_type_BalloonInfoList(Visitor *m, BalloonInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_PciMemoryRange(Visitor *m, PciMemoryRange ** obj, const char *name, Error **errp);
+void visit_type_PciMemoryRangeList(Visitor *m, PciMemoryRangeList ** obj, const char *name, Error **errp);
+
+void visit_type_PciMemoryRegion(Visitor *m, PciMemoryRegion ** obj, const char *name, Error **errp);
+void visit_type_PciMemoryRegionList(Visitor *m, PciMemoryRegionList ** obj, const char *name, Error **errp);
+
+void visit_type_PciBridgeInfo(Visitor *m, PciBridgeInfo ** obj, const char *name, Error **errp);
+void visit_type_PciBridgeInfoList(Visitor *m, PciBridgeInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_PciDeviceInfo(Visitor *m, PciDeviceInfo ** obj, const char *name, Error **errp);
+void visit_type_PciDeviceInfoList(Visitor *m, PciDeviceInfoList ** obj, const char *name, Error **errp);
+
+void visit_type_PciInfo(Visitor *m, PciInfo ** obj, const char *name, Error **errp);
+void visit_type_PciInfoList(Visitor *m, PciInfoList ** obj, const char *name, Error **errp);
+
 #endif

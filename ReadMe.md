@@ -193,10 +193,10 @@ run:
 ./scripts/hxtool -h < qemu-options.hx > qemu-options.def  
 ./scripts/hxtool -h < qemu-monitor.hx > qemu-monitor.h   
 ./scripts/hxtool -h < hmp-commands.hx > hmp-commands.h  
-./scritps/hxtool -h < qemu-img-cmds.hx > qemu-img-cmds.h  
+./scripts/hxtool -h < qemu-img-cmds.hx > qemu-img-cmds.h  
 ./scripts/hxtool -h < qmp-commands.hx > qmp-commands-old.h  
 ./scripts/hxtool -q < qmp-commands.hx > qmp-commands.txt  
-./scritps/tracetool --nop -c < trace-events > trace.c   
+./scripts/tracetool --nop -c < trace-events > trace.c   
 ./scripts/tracetool --nop -h < trace-events > trace.h  
 python ./scripts/qapi-types.py -o . < qapi-schema.json  
 python ./scripts/qapi-visit.py -o . < qapi-schema.json  

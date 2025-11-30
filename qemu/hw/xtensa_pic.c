@@ -26,18 +26,8 @@
  */
 
 #include "hw.h"
-#include "pc.h"
 #include "qemu-log.h"
 #include "qemu-timer.h"
-
-/* Stub functions for hardware that doesn't exist.  */
-void pic_info(Monitor *mon)
-{
-}
-
-void irq_info(Monitor *mon)
-{
-}
 
 void xtensa_advance_ccount(CPUState *env, uint32_t d)
 {
@@ -155,5 +145,17 @@ void xtensa_irq_init(CPUState *env)
             env->config->nccompare > 0) {
         env->ccompare_timer =
             qemu_new_timer_ns(vm_clock, &xtensa_ccompare_cb, env);
+    }
+}
+
+void *xtensa_get_extint(CPUState *env, unsigned extint)
+{
+    if (extint < env->config->nextint) {
+        unsigned irq = env->config->extint[extint];
+        return env->irq_inputs[irq];
+    } else {
+        qemu_log("%s: trying to acquire invalid external interrupt %d\n",
+                __func__, extint);
+        return NULL;
     }
 }

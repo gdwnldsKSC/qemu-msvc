@@ -305,8 +305,7 @@
 .args_type  = "index:i",
 .params     = "index",
 .help       = "set the default CPU",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_cpu_set,
+.mhandler.cmd = hmp_cpu,
 },
 
 
@@ -449,7 +448,8 @@
 .params     = "protocol hostname port tls-port cert-subject",
 .help       = "send migration info to spice/vnc client",
 .user_print = monitor_user_noop,
-.mhandler.cmd_new = client_migrate_info,
+.mhandler.cmd_async = client_migrate_info,
+.flags      = MONITOR_CMD_ASYNC,
 },
 
 

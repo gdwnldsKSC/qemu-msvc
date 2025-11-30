@@ -325,6 +325,7 @@ static void print_mapping(const struct mapping_t* mapping);
 /* here begins the real VVFAT driver */
 
 typedef struct BDRVVVFATState {
+    CoMutex lock;
     BlockDriverState* bs; /* pointer to parent */
     unsigned int first_sectors_number; /* 1 for a single partition, 0x40 for a disk with partition table */
     unsigned char first_sectors[0x40*0x200];
@@ -1073,6 +1074,7 @@ DLOG(if (stderr == NULL) {
 	bs->heads = bs->cyls = bs->secs = 0;
 
     //    assert(is_consistent(s));
+    qemu_co_mutex_init(&s->lock);
     return 0;
 }
 
@@ -1287,6 +1289,17 @@ DLOG(fprintf(stderr, "sector %d not allocated\n", (int)sector_num));
     return 0;
 }
 
+static coroutine_fn int vvfat_co_read(BlockDriverState *bs, int64_t sector_num,
+                                      uint8_t *buf, int nb_sectors)
+{
+    int ret;
+    BDRVVVFATState *s = bs->opaque;
+    qemu_co_mutex_lock(&s->lock);
+    ret = vvfat_read(bs, sector_num, buf, nb_sectors);
+    qemu_co_mutex_unlock(&s->lock);
+    return ret;
+}
+
 /* LATER TODO: statify all functions */
 
 /*
@@ -1491,7 +1504,7 @@ static inline uint32_t modified_fat_get(BDRVVVFATState* s,
         uint16_t* entry=((uint16_t*)s->fat2)+cluster;
         return le16_to_cpu(*entry);
     } else {
-        const uint8_t* x= (char*)s->fat2+cluster*3/2;
+        const uint8_t* x=(char *)s->fat2+cluster*3/2;
         return ((x[0]|(x[1]<<8))>>(cluster&1?4:0))&0x0fff;
     }
 }
@@ -2722,6 +2735,17 @@ DLOG(checkpoint());
     return 0;
 }
 
+static coroutine_fn int vvfat_co_write(BlockDriverState *bs, int64_t sector_num,
+                                       const uint8_t *buf, int nb_sectors)
+{
+    int ret;
+    BDRVVVFATState *s = bs->opaque;
+    qemu_co_mutex_lock(&s->lock);
+    ret = vvfat_write(bs, sector_num, buf, nb_sectors);
+    qemu_co_mutex_unlock(&s->lock);
+    return ret;
+}
+
 static int vvfat_is_allocated(BlockDriverState *bs,
 	int64_t sector_num, int nb_sectors, int* n)
 {
@@ -2811,8 +2835,8 @@ static BlockDriver bdrv_vvfat = {
     .format_name	= "vvfat",
     .instance_size	= sizeof(BDRVVVFATState),
     .bdrv_file_open	= vvfat_open,
-    .bdrv_read		= vvfat_read,
-    .bdrv_write		= vvfat_write,
+    .bdrv_read          = vvfat_co_read,
+    .bdrv_write         = vvfat_co_write,
     .bdrv_close		= vvfat_close,
     .bdrv_is_allocated	= vvfat_is_allocated,
     .protocol_name	= "fat",

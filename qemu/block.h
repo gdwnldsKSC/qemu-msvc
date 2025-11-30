@@ -77,11 +77,6 @@ typedef enum {
     BDRV_ACTION_REPORT, BDRV_ACTION_IGNORE, BDRV_ACTION_STOP
 } BlockMonEventAction;
 
-typedef enum {
-    BDRV_IOS_INVAL, BDRV_IOS_OK, BDRV_IOS_FAILED, BDRV_IOS_ENOSPC,
-    BDRV_IOS_MAX
-} BlockIOStatus;
-
 void bdrv_iostatus_enable(BlockDriverState *bs);
 void bdrv_iostatus_reset(BlockDriverState *bs);
 void bdrv_iostatus_disable(BlockDriverState *bs);
@@ -166,6 +161,9 @@ BlockDriverAIOCB *bdrv_aio_writev(BlockDriverState *bs, int64_t sector_num,
                                   BlockDriverCompletionFunc *cb, void *opaque);
 BlockDriverAIOCB *bdrv_aio_flush(BlockDriverState *bs,
                                  BlockDriverCompletionFunc *cb, void *opaque);
+BlockDriverAIOCB *bdrv_aio_discard(BlockDriverState *bs,
+                                   int64_t sector_num, int nb_sectors,
+                                   BlockDriverCompletionFunc *cb, void *opaque);
 void bdrv_aio_cancel(BlockDriverAIOCB *acb);
 
 typedef struct BlockRequest {
@@ -191,10 +189,12 @@ BlockDriverAIOCB *bdrv_aio_ioctl(BlockDriverState *bs,
 
 /* Ensure contents are flushed to disk.  */
 int bdrv_flush(BlockDriverState *bs);
+int coroutine_fn bdrv_co_flush(BlockDriverState *bs);
 void bdrv_flush_all(void);
 void bdrv_close_all(void);
 
 int bdrv_discard(BlockDriverState *bs, int64_t sector_num, int nb_sectors);
+int bdrv_co_discard(BlockDriverState *bs, int64_t sector_num, int nb_sectors);
 int bdrv_has_zero_init(BlockDriverState *bs);
 int bdrv_is_allocated(BlockDriverState *bs, int64_t sector_num, int nb_sectors,
                       int *pnum);

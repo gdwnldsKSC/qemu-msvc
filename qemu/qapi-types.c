@@ -35,6 +35,13 @@ const char *RunState_lookup[] = {
     NULL,
 };
 
+const char *BlockDeviceIoStatus_lookup[] = {
+    "ok",
+    "failed",
+    "nospace",
+    NULL,
+};
+
 void qapi_free_NameInfoList(NameInfoList * obj)
 {
     QapiDeallocVisitor *md;
@@ -242,6 +249,546 @@ void qapi_free_CommandInfo(CommandInfo * obj)
     md = qapi_dealloc_visitor_new();
     v = qapi_dealloc_get_visitor(md);
     visit_type_CommandInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_MigrationStatsList(MigrationStatsList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_MigrationStatsList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_MigrationStats(MigrationStats * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_MigrationStats(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_MigrationInfoList(MigrationInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_MigrationInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_MigrationInfo(MigrationInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_MigrationInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_MouseInfoList(MouseInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_MouseInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_MouseInfo(MouseInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_MouseInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_CpuInfoList(CpuInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_CpuInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_CpuInfo(CpuInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_CpuInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BlockDeviceInfoList(BlockDeviceInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockDeviceInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BlockDeviceInfo(BlockDeviceInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockDeviceInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BlockInfoList(BlockInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BlockInfo(BlockInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BlockDeviceStatsList(BlockDeviceStatsList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockDeviceStatsList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BlockDeviceStats(BlockDeviceStats * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockDeviceStats(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BlockStatsList(BlockStatsList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockStatsList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BlockStats(BlockStats * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockStats(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_VncClientInfoList(VncClientInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_VncClientInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_VncClientInfo(VncClientInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_VncClientInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_VncInfoList(VncInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_VncInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_VncInfo(VncInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_VncInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_SpiceChannelList(SpiceChannelList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_SpiceChannelList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_SpiceChannel(SpiceChannel * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_SpiceChannel(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_SpiceInfoList(SpiceInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_SpiceInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_SpiceInfo(SpiceInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_SpiceInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BalloonInfoList(BalloonInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BalloonInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BalloonInfo(BalloonInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BalloonInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciMemoryRangeList(PciMemoryRangeList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciMemoryRangeList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciMemoryRange(PciMemoryRange * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciMemoryRange(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciMemoryRegionList(PciMemoryRegionList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciMemoryRegionList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciMemoryRegion(PciMemoryRegion * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciMemoryRegion(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciBridgeInfoList(PciBridgeInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciBridgeInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciBridgeInfo(PciBridgeInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciBridgeInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciDeviceInfoList(PciDeviceInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciDeviceInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciDeviceInfo(PciDeviceInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciDeviceInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciInfoList(PciInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_PciInfo(PciInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciInfo(v, &obj, NULL, NULL);
     qapi_dealloc_visitor_cleanup(md);
 }
 

@@ -377,9 +377,6 @@
     </ClCompile>
     <ClCompile Include="qemu\gdbstub.c" />
     <ClCompile Include="qemu\hmp.c" />
-    <ClCompile Include="qemu\hw\9pfs\virtio-9p-debug.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="qemu\hw\9pfs\virtio-9p-device.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -627,6 +624,7 @@
     <ClCompile Include="qemu\json-parser.c" />
     <ClCompile Include="qemu\json-streamer.c" />
     <ClCompile Include="qemu\kvm-stub.c" />
+    <ClCompile Include="qemu\main-loop.c" />
     <ClCompile Include="qemu\memory.c" />
     <ClCompile Include="qemu\microblaze-dis.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2095,7 +2093,6 @@
     <ClInclude Include="qemu\fsdev\qemu-fsdev.h" />
     <ClInclude Include="qemu\hmp.h" />
     <ClInclude Include="qemu\hw\9p.h" />
-    <ClInclude Include="qemu\hw\9pfs\virtio-9p-debug.h" />
     <ClInclude Include="qemu\hw\9pfs\virtio-9p-xattr.h" />
     <ClInclude Include="qemu\hw\9pfs\virtio-9p.h" />
     <ClInclude Include="qemu\hw\acpi.h" />
@@ -2136,6 +2133,7 @@
     <ClInclude Include="qemu\hw\pci_ids.h" />
     <ClInclude Include="qemu\hw\pci_internals.h" />
     <ClInclude Include="qemu\hw\pcnet.h" />
+    <ClInclude Include="qemu\hw\pl041.h" />
     <ClInclude Include="qemu\hw\pm_smbus.h" />
     <ClInclude Include="qemu\hw\poison.h" />
     <ClInclude Include="qemu\hw\prep_pci.h" />
@@ -2167,6 +2165,7 @@
     <ClInclude Include="qemu\json-lexer.h" />
     <ClInclude Include="qemu\json-parser.h" />
     <ClInclude Include="qemu\json-streamer.h" />
+    <ClInclude Include="qemu\main-loop.h" />
     <ClInclude Include="qemu\memory.h" />
     <ClInclude Include="qemu\module.h" />
     <ClInclude Include="qemu\monitor.h" />

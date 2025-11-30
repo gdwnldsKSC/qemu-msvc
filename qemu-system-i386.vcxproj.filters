@@ -1773,9 +1773,6 @@
     <ClCompile Include="qemu\hw\9pfs\virtio-9p.c">
       <Filter>qemu\hw\9pfs</Filter>
     </ClCompile>
-    <ClCompile Include="qemu\hw\9pfs\virtio-9p-debug.c">
-      <Filter>qemu\hw\9pfs</Filter>
-    </ClCompile>
     <ClCompile Include="qemu\hw\9pfs\virtio-9p-local.c">
       <Filter>qemu\hw\9pfs</Filter>
     </ClCompile>
@@ -1921,6 +1918,9 @@
       <Filter>qemu\src</Filter>
     </ClCompile>
     <ClCompile Include="qemu\qmp-marshal.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\main-loop.c">
       <Filter>qemu\src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2879,9 +2879,6 @@
     <ClInclude Include="qemu\hw\9pfs\virtio-9p.h">
       <Filter>qemu\hw\9pfs</Filter>
     </ClInclude>
-    <ClInclude Include="qemu\hw\9pfs\virtio-9p-debug.h">
-      <Filter>qemu\hw\9pfs</Filter>
-    </ClInclude>
     <ClInclude Include="qemu\hw\9pfs\virtio-9p-xattr.h">
       <Filter>qemu\hw\9pfs</Filter>
     </ClInclude>
@@ -2960,8 +2957,14 @@
     <ClInclude Include="qemu\qapi-visit.h">
       <Filter>qemu\inc</Filter>
     </ClInclude>
-    <ClInclude Include="qemu\qmp-commands-old.h">
+    <ClInclude Include="qemu\main-loop.h">
       <Filter>qemu\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\hw\pl041.h">
+      <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qmp-commands-old.h">
+      <Filter>resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

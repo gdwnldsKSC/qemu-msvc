@@ -26,10 +26,22 @@ StatusInfo * qmp_query_status(Error **errp);
 UuidInfo * qmp_query_uuid(Error **errp);
 ChardevInfoList * qmp_query_chardev(Error **errp);
 CommandInfoList * qmp_query_commands(Error **errp);
+MigrationInfo * qmp_query_migrate(Error **errp);
+MouseInfoList * qmp_query_mice(Error **errp);
+CpuInfoList * qmp_query_cpus(Error **errp);
+BlockInfoList * qmp_query_block(Error **errp);
+BlockStatsList * qmp_query_blockstats(Error **errp);
+VncInfo * qmp_query_vnc(Error **errp);
+SpiceInfo * qmp_query_spice(Error **errp);
+BalloonInfo * qmp_query_balloon(Error **errp);
+PciInfoList * qmp_query_pci(Error **errp);
 void qmp_quit(Error **errp);
 void qmp_stop(Error **errp);
 void qmp_system_reset(Error **errp);
 void qmp_system_powerdown(Error **errp);
+void qmp_cpu(int64_t index, Error **errp);
+
+
 
 void qmp_marshal_input_quit(QDict* args, QObject** ret, Error** errp);
 void qmp_marshal_input_stop(QDict* args, QObject** ret, Error** errp);
@@ -41,11 +53,14 @@ void qmp_marshal_input_query_kvm(QDict* args, QObject** ret, Error** errp);
 void qmp_marshal_input_query_status(QDict* args, QObject** ret, Error** errp);
 void qmp_marshal_input_query_name(QDict* args, QObject** ret, Error** errp);
 void qmp_marshal_input_query_uuid(QDict* args, QObject** ret, Error** errp);
-
-#include "qemu-common.h"
-#include "monitor.h"
-#include "qdict.h"
-#include "qemu-objects.h"
-#include "qmp-commands.h"
+void qmp_marshal_input_cpu(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_query_migrate(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_query_mice(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_query_cpus(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_query_block(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_query_blockstats(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_query_vnc(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_query_balloon(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_query_pci(QDict* args, QObject** ret, Error** errp);
 
 #endif

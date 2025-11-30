@@ -388,7 +388,6 @@ static int bdrv_qed_open(BlockDriverState *bs, int flags)
     if (ret < 0) {
         return ret;
     }
-    ret = 0; /* ret should always be 0 or -errno */
     qed_header_le_to_cpu(&le_header, &s->header);
 
     if (s->header.magic != QED_MAGIC) {
@@ -531,11 +530,6 @@ static void bdrv_qed_close(BlockDriverState *bs)
 
     qed_free_l2_cache(&s->l2_cache);
     qemu_vfree(s->l1_table);
-}
-
-static int bdrv_qed_flush(BlockDriverState *bs)
-{
-    return bdrv_flush(bs->file);
 }
 
 static int qed_create(const char *filename, uint32_t cluster_size,
@@ -1425,8 +1419,10 @@ static int bdrv_qed_change_backing_file(BlockDriverState *bs,
     memcpy(buffer, &le_header, sizeof(le_header));
     buffer_len = sizeof(le_header);
 
-    memcpy((char *)buffer + buffer_len, backing_file, backing_file_len);
-    buffer_len += backing_file_len;
+    if (backing_file) {
+        memcpy((char *)buffer + buffer_len, backing_file, backing_file_len);
+        buffer_len += backing_file_len;
+    }
 
     /* Write new header */
     ret = bdrv_pwrite_sync(bs->file, 0, buffer, buffer_len);
@@ -1479,7 +1475,6 @@ static BlockDriver bdrv_qed = {
     .bdrv_open                = bdrv_qed_open,
     .bdrv_close               = bdrv_qed_close,
     .bdrv_create              = bdrv_qed_create,
-    .bdrv_flush               = bdrv_qed_flush,
     .bdrv_is_allocated        = bdrv_qed_is_allocated,
     .bdrv_make_empty          = bdrv_qed_make_empty,
     .bdrv_aio_readv           = bdrv_qed_aio_readv,

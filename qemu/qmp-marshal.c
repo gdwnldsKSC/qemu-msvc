@@ -49,7 +49,9 @@ void qmp_marshal_input_query_name(QDict *args, QObject **ret, Error **errp)
         goto out;
     }
     retval = qmp_query_name(errp);
-    qmp_marshal_output_query_name(retval, ret, errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_name(retval, ret, errp);
+    }
 
 out:
 
@@ -81,7 +83,9 @@ void qmp_marshal_input_query_version(QDict *args, QObject **ret, Error **errp)
         goto out;
     }
     retval = qmp_query_version(errp);
-    qmp_marshal_output_query_version(retval, ret, errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_version(retval, ret, errp);
+    }
 
 out:
 
@@ -113,7 +117,9 @@ void qmp_marshal_input_query_kvm(QDict *args, QObject **ret, Error **errp)
         goto out;
     }
     retval = qmp_query_kvm(errp);
-    qmp_marshal_output_query_kvm(retval, ret, errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_kvm(retval, ret, errp);
+    }
 
 out:
 
@@ -145,7 +151,9 @@ void qmp_marshal_input_query_status(QDict *args, QObject **ret, Error **errp)
         goto out;
     }
     retval = qmp_query_status(errp);
-    qmp_marshal_output_query_status(retval, ret, errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_status(retval, ret, errp);
+    }
 
 out:
 
@@ -177,7 +185,9 @@ void qmp_marshal_input_query_uuid(QDict *args, QObject **ret, Error **errp)
         goto out;
     }
     retval = qmp_query_uuid(errp);
-    qmp_marshal_output_query_uuid(retval, ret, errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_uuid(retval, ret, errp);
+    }
 
 out:
 
@@ -209,7 +219,9 @@ void qmp_marshal_input_query_chardev(QDict *args, QObject **ret, Error **errp)
         goto out;
     }
     retval = qmp_query_chardev(errp);
-    qmp_marshal_output_query_chardev(retval, ret, errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_chardev(retval, ret, errp);
+    }
 
 out:
 
@@ -241,7 +253,315 @@ void qmp_marshal_input_query_commands(QDict *args, QObject **ret, Error **errp)
         goto out;
     }
     retval = qmp_query_commands(errp);
-    qmp_marshal_output_query_commands(retval, ret, errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_commands(retval, ret, errp);
+    }
+
+out:
+
+    return;
+}
+
+void qmp_marshal_output_query_migrate(MigrationInfo * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_MigrationInfo(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_MigrationInfo(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_query_migrate(QDict *args, QObject **ret, Error **errp)
+{
+    MigrationInfo * retval = NULL;
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_query_migrate(errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_migrate(retval, ret, errp);
+    }
+
+out:
+
+    return;
+}
+
+void qmp_marshal_output_query_mice(MouseInfoList * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_MouseInfoList(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_MouseInfoList(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_query_mice(QDict *args, QObject **ret, Error **errp)
+{
+    MouseInfoList * retval = NULL;
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_query_mice(errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_mice(retval, ret, errp);
+    }
+
+out:
+
+    return;
+}
+
+void qmp_marshal_output_query_cpus(CpuInfoList * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_CpuInfoList(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_CpuInfoList(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_query_cpus(QDict *args, QObject **ret, Error **errp)
+{
+    CpuInfoList * retval = NULL;
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_query_cpus(errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_cpus(retval, ret, errp);
+    }
+
+out:
+
+    return;
+}
+
+void qmp_marshal_output_query_block(BlockInfoList * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_BlockInfoList(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockInfoList(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_query_block(QDict *args, QObject **ret, Error **errp)
+{
+    BlockInfoList * retval = NULL;
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_query_block(errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_block(retval, ret, errp);
+    }
+
+out:
+
+    return;
+}
+
+void qmp_marshal_output_query_blockstats(BlockStatsList * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_BlockStatsList(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockStatsList(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_query_blockstats(QDict *args, QObject **ret, Error **errp)
+{
+    BlockStatsList * retval = NULL;
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_query_blockstats(errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_blockstats(retval, ret, errp);
+    }
+
+out:
+
+    return;
+}
+
+void qmp_marshal_output_query_vnc(VncInfo * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_VncInfo(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_VncInfo(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_query_vnc(QDict *args, QObject **ret, Error **errp)
+{
+    VncInfo * retval = NULL;
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_query_vnc(errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_vnc(retval, ret, errp);
+    }
+
+out:
+
+    return;
+}
+
+void qmp_marshal_output_query_spice(SpiceInfo * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_SpiceInfo(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_SpiceInfo(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_query_spice(QDict *args, QObject **ret, Error **errp)
+{
+    SpiceInfo * retval = NULL;
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_query_spice(errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_spice(retval, ret, errp);
+    }
+
+out:
+
+    return;
+}
+
+void qmp_marshal_output_query_balloon(BalloonInfo * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_BalloonInfo(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BalloonInfo(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_query_balloon(QDict *args, QObject **ret, Error **errp)
+{
+    BalloonInfo * retval = NULL;
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_query_balloon(errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_balloon(retval, ret, errp);
+    }
+
+out:
+
+    return;
+}
+
+void qmp_marshal_output_query_pci(PciInfoList * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_PciInfoList(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_PciInfoList(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_query_pci(QDict *args, QObject **ret, Error **errp)
+{
+    PciInfoList * retval = NULL;
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_query_pci(errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_query_pci(retval, ret, errp);
+    }
 
 out:
 
@@ -300,6 +620,31 @@ out:
     return;
 }
 
+void qmp_marshal_input_cpu(QDict *args, QObject **ret, Error **errp)
+{
+    QmpInputVisitor *mi;
+    QapiDeallocVisitor *md;
+    Visitor *v;
+    int64_t index;
+
+    mi = qmp_input_visitor_new(QOBJECT(args));
+    v = qmp_input_get_visitor(mi);
+    visit_type_int(v, &index, "index", errp);
+    qmp_input_visitor_cleanup(mi);
+
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    qmp_cpu(index, errp);
+
+out:
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_int(v, &index, "index", errp);
+    qapi_dealloc_visitor_cleanup(md);
+    return;
+}
+
 static void qmp_init_marshal(void)
 {
     qmp_register_command("query-name", qmp_marshal_input_query_name);
@@ -309,10 +654,20 @@ static void qmp_init_marshal(void)
     qmp_register_command("query-uuid", qmp_marshal_input_query_uuid);
     qmp_register_command("query-chardev", qmp_marshal_input_query_chardev);
     qmp_register_command("query-commands", qmp_marshal_input_query_commands);
+    qmp_register_command("query-migrate", qmp_marshal_input_query_migrate);
+    qmp_register_command("query-mice", qmp_marshal_input_query_mice);
+    qmp_register_command("query-cpus", qmp_marshal_input_query_cpus);
+    qmp_register_command("query-block", qmp_marshal_input_query_block);
+    qmp_register_command("query-blockstats", qmp_marshal_input_query_blockstats);
+    qmp_register_command("query-vnc", qmp_marshal_input_query_vnc);
+    qmp_register_command("query-spice", qmp_marshal_input_query_spice);
+    qmp_register_command("query-balloon", qmp_marshal_input_query_balloon);
+    qmp_register_command("query-pci", qmp_marshal_input_query_pci);
     qmp_register_command("quit", qmp_marshal_input_quit);
     qmp_register_command("stop", qmp_marshal_input_stop);
     qmp_register_command("system_reset", qmp_marshal_input_system_reset);
     qmp_register_command("system_powerdown", qmp_marshal_input_system_powerdown);
+    qmp_register_command("cpu", qmp_marshal_input_cpu);
 }
 
 qapi_init(qmp_init_marshal);

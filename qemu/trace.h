@@ -105,6 +105,10 @@ static inline void trace_bdrv_aio_multiwrite_latefail(void *mcb, int i)
 {
 }
 
+static inline void trace_bdrv_aio_discard(void *bs, int64_t sector_num, int nb_sectors, void *opaque)
+{
+}
+
 static inline void trace_bdrv_aio_flush(void *bs, void *opaque)
 {
 }
@@ -801,6 +805,10 @@ static inline void trace_scsi_req_data(int target, int lun, int tag, int len)
 {
 }
 
+static inline void trace_scsi_req_data_canceled(int target, int lun, int tag, int len)
+{
+}
+
 static inline void trace_scsi_req_dequeue(int target, int lun, int tag)
 {
 }
@@ -1441,6 +1449,22 @@ static inline void trace_escc_sunmouse_event(int dx, int dy, int buttons_state)
 {
 }
 
+static inline void trace_iscsi_aio_write10_cb(void *iscsi, int status, void *acb, int canceled)
+{
+}
+
+static inline void trace_iscsi_aio_writev(void *iscsi, int64_t sector_num, int nb_sectors, void *opaque, void *acb)
+{
+}
+
+static inline void trace_iscsi_aio_read10_cb(void *iscsi, int status, void *acb, int canceled)
+{
+}
+
+static inline void trace_iscsi_aio_readv(void *iscsi, int64_t sector_num, int nb_sectors, void *opaque, void *acb)
+{
+}
+
 static inline void trace_esp_raise_irq(void)
 {
 }
@@ -1562,6 +1586,306 @@ static inline void trace_handle_qmp_command(void *mon, const char *cmd_name)
 }
 
 static inline void trace_monitor_protocol_emitter(void *mon)
+{
+}
+
+static inline void trace_open_eth_mii_write(unsigned idx, uint16_t v)
+{
+}
+
+static inline void trace_open_eth_mii_read(unsigned idx, uint16_t v)
+{
+}
+
+static inline void trace_open_eth_update_irq(uint32_t v)
+{
+}
+
+static inline void trace_open_eth_receive(unsigned len)
+{
+}
+
+static inline void trace_open_eth_receive_mcast(unsigned idx, uint32_t h0, uint32_t h1)
+{
+}
+
+static inline void trace_open_eth_receive_reject(void)
+{
+}
+
+static inline void trace_open_eth_receive_desc(uint32_t addr, uint32_t len_flags)
+{
+}
+
+static inline void trace_open_eth_start_xmit(uint32_t addr, unsigned len, unsigned tx_len)
+{
+}
+
+static inline void trace_open_eth_reg_read(uint32_t addr, uint32_t v)
+{
+}
+
+static inline void trace_open_eth_reg_write(uint32_t addr, uint32_t v)
+{
+}
+
+static inline void trace_open_eth_desc_read(uint32_t addr, uint32_t v)
+{
+}
+
+static inline void trace_open_eth_desc_write(uint32_t addr, uint32_t v)
+{
+}
+
+static inline void trace_v9fs_rerror(uint16_t tag, uint8_t id, int err)
+{
+}
+
+static inline void trace_v9fs_version(uint16_t tag, uint8_t id, int32_t msize, char* version)
+{
+}
+
+static inline void trace_v9fs_version_return(uint16_t tag, uint8_t id, int32_t msize, char* version)
+{
+}
+
+static inline void trace_v9fs_attach(uint16_t tag, uint8_t id, int32_t fid, int32_t afid, char* uname, char* aname)
+{
+}
+
+static inline void trace_v9fs_attach_return(uint16_t tag, uint8_t id, int8_t type, int32_t version, int64_t path)
+{
+}
+
+static inline void trace_v9fs_stat(uint16_t tag, uint8_t id, int32_t fid)
+{
+}
+
+static inline void trace_v9fs_stat_return(uint16_t tag, uint8_t id, int32_t mode, int32_t atime, int32_t mtime, int64_t length)
+{
+}
+
+static inline void trace_v9fs_getattr(uint16_t tag, uint8_t id, int32_t fid, uint64_t request_mask)
+{
+}
+
+static inline void trace_v9fs_getattr_return(uint16_t tag, uint8_t id, uint64_t result_mask, uint32_t mode, uint32_t uid, uint32_t gid)
+{
+}
+
+static inline void trace_v9fs_walk(uint16_t tag, uint8_t id, int32_t fid, int32_t newfid, uint16_t nwnames)
+{
+}
+
+static inline void trace_v9fs_walk_return(uint16_t tag, uint8_t id, uint16_t nwnames, void* qids)
+{
+}
+
+static inline void trace_v9fs_open(uint16_t tag, uint8_t id, int32_t fid, int32_t mode)
+{
+}
+
+static inline void trace_v9fs_open_return(uint16_t tag, uint8_t id, int8_t type, int32_t version, int64_t path, int iounit)
+{
+}
+
+static inline void trace_v9fs_lcreate(uint16_t tag, uint8_t id, int32_t dfid, int32_t flags, int32_t mode, uint32_t gid)
+{
+}
+
+static inline void trace_v9fs_lcreate_return(uint16_t tag, uint8_t id, int8_t type, int32_t version, int64_t path, int32_t iounit)
+{
+}
+
+static inline void trace_v9fs_fsync(uint16_t tag, uint8_t id, int32_t fid, int datasync)
+{
+}
+
+static inline void trace_v9fs_clunk(uint16_t tag, uint8_t id, int32_t fid)
+{
+}
+
+static inline void trace_v9fs_read(uint16_t tag, uint8_t id, int32_t fid, int64_t off, int32_t max_count)
+{
+}
+
+static inline void trace_v9fs_read_return(uint16_t tag, uint8_t id, int32_t count, ssize_t err)
+{
+}
+
+static inline void trace_v9fs_readdir(uint16_t tag, uint8_t id, int32_t fid, int64_t offset, int32_t max_count)
+{
+}
+
+static inline void trace_v9fs_readdir_return(uint16_t tag, uint8_t id, int32_t count, ssize_t retval)
+{
+}
+
+static inline void trace_v9fs_write(uint16_t tag, uint8_t id, int32_t fid, int64_t off, int32_t count, int cnt)
+{
+}
+
+static inline void trace_v9fs_write_return(uint16_t tag, uint8_t id, int32_t total, ssize_t err)
+{
+}
+
+static inline void trace_v9fs_create(uint16_t tag, uint8_t id, int32_t fid, char* name, int32_t perm, int8_t mode)
+{
+}
+
+static inline void trace_v9fs_create_return(uint16_t tag, uint8_t id, int8_t type, int32_t version, int64_t path, int iounit)
+{
+}
+
+static inline void trace_v9fs_symlink(uint16_t tag, uint8_t id, int32_t fid,  char* name, char* symname, uint32_t gid)
+{
+}
+
+static inline void trace_v9fs_symlink_return(uint16_t tag, uint8_t id, int8_t type, int32_t version, int64_t path)
+{
+}
+
+static inline void trace_v9fs_flush(uint16_t tag, uint8_t id, int16_t flush_tag)
+{
+}
+
+static inline void trace_v9fs_link(uint16_t tag, uint8_t id, int32_t dfid, int32_t oldfid, char* name)
+{
+}
+
+static inline void trace_v9fs_remove(uint16_t tag, uint8_t id, int32_t fid)
+{
+}
+
+static inline void trace_v9fs_wstat(uint16_t tag, uint8_t id, int32_t fid, int32_t mode, int32_t atime, int32_t mtime)
+{
+}
+
+static inline void trace_v9fs_mknod(uint16_t tag, uint8_t id, int32_t fid, int mode, int major, int minor)
+{
+}
+
+static inline void trace_v9fs_mknod_return(uint16_t tag, uint8_t id, int8_t type, int32_t version, int64_t path)
+{
+}
+
+static inline void trace_v9fs_lock(uint16_t tag, uint8_t id, int32_t fid, uint8_t type, uint64_t start, uint64_t length)
+{
+}
+
+static inline void trace_v9fs_lock_return(uint16_t tag, uint8_t id, int8_t status)
+{
+}
+
+static inline void trace_v9fs_getlock(uint16_t tag, uint8_t id, int32_t fid, uint8_t type, uint64_t start, uint64_t length)
+{
+}
+
+static inline void trace_v9fs_getlock_return(uint16_t tag, uint8_t id, uint8_t type, uint64_t start, uint64_t length, uint32_t proc_id)
+{
+}
+
+static inline void trace_v9fs_mkdir(uint16_t tag, uint8_t id, int32_t fid, char* name, int mode, uint32_t gid)
+{
+}
+
+static inline void trace_v9fs_mkdir_return(uint16_t tag, uint8_t id, int8_t type, int32_t version, int64_t path, int err)
+{
+}
+
+static inline void trace_v9fs_xattrwalk(uint16_t tag, uint8_t id, int32_t fid, int32_t newfid, char* name)
+{
+}
+
+static inline void trace_v9fs_xattrwalk_return(uint16_t tag, uint8_t id, int64_t size)
+{
+}
+
+static inline void trace_v9fs_xattrcreate(uint16_t tag, uint8_t id, int32_t fid, char* name, int64_t size, int flags)
+{
+}
+
+static inline void trace_v9fs_readlink(uint16_t tag, uint8_t id, int32_t fid)
+{
+}
+
+static inline void trace_v9fs_readlink_return(uint16_t tag, uint8_t id, char* target)
+{
+}
+
+static inline void trace_mmu_helper_dfault(uint64_t address, uint64_t context, int mmu_idx, uint32_t tl)
+{
+}
+
+static inline void trace_mmu_helper_dprot(uint64_t address, uint64_t context, int mmu_idx, uint32_t tl)
+{
+}
+
+static inline void trace_mmu_helper_dmiss(uint64_t address, uint64_t context)
+{
+}
+
+static inline void trace_mmu_helper_tfault(uint64_t address, uint64_t context)
+{
+}
+
+static inline void trace_mmu_helper_tmiss(uint64_t address, uint64_t context)
+{
+}
+
+static inline void trace_mmu_helper_get_phys_addr_code(uint32_t tl, int mmu_idx, uint64_t prim_context, uint64_t sec_context, uint64_t address)
+{
+}
+
+static inline void trace_mmu_helper_get_phys_addr_data(uint32_t tl, int mmu_idx, uint64_t prim_context, uint64_t sec_context, uint64_t address)
+{
+}
+
+static inline void trace_mmu_helper_mmu_fault(uint64_t address, uint64_t paddr, int mmu_idx, uint32_t tl, uint64_t prim_context, uint64_t sec_context)
+{
+}
+
+static inline void trace_int_helper_set_softint(uint32_t softint)
+{
+}
+
+static inline void trace_int_helper_clear_softint(uint32_t softint)
+{
+}
+
+static inline void trace_int_helper_write_softint(uint32_t softint)
+{
+}
+
+static inline void trace_int_helper_icache_freeze(void)
+{
+}
+
+static inline void trace_int_helper_dcache_freeze(void)
+{
+}
+
+static inline void trace_win_helper_gregset_error(uint32_t pstate)
+{
+}
+
+static inline void trace_win_helper_switch_pstate(uint32_t pstate_regs, uint32_t new_pstate_regs)
+{
+}
+
+static inline void trace_win_helper_no_switch_pstate(uint32_t new_pstate_regs)
+{
+}
+
+static inline void trace_win_helper_wrpil(uint32_t psrpil, uint32_t new_pil)
+{
+}
+
+static inline void trace_win_helper_done(uint32_t tl)
+{
+}
+
+static inline void trace_win_helper_retry(uint32_t tl)
 {
 }
 

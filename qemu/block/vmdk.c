@@ -94,6 +94,7 @@ typedef struct VmdkExtent {
 } VmdkExtent;
 
 typedef struct BDRVVmdkState {
+    CoMutex lock;
     int desc_offset;
     bool cid_updated;
     uint32_t parent_cid;
@@ -211,12 +212,14 @@ static void vmdk_free_last_extent(BlockDriverState *bs)
 static uint32_t vmdk_read_cid(BlockDriverState *bs, int parent)
 {
     char desc[DESC_SIZE];
-    uint32_t cid;
+    uint32_t cid = 0xffffffff;
     const char *p_name, *cid_str;
     size_t cid_str_size;
     BDRVVmdkState *s = bs->opaque;
+    int ret;
 
-    if (bdrv_pread(bs->file, s->desc_offset, desc, DESC_SIZE) != DESC_SIZE) {
+    ret = bdrv_pread(bs->file, s->desc_offset, desc, DESC_SIZE);
+    if (ret < 0) {
         return 0;
     }
 
@@ -228,6 +231,7 @@ static uint32_t vmdk_read_cid(BlockDriverState *bs, int parent)
         cid_str_size = sizeof("CID");
     }
 
+    desc[DESC_SIZE - 1] = '\0';
     p_name = strstr(desc, cid_str);
     if (p_name != NULL) {
         p_name += cid_str_size;
@@ -242,13 +246,19 @@ static int vmdk_write_cid(BlockDriverState *bs, uint32_t cid)
     char desc[DESC_SIZE], tmp_desc[DESC_SIZE];
     char *p_name, *tmp_str;
     BDRVVmdkState *s = bs->opaque;
+    int ret;
 
-    memset(desc, 0, sizeof(desc));
-    if (bdrv_pread(bs->file, s->desc_offset, desc, DESC_SIZE) != DESC_SIZE) {
-        return -EIO;
+    ret = bdrv_pread(bs->file, s->desc_offset, desc, DESC_SIZE);
+    if (ret < 0) {
+        return ret;
     }
 
+    desc[DESC_SIZE - 1] = '\0';
     tmp_str = strstr(desc, "parentCID");
+    if (tmp_str == NULL) {
+        return -EINVAL;
+    }
+
     pstrcpy(tmp_desc, sizeof(tmp_desc), tmp_str);
     p_name = strstr(desc, "CID");
     if (p_name != NULL) {
@@ -257,9 +267,11 @@ static int vmdk_write_cid(BlockDriverState *bs, uint32_t cid)
         pstrcat(desc, sizeof(desc), tmp_desc);
     }
 
-    if (bdrv_pwrite_sync(bs->file, s->desc_offset, desc, DESC_SIZE) < 0) {
-        return -EIO;
+    ret = bdrv_pwrite_sync(bs->file, s->desc_offset, desc, DESC_SIZE);
+    if (ret < 0) {
+        return ret;
     }
+
     return 0;
 }
 
@@ -287,10 +299,12 @@ static int vmdk_parent_open(BlockDriverState *bs)
     char *p_name;
     char desc[DESC_SIZE + 1];
     BDRVVmdkState *s = bs->opaque;
+    int ret;
 
     desc[DESC_SIZE] = '\0';
-    if (bdrv_pread(bs->file, s->desc_offset, desc, DESC_SIZE) != DESC_SIZE) {
-        return -1;
+    ret = bdrv_pread(bs->file, s->desc_offset, desc, DESC_SIZE);
+    if (ret < 0) {
+        return ret;
     }
 
     p_name = strstr(desc, "parentFileNameHint");
@@ -300,10 +314,10 @@ static int vmdk_parent_open(BlockDriverState *bs)
         p_name += sizeof("parentFileNameHint") + 1;
         end_name = strchr(p_name, '\"');
         if (end_name == NULL) {
-            return -1;
+            return -EINVAL;
         }
         if ((end_name - p_name) > sizeof(bs->backing_file) - 1) {
-            return -1;
+            return -EINVAL;
         }
 
         pstrcpy(bs->backing_file, end_name - p_name + 1, p_name);
@@ -626,19 +640,7 @@ static int vmdk_open_desc_file(BlockDriverState *bs, int flags,
         return -ENOTSUP;
     }
     s->desc_offset = 0;
-    ret = vmdk_parse_extents(buf, bs, bs->file->filename);
-    if (ret) {
-        vmdk_free_extents(bs);
-        return ret;
-    }
-
-    /* try to open parent images, if exist */
-    if (vmdk_parent_open(bs)) {
-        vmdk_free_extents(bs);
-        return -EINVAL;
-    }
-    s->parent_cid = vmdk_read_cid(bs, 1);
-    return 0;
+    return vmdk_parse_extents(buf, bs, bs->file->filename);
 }
 
 static int vmdk_open(BlockDriverState *bs, int flags)
@@ -648,17 +650,24 @@ static int vmdk_open(BlockDriverState *bs, int flags)
 
     if (vmdk_open_sparse(bs, bs->file, flags) == 0) {
         s->desc_offset = 0x200;
-        /* try to open parent images, if exist */
-        ret = vmdk_parent_open(bs);
-        if (ret) {
-            vmdk_free_extents(bs);
-            return ret;
-        }
-        s->parent_cid = vmdk_read_cid(bs, 1);
-        return 0;
     } else {
-        return vmdk_open_desc_file(bs, flags, 0);
+        ret = vmdk_open_desc_file(bs, flags, 0);
+        if (ret) {
+            goto fail;
+        }
     }
+    /* try to open parent images, if exist */
+    ret = vmdk_parent_open(bs);
+    if (ret) {
+        goto fail;
+    }
+    s->parent_cid = vmdk_read_cid(bs, 1);
+    qemu_co_mutex_init(&s->lock);
+    return ret;
+
+fail:
+    vmdk_free_extents(bs);
+    return ret;
 }
 
 static int get_whole_cluster(BlockDriverState *bs,
@@ -1047,6 +1056,17 @@ static int vmdk_read(BlockDriverState *bs, int64_t sector_num,
     return 0;
 }
 
+static coroutine_fn int vmdk_co_read(BlockDriverState *bs, int64_t sector_num,
+                                     uint8_t *buf, int nb_sectors)
+{
+    int ret;
+    BDRVVmdkState *s = bs->opaque;
+    qemu_co_mutex_lock(&s->lock);
+    ret = vmdk_read(bs, sector_num, buf, nb_sectors);
+    qemu_co_mutex_unlock(&s->lock);
+    return ret;
+}
+
 static int vmdk_write(BlockDriverState *bs, int64_t sector_num,
                      const uint8_t *buf, int nb_sectors)
 {
@@ -1121,11 +1141,25 @@ static int vmdk_write(BlockDriverState *bs, int64_t sector_num,
         /* update CID on the first write every time the virtual disk is
          * opened */
         if (!s->cid_updated) {
-            vmdk_write_cid(bs, time(NULL));
+            ret = vmdk_write_cid(bs, time(NULL));
+            if (ret < 0) {
+                return ret;
+            }
             s->cid_updated = true;
         }
     }
     return 0;
+}
+
+static coroutine_fn int vmdk_co_write(BlockDriverState *bs, int64_t sector_num,
+                                      const uint8_t *buf, int nb_sectors)
+{
+    int ret;
+    BDRVVmdkState *s = bs->opaque;
+    qemu_co_mutex_lock(&s->lock);
+    ret = vmdk_write(bs, sector_num, buf, nb_sectors);
+    qemu_co_mutex_unlock(&s->lock);
+    return ret;
 }
 
 
@@ -1408,7 +1442,6 @@ static int vmdk_create(const char *filename, QEMUOptionParameter *options)
             bdrv_delete(bs);
             return -EINVAL;
         }
-        filesize = bdrv_getlength(bs);
         parent_cid = vmdk_read_cid(bs, 0);
         bdrv_delete(bs);
         relative_path(parent_filename, sizeof(parent_filename),
@@ -1495,14 +1528,14 @@ static void vmdk_close(BlockDriverState *bs)
     vmdk_free_extents(bs);
 }
 
-static int vmdk_flush(BlockDriverState *bs)
+static coroutine_fn int vmdk_co_flush(BlockDriverState *bs)
 {
     int i, ret, err;
     BDRVVmdkState *s = bs->opaque;
 
-    ret = bdrv_flush(bs->file);
+    ret = bdrv_co_flush(bs->file);
     for (i = 0; i < s->num_extents; i++) {
-        err = bdrv_flush(s->extents[i].file);
+        err = bdrv_co_flush(s->extents[i].file);
         if (err < 0) {
             ret = err;
         }
@@ -1565,11 +1598,11 @@ static BlockDriver bdrv_vmdk = {
     .instance_size  = sizeof(BDRVVmdkState),
     .bdrv_probe     = vmdk_probe,
     .bdrv_open      = vmdk_open,
-    .bdrv_read      = vmdk_read,
-    .bdrv_write     = vmdk_write,
+    .bdrv_read      = vmdk_co_read,
+    .bdrv_write     = vmdk_co_write,
     .bdrv_close     = vmdk_close,
     .bdrv_create    = vmdk_create,
-    .bdrv_flush     = vmdk_flush,
+    .bdrv_co_flush  = vmdk_co_flush,
     .bdrv_is_allocated  = vmdk_is_allocated,
     .bdrv_get_allocated_file_size  = vmdk_get_allocated_file_size,
 

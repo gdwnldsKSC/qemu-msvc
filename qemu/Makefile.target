@@ -74,8 +74,15 @@ libobj-y += op_helper.o helper.o
 ifeq ($(TARGET_BASE_ARCH), i386)
 libobj-y += cpuid.o
 endif
+libobj-$(TARGET_SPARC64) += vis_helper.o
 libobj-$(CONFIG_NEED_MMU) += mmu.o
 libobj-$(TARGET_ARM) += neon_helper.o iwmmxt_helper.o
+ifeq ($(TARGET_BASE_ARCH), sparc)
+libobj-y += fop_helper.o cc_helper.o win_helper.o mmu_helper.o ldst_helper.o
+libobj-y += cpu_init.o
+endif
+libobj-$(TARGET_SPARC) += int32_helper.o
+libobj-$(TARGET_SPARC64) += int64_helper.o
 
 libobj-y += disas.o
 
@@ -91,7 +98,7 @@ tcg/tcg.o: cpu.h
 
 # HELPER_CFLAGS is used for all the code compiled with static register
 # variables
-op_helper.o user-exec.o: QEMU_CFLAGS += $(HELPER_CFLAGS)
+op_helper.o ldst_helper.o user-exec.o: QEMU_CFLAGS += $(HELPER_CFLAGS)
 
 # Note: this is a workaround. The real fix is to avoid compiling
 # cpu_signal_handler() in user-exec.c.
@@ -219,7 +226,7 @@ obj-$(CONFIG_IVSHMEM) += ivshmem.o
 
 # Hardware support
 obj-i386-y += vga.o
-obj-i386-y += mc146818rtc.o i8259.o pc.o
+obj-i386-y += mc146818rtc.o pc.o
 obj-i386-y += cirrus_vga.o sga.o apic.o ioapic.o piix_pci.o
 obj-i386-y += vmport.o
 obj-i386-y += device-hotplug.o pci-hotplug.o smbios.o wdt_ib700.o
@@ -232,7 +239,7 @@ obj-i386-$(CONFIG_SPICE) += qxl.o qxl-logger.o qxl-render.o
 obj-ppc-y = ppc.o ppc_booke.o
 obj-ppc-y += vga.o
 # PREP target
-obj-ppc-y += i8259.o mc146818rtc.o
+obj-ppc-y += mc146818rtc.o
 obj-ppc-y += ppc_prep.o
 # OldWorld PowerMac
 obj-ppc-y += ppc_oldworld.o
@@ -283,7 +290,7 @@ obj-lm32-y += framebuffer.o
 
 obj-mips-y = mips_r4k.o mips_jazz.o mips_malta.o mips_mipssim.o
 obj-mips-y += mips_addr.o mips_timer.o mips_int.o
-obj-mips-y += vga.o i8259.o
+obj-mips-y += vga.o
 obj-mips-y += jazz_led.o
 obj-mips-y += gt64xxx.o mc146818rtc.o
 obj-mips-y += cirrus_vga.o
@@ -355,6 +362,7 @@ obj-arm-y += syborg_virtio.o
 obj-arm-y += vexpress.o
 obj-arm-y += strongarm.o
 obj-arm-y += collie.o
+obj-arm-y += pl041.o lm4549.o
 
 obj-sh4-y = shix.o r2d.o sh7750.o sh7750_regnames.o tc58128.o
 obj-sh4-y += sh_timer.o sh_serial.o sh_intc.o sh_pci.o sm501.o
@@ -365,14 +373,16 @@ obj-m68k-y += m68k-semi.o dummy_m68k.o
 
 obj-s390x-y = s390-virtio-bus.o s390-virtio.o
 
-obj-alpha-y = i8259.o mc146818rtc.o
+obj-alpha-y = mc146818rtc.o
 obj-alpha-y += vga.o cirrus_vga.o
 obj-alpha-y += alpha_pci.o alpha_dp264.o alpha_typhoon.o
 
 obj-xtensa-y += xtensa_pic.o
-obj-xtensa-y += xtensa_sample.o
-obj-xtensa-y += xtensa_dc232b.o
+obj-xtensa-y += xtensa_sim.o
+obj-xtensa-y += xtensa_lx60.o
 obj-xtensa-y += xtensa-semi.o
+obj-xtensa-y += core-dc232b.o
+obj-xtensa-y += core-fsf.o
 
 main.o: QEMU_CFLAGS+=$(GPROF_CFLAGS)
 
