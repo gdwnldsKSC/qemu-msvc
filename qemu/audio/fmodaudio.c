@@ -21,18 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
- 
 #include <fmod.h>
 #include <fmod_errors.h>
 #include "qemu-common.h"
@@ -216,14 +204,8 @@ static int fmod_lock_sample (
 
         fmod_unlock_sample (sample, *p1, *p2, *blen1, *blen2);
 
-#ifndef _MSC_VER
         *p1 = NULL - 1;
         *p2 = NULL - 1;
-#else
-		*p1 = (char*)NULL - 1;
-		*p2 = (char*)NULL - 1;
-#endif
-
         *blen1 = ~0U;
         *blen2 = ~0U;
         return -1;
@@ -361,7 +343,7 @@ static void fmod_fini_out (HWVoiceOut *hw)
 
 static int fmod_init_out (HWVoiceOut *hw, struct audsettings *as)
 {
-    int bits16, mode, channel;
+    int mode, channel;
     FMODVoiceOut *fmd = (FMODVoiceOut *) hw;
     struct audsettings obt_as = *as;
 
@@ -392,7 +374,6 @@ static int fmod_init_out (HWVoiceOut *hw, struct audsettings *as)
     /* FMOD always operates on little endian frames? */
     obt_as.endianness = 0;
     audio_pcm_init_info (&hw->info, &obt_as);
-    bits16 = (mode & FSOUND_16BITS) != 0;
     hw->samples = conf.nb_samples;
     return 0;
 }
@@ -423,7 +404,7 @@ static int fmod_ctl_out (HWVoiceOut *hw, int cmd, ...)
 
 static int fmod_init_in (HWVoiceIn *hw, struct audsettings *as)
 {
-    int bits16, mode;
+    int mode;
     FMODVoiceIn *fmd = (FMODVoiceIn *) hw;
     struct audsettings obt_as = *as;
 
@@ -450,7 +431,6 @@ static int fmod_init_in (HWVoiceIn *hw, struct audsettings *as)
     /* FMOD always operates on little endian frames? */
     obt_as.endianness = 0;
     audio_pcm_init_info (&hw->info, &obt_as);
-    bits16 = (mode & FSOUND_16BITS) != 0;
     hw->samples = conf.nb_samples;
     return 0;
 }

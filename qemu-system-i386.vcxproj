@@ -372,6 +372,7 @@
     <ClCompile Include="qemu\cpus.c" />
     <ClCompile Include="qemu\cursor.c" />
     <ClCompile Include="qemu\error.c" />
+    <ClCompile Include="qemu\event_notifier.c" />
     <ClCompile Include="qemu\fsdev\qemu-fsdev.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -410,7 +411,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="qemu\hw\ds1338.c" />
-    <ClCompile Include="qemu\hw\event_notifier.c" />
     <ClCompile Include="qemu\hw\framebuffer.c" />
     <ClCompile Include="qemu\hw\grlib_apbuart.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -2088,6 +2088,7 @@
     <ClInclude Include="qemu\cpus.h" />
     <ClInclude Include="qemu\error.h" />
     <ClInclude Include="qemu\error_int.h" />
+    <ClInclude Include="qemu\event_notifier.h" />
     <ClInclude Include="qemu\exec-memory.h" />
     <ClInclude Include="qemu\fsdev\file-op-9p.h" />
     <ClInclude Include="qemu\fsdev\qemu-fsdev.h" />
@@ -2103,7 +2104,6 @@
     <ClInclude Include="qemu\hw\bitbang_i2c.h" />
     <ClInclude Include="qemu\hw\cris-boot.h" />
     <ClInclude Include="qemu\hw\elf_ops.h" />
-    <ClInclude Include="qemu\hw\event_notifier.h" />
     <ClInclude Include="qemu\hw\grlib.h" />
     <ClInclude Include="qemu\hw\hid.h" />
     <ClInclude Include="qemu\hw\ide\ahci.h" />
@@ -2159,6 +2159,7 @@
     <ClInclude Include="qemu\hw\xilinx_axidma.h" />
     <ClInclude Include="qemu\hw\xio3130_downstream.h" />
     <ClInclude Include="qemu\hw\xio3130_upstream.h" />
+    <ClInclude Include="qemu\int128.h" />
     <ClInclude Include="qemu\ioport.h" />
     <ClInclude Include="qemu\iorange.h" />
     <ClInclude Include="qemu\iov.h" />
@@ -2203,6 +2204,8 @@
     <ClInclude Include="qemu\qemu-thread-posix.h" />
     <ClInclude Include="qemu\qemu-thread-win32.h" />
     <ClInclude Include="qemu\qemu-thread.h" />
+    <ClInclude Include="qemu\qemu-tls.h" />
+    <ClInclude Include="qemu\qemu-xattr.h" />
     <ClInclude Include="qemu\qerror.h" />
     <ClInclude Include="qemu\qfloat.h" />
     <ClInclude Include="qemu\qga\guest-agent-core.h">

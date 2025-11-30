@@ -71,6 +71,12 @@
         XTENSA_OPTION_HIGH_PRIORITY_INTERRUPT) | \
     XCHAL_OPTION(XCHAL_HAVE_CCOUNT, XTENSA_OPTION_TIMER_INTERRUPT) | \
     /* Local memory, TODO */ \
+    XCHAL_OPTION(XCHAL_ICACHE_WAYS, XTENSA_OPTION_ICACHE) | \
+    XCHAL_OPTION(XCHAL_ICACHE_LINE_LOCKABLE, \
+            XTENSA_OPTION_ICACHE_INDEX_LOCK) | \
+    XCHAL_OPTION(XCHAL_DCACHE_WAYS, XTENSA_OPTION_DCACHE) | \
+    XCHAL_OPTION(XCHAL_DCACHE_LINE_LOCKABLE, \
+            XTENSA_OPTION_DCACHE_INDEX_LOCK) | \
     XCHAL_OPTION(XCHAL_UNALIGNED_LOAD_HW, XTENSA_OPTION_HW_ALIGNMENT) | \
     /* Memory protection and translation */ \
     XCHAL_OPTION(XCHAL_HAVE_MIMIC_CACHEATTR, \
@@ -250,7 +256,7 @@
         .way_size = { \
             (refill_way_size), (refill_way_size), \
             (refill_way_size), (refill_way_size), \
-            4, 2, 2, 1, 1, 1, \
+            4, (way56) ? 4 : 2, (way56) ? 8 : 2, 1, 1, 1, \
         }, \
         .varway56 = (way56), \
         .nrefillentries = (refill_way_size) * 4, \

@@ -8,6 +8,7 @@ ifeq ($(TRACE_BACKEND),dtrace)
 GENERATED_HEADERS += trace-dtrace.h
 endif
 GENERATED_HEADERS += qmp-commands.h qapi-types.h qapi-visit.h
+GENERATED_SOURCES += qmp-marshal.c qapi-types.c qapi-visit.c
 
 ifneq ($(wildcard config-host.mak),)
 # Put the all: rule here so that config-host.mak can contain dependencies.
@@ -75,7 +76,7 @@ defconfig:
 
 -include config-all-devices.mak
 
-build-all: $(DOCS) $(TOOLS) recurse-all
+build-all: $(DOCS) $(TOOLS) $(CHECKS) recurse-all
 
 config-host.h: config-host.h-timestamp
 config-host.h-timestamp: config-host.mak
@@ -167,38 +168,38 @@ check-qjson: check-qjson.o $(qobject-obj-y) $(tools-obj-y)
 test-coroutine: test-coroutine.o qemu-timer-common.o async.o $(coroutine-obj-y) $(tools-obj-y)
 
 $(qapi-obj-y): $(GENERATED_HEADERS)
-qapi-dir := qapi-generated
+qapi-dir := $(BUILD_DIR)/qapi-generated
 test-visitor.o test-qmp-commands.o qemu-ga$(EXESUF): QEMU_CFLAGS += -I $(qapi-dir)
 qemu-ga$(EXESUF): LIBS = $(LIBS_QGA)
 
-$(qapi-dir)/test-qapi-types.c: $(qapi-dir)/test-qapi-types.h
-$(qapi-dir)/test-qapi-types.h: $(SRC_PATH)/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-types.py
+$(qapi-dir)/test-qapi-types.c $(qapi-dir)/test-qapi-types.h :\
+$(SRC_PATH)/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-types.py
 	$(call quiet-command,$(PYTHON) $(SRC_PATH)/scripts/qapi-types.py -o "$(qapi-dir)" -p "test-" < $<, "  GEN   $@")
-$(qapi-dir)/test-qapi-visit.c: $(qapi-dir)/test-qapi-visit.h
-$(qapi-dir)/test-qapi-visit.h: $(SRC_PATH)/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-visit.py
+$(qapi-dir)/test-qapi-visit.c $(qapi-dir)/test-qapi-visit.h :\
+$(SRC_PATH)/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-visit.py
 	$(call quiet-command,$(PYTHON) $(SRC_PATH)/scripts/qapi-visit.py -o "$(qapi-dir)" -p "test-" < $<, "  GEN   $@")
-$(qapi-dir)/test-qmp-commands.h: $(qapi-dir)/test-qmp-marshal.c
-$(qapi-dir)/test-qmp-marshal.c: $(SRC_PATH)/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-commands.py
+$(qapi-dir)/test-qmp-commands.h $(qapi-dir)/test-qmp-marshal.c :\
+$(SRC_PATH)/qapi-schema-test.json $(SRC_PATH)/scripts/qapi-commands.py
 	    $(call quiet-command,$(PYTHON) $(SRC_PATH)/scripts/qapi-commands.py -o "$(qapi-dir)" -p "test-" < $<, "  GEN   $@")
 
-$(qapi-dir)/qga-qapi-types.c: $(qapi-dir)/qga-qapi-types.h
-$(qapi-dir)/qga-qapi-types.h: $(SRC_PATH)/qapi-schema-guest.json $(SRC_PATH)/scripts/qapi-types.py
+$(qapi-dir)/qga-qapi-types.c $(qapi-dir)/qga-qapi-types.h :\
+$(SRC_PATH)/qapi-schema-guest.json $(SRC_PATH)/scripts/qapi-types.py
 	$(call quiet-command,$(PYTHON) $(SRC_PATH)/scripts/qapi-types.py -o "$(qapi-dir)" -p "qga-" < $<, "  GEN   $@")
-$(qapi-dir)/qga-qapi-visit.c: $(qapi-dir)/qga-qapi-visit.h
-$(qapi-dir)/qga-qapi-visit.h: $(SRC_PATH)/qapi-schema-guest.json $(SRC_PATH)/scripts/qapi-visit.py
+$(qapi-dir)/qga-qapi-visit.c $(qapi-dir)/qga-qapi-visit.h :\
+$(SRC_PATH)/qapi-schema-guest.json $(SRC_PATH)/scripts/qapi-visit.py
 	$(call quiet-command,$(PYTHON) $(SRC_PATH)/scripts/qapi-visit.py -o "$(qapi-dir)" -p "qga-" < $<, "  GEN   $@")
-$(qapi-dir)/qga-qmp-commands.h: $(qapi-dir)/qga-qmp-marshal.c
-$(qapi-dir)/qga-qmp-marshal.c: $(SRC_PATH)/qapi-schema-guest.json $(SRC_PATH)/scripts/qapi-commands.py
+$(qapi-dir)/qga-qmp-commands.h $(qapi-dir)/qga-qmp-marshal.c :\
+$(SRC_PATH)/qapi-schema-guest.json $(SRC_PATH)/scripts/qapi-commands.py
 	$(call quiet-command,$(PYTHON) $(SRC_PATH)/scripts/qapi-commands.py -o "$(qapi-dir)" -p "qga-" < $<, "  GEN   $@")
 
-qapi-types.c: qapi-types.h
-qapi-types.h: $(SRC_PATH)/qapi-schema.json $(SRC_PATH)/scripts/qapi-types.py
+qapi-types.c qapi-types.h :\
+$(SRC_PATH)/qapi-schema.json $(SRC_PATH)/scripts/qapi-types.py
 	$(call quiet-command,$(PYTHON) $(SRC_PATH)/scripts/qapi-types.py -o "." < $<, "  GEN   $@")
-qapi-visit.c: qapi-visit.h
-qapi-visit.h: $(SRC_PATH)/qapi-schema.json $(SRC_PATH)/scripts/qapi-visit.py
+qapi-visit.c qapi-visit.h :\
+$(SRC_PATH)/qapi-schema.json $(SRC_PATH)/scripts/qapi-visit.py
 	$(call quiet-command,$(PYTHON) $(SRC_PATH)/scripts/qapi-visit.py -o "."  < $<, "  GEN   $@")
-qmp-commands.h: qmp-marshal.c
-qmp-marshal.c: $(SRC_PATH)/qapi-schema.json $(SRC_PATH)/scripts/qapi-commands.py
+qmp-commands.h qmp-marshal.c :\
+$(SRC_PATH)/qapi-schema.json $(SRC_PATH)/scripts/qapi-commands.py
 	$(call quiet-command,$(PYTHON) $(SRC_PATH)/scripts/qapi-commands.py -m -o "." < $<, "  GEN   $@")
 
 test-visitor.o: $(addprefix $(qapi-dir)/, test-qapi-types.c test-qapi-types.h test-qapi-visit.c test-qapi-visit.h) $(qapi-obj-y)
@@ -207,11 +208,12 @@ test-visitor: test-visitor.o $(qobject-obj-y) $(qapi-obj-y) $(tools-obj-y) $(qap
 test-qmp-commands.o: $(addprefix $(qapi-dir)/, test-qapi-types.c test-qapi-types.h test-qapi-visit.c test-qapi-visit.h test-qmp-marshal.c test-qmp-commands.h) $(qapi-obj-y)
 test-qmp-commands: test-qmp-commands.o $(qobject-obj-y) $(qapi-obj-y) $(tools-obj-y) $(qapi-dir)/test-qapi-visit.o $(qapi-dir)/test-qapi-types.o $(qapi-dir)/test-qmp-marshal.o module.o
 
-QGALIB_GEN=$(addprefix $(qapi-dir)/, qga-qapi-types.c qga-qapi-types.h qga-qapi-visit.c qga-qmp-marshal.c)
-$(QGALIB_GEN): $(GENERATED_HEADERS)
-$(qga-obj-y) qemu-ga.o: $(QGALIB_GEN)
+QGALIB_OBJ=$(addprefix $(qapi-dir)/, qga-qapi-types.o qga-qapi-visit.o qga-qmp-marshal.o)
+QGALIB_GEN=$(addprefix $(qapi-dir)/, qga-qapi-types.h qga-qapi-visit.h qga-qmp-commands.h)
+$(QGALIB_OBJ): $(QGALIB_GEN) $(GENERATED_HEADERS)
+$(qga-obj-y) qemu-ga.o: $(QGALIB_GEN) $(GENERATED_HEADERS)
 
-qemu-ga$(EXESUF): qemu-ga.o $(qga-obj-y) $(qapi-obj-y) $(tools-obj-y) $(qobject-obj-y) $(version-obj-y) $(addprefix $(qapi-dir)/, qga-qapi-visit.o qga-qapi-types.o qga-qmp-marshal.o)
+qemu-ga$(EXESUF): qemu-ga.o $(qga-obj-y) $(qapi-obj-y) $(tools-obj-y) $(qobject-obj-y) $(version-obj-y) $(QGALIB_OBJ)
 
 QEMULIBS=libhw32 libhw64 libuser libdis libdis-user
 
@@ -219,7 +221,7 @@ clean:
 # avoid old build problems by removing potentially incorrect old files
 	rm -f config.mak op-i386.h opc-i386.h gen-op-i386.h op-arm.h opc-arm.h gen-op-arm.h
 	rm -f qemu-options.def
-	rm -f *.o *.d *.a *.lo $(TOOLS) qemu-ga TAGS cscope.* *.pod *~ */*~
+	rm -f *.o *.d *.a *.lo $(TOOLS) $(CHECKS) qemu-ga TAGS cscope.* *.pod *~ */*~
 	rm -Rf .libs
 	rm -f slirp/*.o slirp/*.d audio/*.o audio/*.d block/*.o block/*.d net/*.o net/*.d fsdev/*.o fsdev/*.d ui/*.o ui/*.d qapi/*.o qapi/*.d qga/*.o qga/*.d
 	rm -f qemu-img-cmds.h
@@ -227,6 +229,7 @@ clean:
 	rm -f trace.c trace.h trace.c-timestamp trace.h-timestamp
 	rm -f trace-dtrace.dtrace trace-dtrace.dtrace-timestamp
 	rm -f trace-dtrace.h trace-dtrace.h-timestamp
+	rm -f $(GENERATED_SOURCES)
 	rm -rf $(qapi-dir)
 	$(MAKE) -C tests clean
 	for d in $(ALL_SUBDIRS) $(QEMULIBS) libcacard; do \
@@ -253,7 +256,7 @@ ar      de     en-us  fi  fr-be  hr     it  lv  nl         pl  ru     th \
 common  de-ch  es     fo  fr-ca  hu     ja  mk  nl-be      pt  sl     tr
 
 ifdef INSTALL_BLOBS
-BLOBS=bios.bin vgabios.bin vgabios-cirrus.bin \
+BLOBS=bios.bin sgabios.bin vgabios.bin vgabios-cirrus.bin \
 vgabios-stdvga.bin vgabios-vmware.bin vgabios-qxl.bin \
 ppc_rom.bin openbios-sparc32 openbios-sparc64 openbios-ppc \
 pxe-e1000.rom pxe-eepro100.rom pxe-ne2k_pci.rom \
@@ -304,6 +307,12 @@ endif
 # various test targets
 test speed: all
 	$(MAKE) -C tests $@
+
+.PHONY: check
+check: $(patsubst %,run-check-%,$(CHECKS))
+
+run-check-%: %
+	./$<
 
 .PHONY: TAGS
 TAGS:

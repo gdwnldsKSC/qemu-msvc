@@ -179,7 +179,7 @@ typedef void(__cdecl* qemu_ctor_fn)(void);
 #endif // end MSVC sections
 
 /* icount */
-void configure_icount(const char* option);
+void configure_icount(const char *option);
 extern int use_icount;
 
 /* FIXME: Remove NEED_CPU_H.  */
@@ -212,6 +212,7 @@ time_t mktimegm(struct tm *tm);
 int qemu_fls(int i);
 int qemu_fdatasync(int fd);
 int fcntl_setfl(int fd, int flag);
+int qemu_parse_fd(const char *param);
 
 /*
  * strtosz() suffixes used to specify the default treatment of an

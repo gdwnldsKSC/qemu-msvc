@@ -477,6 +477,8 @@ static void qemu_fill_buffer(QEMUFile *f)
     if (len > 0) {
         f->buf_size += len;
         f->buf_offset += len;
+    } else if (len == 0) {
+        f->last_error = -EIO;
     } else if (len != -EAGAIN)
         f->last_error = len;
 }
@@ -1250,31 +1252,6 @@ void unregister_savevm(DeviceState *dev, const char *idstr, void *opaque)
                 g_free(se->compat);
             }
             g_free(se);
-        }
-    }
-}
-
-/* mark a device as not to be migrated, that is the device should be
-   unplugged before migration */
-void register_device_unmigratable(DeviceState *dev, const char *idstr,
-                                                            void *opaque)
-{
-    SaveStateEntry *se;
-    char id[256] = "";
-
-    if (dev && dev->parent_bus && dev->parent_bus->info->get_dev_path) {
-        char *path = dev->parent_bus->info->get_dev_path(dev);
-        if (path) {
-            pstrcpy(id, sizeof(id), path);
-            pstrcat(id, sizeof(id), "/");
-            g_free(path);
-        }
-    }
-    pstrcat(id, sizeof(id), idstr);
-
-    QTAILQ_FOREACH(se, &savevm_handlers, entry) {
-        if (strcmp(se->idstr, id) == 0 && se->opaque == opaque) {
-            se->no_migrate = 1;
         }
     }
 }

@@ -22,7 +22,7 @@
 #define smp_wmb()   _ReadWriteBarrier()
 #endif
 
-#elif defined(__powerpc__)
+#elif defined(_ARCH_PPC)
 
 /*
  * We use an eieio() for a wmb() on powerpc.  This assumes we don't

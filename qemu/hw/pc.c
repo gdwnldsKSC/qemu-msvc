@@ -339,7 +339,7 @@ void pc_cmos_init(ram_addr_t ram_size, ram_addr_t above_4g_mem_size,
                   ISADevice *s)
 {
     int val, nb, nb_heads, max_track, last_sect, i;
-    FDriveType fd_type[2];
+    FDriveType fd_type[2] = { FDRIVE_DRV_NONE, FDRIVE_DRV_NONE };
     BlockDriverState *fd[MAX_FD];
     static pc_cmos_init_late_arg arg;
 
@@ -389,8 +389,6 @@ void pc_cmos_init(ram_addr_t ram_size, ram_addr_t above_4g_mem_size,
                 bdrv_get_floppy_geometry_hint(fd[i], &nb_heads, &max_track,
                                               &last_sect, FDRIVE_DRV_NONE,
                                               &fd_type[i]);
-            } else {
-                fd_type[i] = FDRIVE_DRV_NONE;
             }
         }
     }
@@ -945,7 +943,6 @@ static CPUState *pc_new_cpu(const char *cpu_model)
         exit(1);
     }
     if ((env->cpuid_features & CPUID_APIC) || smp_cpus > 1) {
-        env->cpuid_apic_id = env->cpu_index;
         env->apic_state = apic_init(env, env->cpuid_apic_id);
     }
     qemu_register_reset(pc_cpu_reset, env);
@@ -1107,15 +1104,6 @@ void pc_vga_init(PCIBus *pci_bus)
         } else {
             isa_vga_init();
         }
-    }
-
-    /*
-     * sga does not suppress normal vga output. So a machine can have both a
-     * vga card and sga manually enabled. Output will be seen on both.
-     * For nographic case, sga is enabled at all times
-     */
-    if (display_type == DT_NOGRAPHIC) {
-        isa_create_simple("sga");
     }
 }
 

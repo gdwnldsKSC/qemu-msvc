@@ -199,11 +199,10 @@ static inline int mon_print_count_get(const Monitor *mon) { return 0; }
 
 static QLIST_HEAD(mon_list, Monitor) mon_list;
 
-static const mon_cmd_t mon_cmds[100]; // must define these two due to MSVC not supporting variable length arrays 
-static const mon_cmd_t info_cmds[100];
+static mon_cmd_t mon_cmds[100]; // must define these two due to MSVC not supporting variable length arrays 
+static mon_cmd_t info_cmds[100];
 
 static const mon_cmd_t qmp_cmds[100];
-static const mon_cmd_t qmp_query_cmds[100];
 
 Monitor *cur_mon;
 Monitor *default_mon;
@@ -2592,13 +2591,14 @@ int monitor_get_fd(Monitor *mon, const char *fdname)
     return -1;
 }
 
-static const mon_cmd_t mon_cmds[] = {
+/* mon_cmds and info_cmds would be sorted at runtime */
+static mon_cmd_t mon_cmds[] = {
 #include "hmp-commands.h"
     { NULL, NULL, },
 };
 
 /* Please update hmp-commands.hx when adding or changing commands */
-static const mon_cmd_t info_cmds[] = {
+static mon_cmd_t info_cmds[] = {
     {
         .name       = "version",
         .args_type  = "",
@@ -4207,9 +4207,9 @@ static void file_completion(const char *input)
             /* stat the file to find out if it's a directory.
              * In that case add a slash to speed up typing long paths
              */
-            stat(file, &sb);
-            if(S_ISDIR(sb.st_mode))
+            if (stat(file, &sb) == 0 && S_ISDIR(sb.st_mode)) {
                 pstrcat(file, sizeof(file), "/");
+            }
             readline_add_completion(cur_mon->rs, file);
         }
     }
@@ -4833,6 +4833,42 @@ static void monitor_event(void *opaque, int event)
     }
 }
 
+static int
+compare_mon_cmd(const void *a, const void *b)
+{
+    const mon_cmd_t* ca = (const mon_cmd_t*)a;
+    const mon_cmd_t* cb = (const mon_cmd_t*)b;
+
+    /* Treat NULL names as empty strings to avoid NULL deref during sort */
+    const char* na = ca->name ? ca->name : "";
+    const char* nb = cb->name ? cb->name : "";
+    return strcmp(na, nb);
+}
+
+static void sortcmdlist(void)
+{
+    int elem_size = sizeof(mon_cmd_t);
+    int array_num = 0;
+
+    /* count actual entries until NULL terminator in fixed-size arrays */
+    while (array_num < (int)(sizeof(mon_cmds) / sizeof(mon_cmd_t)) &&
+        mon_cmds[array_num].name != NULL) {
+        array_num++;
+    }
+    if (array_num > 1) {
+        qsort((void*)mon_cmds, array_num, elem_size, compare_mon_cmd);
+    }
+
+    array_num = 0;
+    while (array_num < (int)(sizeof(info_cmds) / sizeof(mon_cmd_t)) &&
+        info_cmds[array_num].name != NULL) {
+        array_num++;
+    }
+    if (array_num > 1) {
+        qsort((void*)info_cmds, array_num, elem_size, compare_mon_cmd);
+    }
+}
+
 
 /*
  * Local variables:
@@ -4875,6 +4911,8 @@ void monitor_init(CharDriverState *chr, int flags)
     QLIST_INSERT_HEAD(&mon_list, mon, entry);
     if (!default_mon || (flags & MONITOR_IS_DEFAULT))
         default_mon = mon;
+
+    sortcmdlist();
 }
 
 static void bdrv_password_cb(Monitor *mon, const char *password, void *opaque)

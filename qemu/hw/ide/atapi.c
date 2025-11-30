@@ -516,9 +516,14 @@ static unsigned int event_status_media(IDEState *s,
 
     /* Event notification descriptor */
     event_code = MEC_NO_CHANGE;
-    if (media_status != MS_TRAY_OPEN && s->events.new_media) {
-        event_code = MEC_NEW_MEDIA;
-        s->events.new_media = false;
+    if (media_status != MS_TRAY_OPEN) {
+        if (s->events.new_media) {
+            event_code = MEC_NEW_MEDIA;
+            s->events.new_media = false;
+        } else if (s->events.eject_request) {
+            event_code = MEC_EJECT_REQUESTED;
+            s->events.eject_request = false;
+        }
     }
 
     buf[4] = event_code;
@@ -690,12 +695,7 @@ static void cmd_mode_sense(IDEState *s, uint8_t *buf)
     int action, code;
     int max_len;
 
-    if (buf[0] == GPCMD_MODE_SENSE_10) {
-        max_len = ube16_to_cpu(buf + 7);
-    } else {
-        max_len = buf[4];
-    }
-
+    max_len = ube16_to_cpu(buf + 7);
     action = buf[2] >> 6;
     code = buf[2] & 0x3f;
 
@@ -703,7 +703,7 @@ static void cmd_mode_sense(IDEState *s, uint8_t *buf)
     case 0: /* current values */
         switch(code) {
         case MODE_PAGE_R_W_ERROR: /* error recovery */
-            cpu_to_ube16(&buf[0], 16 + 6);
+            cpu_to_ube16(&buf[0], 16 - 2);
             buf[2] = 0x70;
             buf[3] = 0;
             buf[4] = 0;
@@ -722,7 +722,7 @@ static void cmd_mode_sense(IDEState *s, uint8_t *buf)
             ide_atapi_cmd_reply(s, 16, max_len);
             break;
         case MODE_PAGE_AUDIO_CTL:
-            cpu_to_ube16(&buf[0], 24 + 6);
+            cpu_to_ube16(&buf[0], 24 - 2);
             buf[2] = 0x70;
             buf[3] = 0;
             buf[4] = 0;
@@ -741,7 +741,7 @@ static void cmd_mode_sense(IDEState *s, uint8_t *buf)
             ide_atapi_cmd_reply(s, 24, max_len);
             break;
         case MODE_PAGE_CAPABILITIES:
-            cpu_to_ube16(&buf[0], 28 + 6);
+            cpu_to_ube16(&buf[0], 30 - 2);
             buf[2] = 0x70;
             buf[3] = 0;
             buf[4] = 0;
@@ -750,7 +750,7 @@ static void cmd_mode_sense(IDEState *s, uint8_t *buf)
             buf[7] = 0;
 
             buf[8] = MODE_PAGE_CAPABILITIES;
-            buf[9] = 28 - 10;
+            buf[9] = 30 - 10;
             buf[10] = 0x3b; /* read CDR/CDRW/DVDROM/DVDR/DVDRAM */
             buf[11] = 0x00;
 
@@ -772,7 +772,9 @@ static void cmd_mode_sense(IDEState *s, uint8_t *buf)
             buf[25] = 0;
             buf[26] = 0;
             buf[27] = 0;
-            ide_atapi_cmd_reply(s, 28, max_len);
+            buf[28] = 0;
+            buf[29] = 0;
+            ide_atapi_cmd_reply(s, 30, max_len);
             break;
         default:
             goto error_cmd;
@@ -1020,7 +1022,7 @@ static void cmd_read_dvd_structure(IDEState *s, uint8_t* buf)
             else
                 ide_atapi_cmd_reply(s, ret, max_len);
         }
-    }
+}
     /* TODO: BD support, fall through for now */
     else if (format == 0x80); /* TODO); AACS volume identifier */
     else if (format == 0x81); /* TODO); AACS media serial number */
@@ -1064,7 +1066,6 @@ static const struct {
     [ 0x00 ] = { cmd_test_unit_ready,               CHECK_READY },
     [ 0x03 ] = { cmd_request_sense,                 ALLOW_UA },
     [ 0x12 ] = { cmd_inquiry,                       ALLOW_UA },
-    [ 0x1a ] = { cmd_mode_sense, /* (6) */          0 },
     [ 0x1b ] = { cmd_start_stop_unit,               0 }, /* [1] */
     [ 0x1e ] = { cmd_prevent_allow_medium_removal,  0 },
     [ 0x25 ] = { cmd_read_cdvd_capacity,            CHECK_READY },

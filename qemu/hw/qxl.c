@@ -896,6 +896,20 @@ static void qxl_vga_ioport_write(void *opaque, uint32_t addr, uint32_t val)
     vga_ioport_write(opaque, addr, val);
 }
 
+static const MemoryRegionPortio qxl_vga_portio_list[] = {
+    { 0x04,  2, 1, .read  = vga_ioport_read,
+                   .write = qxl_vga_ioport_write }, /* 3b4 */
+    { 0x0a,  1, 1, .read  = vga_ioport_read,
+                   .write = qxl_vga_ioport_write }, /* 3ba */
+    { 0x10, 16, 1, .read  = vga_ioport_read,
+                   .write = qxl_vga_ioport_write }, /* 3c0 */
+    { 0x24,  2, 1, .read  = vga_ioport_read,
+                   .write = qxl_vga_ioport_write }, /* 3d4 */
+    { 0x2a,  1, 1, .read  = vga_ioport_read,
+                   .write = qxl_vga_ioport_write }, /* 3da */
+    PORTIO_END_OF_LIST(),
+};
+
 static void qxl_add_memslot(PCIQXLDevice *d, uint32_t slot_id, uint64_t delta,
                             qxl_async_io async)
 {
@@ -1595,6 +1609,7 @@ static int qxl_init_primary(PCIDevice *dev)
     PCIQXLDevice *qxl = DO_UPCAST(PCIQXLDevice, pci, dev);
     VGACommonState *vga = &qxl->vga;
     ram_addr_t ram_size = msb_mask(qxl->vga.vram_size * 2 - 1);
+    PortioList *qxl_vga_port_list = g_new(PortioList, 1);
 
     qxl->id = 0;
 
@@ -1603,11 +1618,8 @@ static int qxl_init_primary(PCIDevice *dev)
     }
     vga_common_init(vga, ram_size);
     vga_init(vga, pci_address_space(dev), pci_address_space_io(dev), false);
-    register_ioport_write(0x3c0, 16, 1, qxl_vga_ioport_write, vga);
-    register_ioport_write(0x3b4,  2, 1, qxl_vga_ioport_write, vga);
-    register_ioport_write(0x3d4,  2, 1, qxl_vga_ioport_write, vga);
-    register_ioport_write(0x3ba,  1, 1, qxl_vga_ioport_write, vga);
-    register_ioport_write(0x3da,  1, 1, qxl_vga_ioport_write, vga);
+    portio_list_init(qxl_vga_port_list, qxl_vga_portio_list, vga, "vga");
+    portio_list_add(qxl_vga_port_list, pci_address_space_io(dev), 0x3b0);
 
     vga->ds = graphic_console_init(qxl_hw_update, qxl_hw_invalidate,
                                    qxl_hw_screen_dump, qxl_hw_text_update, qxl);
@@ -1663,12 +1675,25 @@ static int qxl_pre_load(void *opaque)
     return 0;
 }
 
+static void qxl_create_memslots(PCIQXLDevice *d)
+{
+    int i;
+
+    for (i = 0; i < NUM_MEMSLOTS; i++) {
+        if (!d->guest_slots[i].active) {
+            continue;
+        }
+        dprint(d, 1, "%s: restoring guest slot %d\n", __func__, i);
+        qxl_add_memslot(d, i, 0, QXL_SYNC);
+    }
+}
+
 static int qxl_post_load(void *opaque, int version)
 {
     PCIQXLDevice* d = opaque;
     uint8_t *ram_start = d->vga.vram_ptr;
     QXLCommandExt *cmds;
-    int in, out, i, newmode;
+    int in, out, newmode;
 
     dprint(d, 1, "%s: start\n", __FUNCTION__);
 
@@ -1685,19 +1710,16 @@ static int qxl_post_load(void *opaque, int version)
         qxl_mode_to_string(d->mode));
     newmode = d->mode;
     d->mode = QXL_MODE_UNDEFINED;
+
     switch (newmode) {
     case QXL_MODE_UNDEFINED:
         break;
     case QXL_MODE_VGA:
+        qxl_create_memslots(d);
         qxl_enter_vga_mode(d);
         break;
     case QXL_MODE_NATIVE:
-        for (i = 0; i < NUM_MEMSLOTS; i++) {
-            if (!d->guest_slots[i].active) {
-                continue;
-            }
-            qxl_add_memslot(d, i, 0, QXL_SYNC);
-        }
+        qxl_create_memslots(d);
         qxl_create_guest_primary(d, 1, QXL_SYNC);
 
         /* replay surface-create and cursor-set commands */
@@ -1722,6 +1744,8 @@ static int qxl_post_load(void *opaque, int version)
 
         break;
     case QXL_MODE_COMPAT:
+        /* note: no need to call qxl_create_memslots, qxl_set_mode
+         * creates the mem slot. */
         qxl_set_mode(d, d->shadow_rom.mode, 1);
         break;
     }
