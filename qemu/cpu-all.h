@@ -336,7 +336,7 @@ void QEMU_NORETURN cpu_abort(CPUState *env, const char *fmt, ...)
     GCC_FMT_ATTR(2, 3);
 extern CPUState *first_cpu;
 DECLARE_TLS(CPUState *,cpu_single_env);
-#define cpu_single_env get_tls(cpu_single_env)
+#define cpu_single_env tls_var(cpu_single_env)
 
 /* Flags for use in ENV->INTERRUPT_PENDING.
 
@@ -368,7 +368,7 @@ DECLARE_TLS(CPUState *,cpu_single_env);
 #define CPU_INTERRUPT_TGT_EXT_4   0x1000
 
 /* Several target-specific internal interrupts.  These differ from the
-   preceeding target-specific interrupts in that they are intended to
+   preceding target-specific interrupts in that they are intended to
    originate from within the cpu itself, typically in response to some
    instruction being executed.  These, therefore, are not masked while
    single-stepping within the debugger.  */

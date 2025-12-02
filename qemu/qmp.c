@@ -16,6 +16,9 @@
 #include "qmp-commands.h"
 #include "kvm.h"
 #include "arch_init.h"
+#include "hw/qdev.h"
+#include "qapi/qmp-input-visitor.h"
+#include "qapi/qmp-output-visitor.h"
 
 NameInfo *qmp_query_name(Error **errp)
 {
@@ -117,3 +120,130 @@ SpiceInfo *qmp_query_spice(Error **errp)
     return NULL;
 };
 #endif
+
+static void iostatus_bdrv_it(void *opaque, BlockDriverState *bs)
+{
+    bdrv_iostatus_reset(bs);
+}
+
+static void encrypted_bdrv_it(void *opaque, BlockDriverState *bs)
+{
+    Error **err = opaque;
+
+    if (!error_is_set(err) && bdrv_key_required(bs)) {
+        error_set(err, QERR_DEVICE_ENCRYPTED, bdrv_get_device_name(bs));
+    }
+}
+
+void qmp_cont(Error **errp)
+{
+    Error *local_err = NULL;
+
+    if (runstate_check(RUN_STATE_INMIGRATE)) {
+        error_set(errp, QERR_MIGRATION_EXPECTED);
+        return;
+    } else if (runstate_check(RUN_STATE_INTERNAL_ERROR) ||
+               runstate_check(RUN_STATE_SHUTDOWN)) {
+        error_set(errp, QERR_RESET_REQUIRED);
+        return;
+    }
+
+    bdrv_iterate(iostatus_bdrv_it, NULL);
+    bdrv_iterate(encrypted_bdrv_it, &local_err);
+    if (local_err) {
+        error_propagate(errp, local_err);
+        return;
+    }
+
+    vm_start();
+}
+
+DevicePropertyInfoList *qmp_qom_list(const char *path, Error **errp)
+{
+    DeviceState *dev;
+    bool ambiguous = false;
+    DevicePropertyInfoList *props = NULL;
+    DeviceProperty *prop;
+
+    dev = qdev_resolve_path(path, &ambiguous);
+    if (dev == NULL) {
+        error_set(errp, QERR_DEVICE_NOT_FOUND, path);
+        return NULL;
+    }
+
+    QTAILQ_FOREACH(prop, &dev->properties, node) {
+        DevicePropertyInfoList *entry = g_malloc0(sizeof(*entry));
+
+        entry->value = g_malloc0(sizeof(DevicePropertyInfo));
+        entry->next = props;
+        props = entry;
+
+        entry->value->name = g_strdup(prop->name);
+        entry->value->type = g_strdup(prop->type);
+    }
+
+    return props;
+}
+
+/* FIXME: teach qapi about how to pass through Visitors */
+int qmp_qom_set(Monitor *mon, const QDict *qdict, QObject **ret)
+{
+    const char *path = qdict_get_str(qdict, "path");
+    const char *property = qdict_get_str(qdict, "property");
+    QObject *value = qdict_get(qdict, "value");
+    Error *local_err = NULL;
+    QmpInputVisitor *mi;
+    DeviceState *dev;
+
+    dev = qdev_resolve_path(path, NULL);
+    if (!dev) {
+        error_set(&local_err, QERR_DEVICE_NOT_FOUND, path);
+        goto out;
+    }
+
+    mi = qmp_input_visitor_new(value);
+    qdev_property_set(dev, qmp_input_get_visitor(mi), property, &local_err);
+
+    qmp_input_visitor_cleanup(mi);
+
+out:
+    if (local_err) {
+        qerror_report_err(local_err);
+        error_free(local_err);
+        return -1;
+    }
+
+    return 0;
+}
+
+int qmp_qom_get(Monitor *mon, const QDict *qdict, QObject **ret)
+{
+    const char *path = qdict_get_str(qdict, "path");
+    const char *property = qdict_get_str(qdict, "property");
+    Error *local_err = NULL;
+    QmpOutputVisitor *mo;
+    DeviceState *dev;
+
+    dev = qdev_resolve_path(path, NULL);
+    if (!dev) {
+        error_set(&local_err, QERR_DEVICE_NOT_FOUND, path);
+        goto out;
+    }
+
+    mo = qmp_output_visitor_new();
+    qdev_property_get(dev, qmp_output_get_visitor(mo), property, &local_err);
+    if (!local_err) {
+        *ret = qmp_output_get_qobject(mo);
+    }
+
+    qmp_output_visitor_cleanup(mo);
+
+out:
+    if (local_err) {
+        qerror_report_err(local_err);
+        error_free(local_err);
+        return -1;
+    }
+
+    return 0;
+}

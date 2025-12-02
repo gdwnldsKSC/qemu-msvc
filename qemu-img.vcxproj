@@ -89,7 +89,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glib-2.0.lib;gthread-2.0.lib;gobject-2.0.lib;gio-2.0.lib;Ws2_32.lib;zlib1.lib;pxwc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glib-2.0.lib;gthread-2.0.lib;gobject-2.0.lib;gio-2.0.lib;Ws2_32.lib;zlib1.lib;pxwc.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)third_party\glib\lib;.\third_party\precompiled old winqemu libs\Debug</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName).exe</OutputFile>
     </Link>
@@ -170,10 +170,13 @@
     <ClCompile Include="qemu\coroutine-win32.c" />
     <ClCompile Include="qemu\cutils.c" />
     <ClCompile Include="qemu\error.c" />
+    <ClCompile Include="qemu\iohandler.c" />
     <ClCompile Include="qemu\json-lexer.c" />
     <ClCompile Include="qemu\json-parser.c" />
     <ClCompile Include="qemu\json-streamer.c" />
+    <ClCompile Include="qemu\main-loop.c" />
     <ClCompile Include="qemu\module.c" />
+    <ClCompile Include="qemu\notify.c" />
     <ClCompile Include="qemu\osdep.c" />
     <ClCompile Include="qemu\oslib-win32.c" />
     <ClCompile Include="qemu\qbool.c" />
@@ -187,6 +190,7 @@
     <ClCompile Include="qemu\qemu-progress.c" />
     <ClCompile Include="qemu\qemu-thread-win32.c" />
     <ClCompile Include="qemu\qemu-timer-common.c" />
+    <ClCompile Include="qemu\qemu-timer.c" />
     <ClCompile Include="qemu\qemu-tool.c" />
     <ClCompile Include="qemu\qerror.c" />
     <ClCompile Include="qemu\qfloat.c" />
@@ -194,6 +198,8 @@
     <ClCompile Include="qemu\qjson.c" />
     <ClCompile Include="qemu\qlist.c" />
     <ClCompile Include="qemu\qstring.c" />
+    <ClCompile Include="third_party\outside_qemu_tree_custom\clock_gettime.c" />
+    <ClCompile Include="third_party\outside_qemu_tree_custom\gettimeofday.c" />
     <ClCompile Include="third_party\outside_qemu_tree_custom\XGetopt.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

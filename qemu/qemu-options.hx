@@ -135,7 +135,8 @@ DEF("drive", HAS_ARG, QEMU_OPTION_drive,
     "       [,cyls=c,heads=h,secs=s[,trans=t]][,snapshot=on|off]\n"
     "       [,cache=writethrough|writeback|none|directsync|unsafe][,format=f]\n"
     "       [,serial=s][,addr=A][,id=name][,aio=threads|native]\n"
-    "       [,readonly=on|off]\n"
+    "       [,readonly=on|off][,copy-on-read=on|off]\n"
+    "       [[,bps=b]|[[,bps_rd=r][,bps_wr=w]]][[,iops=i]|[[,iops_rd=r][,iops_wr=w]]\n"
     "                use 'file' as a drive image\n", QEMU_ARCH_ALL)
 STEXI
 @item -drive @var{option}[,@var{option}[,@var{option}[,...]]]
@@ -186,6 +187,9 @@ host disk is full; report the error to the guest otherwise).
 The default setting is @option{werror=enospc} and @option{rerror=report}.
 @item readonly
 Open drive @option{file} as read-only. Guest write attempts will fail.
+@item copy-on-read=@var{copy-on-read}
+@var{copy-on-read} is "on" or "off" and enables whether to copy read backing
+file sectors into the image file.
 @end table
 
 By default, writethrough caching is used for all block device.  This means that
@@ -213,9 +217,13 @@ qcow2.  If performance is more important than correctness,
 In case you don't care about data integrity over host failures, use
 cache=unsafe. This option tells qemu that it never needs to write any data
 to the disk but can instead keeps things in cache. If anything goes wrong,
-like your host losing power, the disk storage getting disconnected accidently,
+like your host losing power, the disk storage getting disconnected accidentally,
 etc. you're image will most probably be rendered unusable.   When using
 the @option{-snapshot} option, unsafe caching is always used.
+
+Copy-on-read avoids accessing the same backing file sectors repeatedly and is
+useful when the backing file is over a slow network.  By default copy-on-read
+is off.
 
 Instead of @option{-cdrom} you can use:
 @example
@@ -446,6 +454,19 @@ require manually specifying clocking.
 @example
 modprobe i810_audio clocking=48000
 @end example
+ETEXI
+
+DEF("balloon", HAS_ARG, QEMU_OPTION_balloon,
+    "-balloon none   disable balloon device\n"
+    "-balloon virtio[,addr=str]\n"
+    "                enable virtio balloon device (default)\n", QEMU_ARCH_ALL)
+STEXI
+@item -balloon none
+@findex -balloon
+Disable balloon device.
+@item -balloon virtio[,addr=@var{addr}]
+Enable virtio balloon device (default), optionally with PCI address
+@var{addr}.
 ETEXI
 
 STEXI
@@ -1062,9 +1083,9 @@ STEXI
 @end table
 ETEXI
 
-DEFHEADING()
+ARCHHEADING(, QEMU_ARCH_I386)
 
-DEFHEADING(i386 target only:)
+ARCHHEADING(i386 target only:, QEMU_ARCH_I386)
 STEXI
 @table @option
 ETEXI
@@ -1110,19 +1131,6 @@ STEXI
 @item -no-hpet
 @findex -no-hpet
 Disable HPET support.
-ETEXI
-
-DEF("balloon", HAS_ARG, QEMU_OPTION_balloon,
-    "-balloon none   disable balloon device\n"
-    "-balloon virtio[,addr=str]\n"
-    "                enable virtio balloon device (default)\n", QEMU_ARCH_ALL)
-STEXI
-@item -balloon none
-@findex -balloon
-Disable balloon device.
-@item -balloon virtio[,addr=@var{addr}]
-Enable virtio balloon device (default), optionally with PCI address
-@var{addr}.
 ETEXI
 
 DEF("acpitable", HAS_ARG, QEMU_OPTION_acpitable,

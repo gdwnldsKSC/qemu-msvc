@@ -53,7 +53,7 @@ static void pic_update(struct etrax_pic *fs)
 
     fs->regs[R_R_MASKED_VECT] = fs->regs[R_R_VECT] & fs->regs[R_RW_MASK];
 
-    /* The ETRAX interrupt controller signals interrupts to teh core
+    /* The ETRAX interrupt controller signals interrupts to the core
        through an interrupt request wire and an irq vector bus. If 
        multiple interrupts are simultaneously active it chooses vector 
        0x30 and lets the sw choose the priorities.  */
@@ -147,7 +147,7 @@ static int etraxfs_pic_init(SysBusDevice *dev)
     sysbus_init_irq(dev, &s->parent_nmi);
 
     memory_region_init_io(&s->mmio, &pic_ops, s, "etraxfs-pic", R_MAX * 4);
-    sysbus_init_mmio_region(dev, &s->mmio);
+    sysbus_init_mmio(dev, &s->mmio);
     return 0;
 }
 

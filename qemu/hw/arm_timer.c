@@ -61,7 +61,7 @@ static uint32_t arm_timer_read(void *opaque, target_phys_addr_t offset)
             return 0;
         return s->int_level;
     default:
-        hw_error("arm_timer_read: Bad offset %x\n", (int)offset);
+        hw_error("%s: Bad offset %x\n", __func__, (int)offset);
         return 0;
     }
 }
@@ -128,7 +128,7 @@ static void arm_timer_write(void *opaque, target_phys_addr_t offset,
         arm_timer_recalibrate(s, 0);
         break;
     default:
-        hw_error("arm_timer_write: Bad offset %x\n", (int)offset);
+        hw_error("%s: Bad offset %x\n", __func__, (int)offset);
     }
     arm_timer_update(s);
 }
@@ -170,9 +170,9 @@ static arm_timer_state *arm_timer_init(uint32_t freq)
 }
 
 /* ARM PrimeCell SP804 dual timer module.
-   Docs for this device don't seem to be publicly available.  This
-   implementation is based on guesswork, the linux kernel sources and the
-   Integrator/CP timer modules.  */
+ * Docs at
+ * http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0271d/index.html
+*/
 
 typedef struct {
     SysBusDevice busdev;
@@ -181,6 +181,13 @@ typedef struct {
     int level[2];
     qemu_irq irq;
 } sp804_state;
+
+static const uint8_t sp804_ids[] = {
+    /* Timer ID */
+    0x04, 0x18, 0x14, 0,
+    /* PrimeCell ID */
+    0xd, 0xf0, 0x05, 0xb1
+};
 
 /* Merge the IRQs from the two component devices.  */
 static void sp804_set_irq(void *opaque, int irq, int level)
@@ -196,12 +203,27 @@ static uint64_t sp804_read(void *opaque, target_phys_addr_t offset,
 {
     sp804_state *s = (sp804_state *)opaque;
 
-    /* ??? Don't know the PrimeCell ID for this device.  */
     if (offset < 0x20) {
         return arm_timer_read(s->timer[0], offset);
-    } else {
+    }
+    if (offset < 0x40) {
         return arm_timer_read(s->timer[1], offset - 0x20);
     }
+
+    /* TimerPeriphID */
+    if (offset >= 0xfe0 && offset <= 0xffc) {
+        return sp804_ids[(offset - 0xfe0) >> 2];
+    }
+
+    switch (offset) {
+    /* Integration Test control registers, which we won't support */
+    case 0xf00: /* TimerITCR */
+    case 0xf04: /* TimerITOP (strictly write only but..) */
+        return 0;
+    }
+
+    hw_error("%s: Bad offset %x\n", __func__, (int)offset);
+    return 0;
 }
 
 static void sp804_write(void *opaque, target_phys_addr_t offset,
@@ -211,9 +233,16 @@ static void sp804_write(void *opaque, target_phys_addr_t offset,
 
     if (offset < 0x20) {
         arm_timer_write(s->timer[0], offset, value);
-    } else {
-        arm_timer_write(s->timer[1], offset - 0x20, value);
+        return;
     }
+
+    if (offset < 0x40) {
+        arm_timer_write(s->timer[1], offset - 0x20, value);
+        return;
+    }
+
+    /* Technically we could be writing to the Test Registers, but not likely */
+    hw_error("%s: Bad offset %x\n", __func__, (int)offset);
 }
 
 static const MemoryRegionOps sp804_ops = {
@@ -247,7 +276,7 @@ static int sp804_init(SysBusDevice *dev)
     s->timer[0]->irq = qi[0];
     s->timer[1]->irq = qi[1];
     memory_region_init_io(&s->iomem, &sp804_ops, s, "sp804", 0x1000);
-    sysbus_init_mmio_region(dev, &s->iomem);
+    sysbus_init_mmio(dev, &s->iomem);
     vmstate_register(&dev->qdev, -1, &vmstate_sp804, s);
     return 0;
 }
@@ -270,7 +299,7 @@ static uint64_t icp_pit_read(void *opaque, target_phys_addr_t offset,
     /* ??? Don't know the PrimeCell ID for this device.  */
     n = offset >> 8;
     if (n > 2) {
-        hw_error("sp804_read: Bad timer %d\n", n);
+        hw_error("%s: Bad timer %d\n", __func__, n);
     }
 
     return arm_timer_read(s->timer[n], offset & 0xff);
@@ -284,7 +313,7 @@ static void icp_pit_write(void *opaque, target_phys_addr_t offset,
 
     n = offset >> 8;
     if (n > 2) {
-        hw_error("sp804_write: Bad timer %d\n", n);
+        hw_error("%s: Bad timer %d\n", __func__, n);
     }
 
     arm_timer_write(s->timer[n], offset & 0xff, value);
@@ -311,7 +340,7 @@ static int icp_pit_init(SysBusDevice *dev)
     sysbus_init_irq(dev, &s->timer[2]->irq);
 
     memory_region_init_io(&s->iomem, &icp_pit_ops, s, "icp_pit", 0x1000);
-    sysbus_init_mmio_region(dev, &s->iomem);
+    sysbus_init_mmio(dev, &s->iomem);
     /* This device has no state to save/restore.  The component timers will
        save themselves.  */
     return 0;

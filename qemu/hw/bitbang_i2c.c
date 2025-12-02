@@ -205,6 +205,7 @@ bitbang_i2c_interface *bitbang_i2c_init(i2c_bus *bus)
 /* GPIO interface.  */
 typedef struct {
     SysBusDevice busdev;
+    MemoryRegion dummy_iomem;
     bitbang_i2c_interface *bitbang;
     int last_level;
     qemu_irq out;
@@ -226,7 +227,8 @@ static int gpio_i2c_init(SysBusDevice *dev)
     GPIOI2CState *s = FROM_SYSBUS(GPIOI2CState, dev);
     i2c_bus *bus;
 
-    sysbus_init_mmio(dev, 0x0, 0);
+    memory_region_init(&s->dummy_iomem, "gpio_i2c", 0);
+    sysbus_init_mmio(dev, &s->dummy_iomem);
 
     bus = i2c_init_bus(&dev->qdev, "i2c");
     s->bitbang = bitbang_i2c_init(bus);

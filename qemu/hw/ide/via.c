@@ -160,7 +160,7 @@ static void vt82c686b_init_ports(PCIIDEState *d) {
         ide_bus_new(&d->bus[i], &d->dev.qdev, i);
         ide_init_ioport(&d->bus[i], NULL, port_info[i].iobase,
                         port_info[i].iobase2);
-        ide_init2(&d->bus[i], isa_get_irq(port_info[i].isairq));
+        ide_init2(&d->bus[i], isa_get_irq(NULL, port_info[i].isairq));
 
         bmdma_init(&d->bus[i], &d->bmdma[i], d);
         d->bmdma[i].bus = &d->bus[i];
@@ -172,7 +172,7 @@ static void vt82c686b_init_ports(PCIIDEState *d) {
 /* via ide func */
 static int vt82c686b_ide_initfn(PCIDevice *dev)
 {
-    PCIIDEState *d = DO_UPCAST(PCIIDEState, dev, dev);;
+    PCIIDEState *d = DO_UPCAST(PCIIDEState, dev, dev);
     uint8_t *pci_conf = d->dev.config;
 
     pci_config_set_prog_interface(pci_conf, 0x8a); /* legacy ATA mode */

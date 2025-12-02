@@ -246,6 +246,14 @@ typedef struct PciInfoList
     struct PciInfoList *next;
 } PciInfoList;
 
+typedef struct DevicePropertyInfo DevicePropertyInfo;
+
+typedef struct DevicePropertyInfoList
+{
+    DevicePropertyInfo *value;
+    struct DevicePropertyInfoList *next;
+} DevicePropertyInfoList;
+
 struct NameInfo
 {
     bool has_name;
@@ -374,6 +382,12 @@ struct BlockDeviceInfo
     bool has_backing_file;
     char * backing_file;
     bool encrypted;
+    int64_t bps;
+    int64_t bps_rd;
+    int64_t bps_wr;
+    int64_t iops;
+    int64_t iops_rd;
+    int64_t iops_wr;
 };
 
 void qapi_free_BlockDeviceInfoList(BlockDeviceInfoList * obj);
@@ -587,5 +601,14 @@ struct PciInfo
 
 void qapi_free_PciInfoList(PciInfoList * obj);
 void qapi_free_PciInfo(PciInfo * obj);
+
+struct DevicePropertyInfo
+{
+    char * name;
+    char * type;
+};
+
+void qapi_free_DevicePropertyInfoList(DevicePropertyInfoList * obj);
+void qapi_free_DevicePropertyInfo(DevicePropertyInfo * obj);
 
 #endif

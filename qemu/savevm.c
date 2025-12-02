@@ -236,6 +236,9 @@ static int stdio_pclose(void *opaque)
     QEMUFileStdio *s = opaque;
     int ret;
     ret = pclose(s->stdio_file);
+    if (ret == -1) {
+        ret = -errno;
+    }
     g_free(s);
     return ret;
 }
@@ -243,9 +246,12 @@ static int stdio_pclose(void *opaque)
 static int stdio_fclose(void *opaque)
 {
     QEMUFileStdio *s = opaque;
-    fclose(s->stdio_file);
+    int ret = 0;
+    if (fclose(s->stdio_file) == EOF) {
+        ret = -errno;
+    }
     g_free(s);
-    return 0;
+    return ret;
 }
 
 QEMUFile *qemu_popen(FILE *stdio_file, const char *mode)
@@ -437,6 +443,22 @@ void qemu_file_set_error(QEMUFile *f, int ret)
     f->last_error = ret;
 }
 
+/** Sets last_error conditionally
+ *
+ * Sets last_error only if ret is negative _and_ no error
+ * was set before.
+ */
+static void qemu_file_set_if_error(QEMUFile *f, int ret)
+{
+    if (ret < 0 && !f->last_error) {
+        qemu_file_set_error(f, ret);
+    }
+}
+
+/** Flushes QEMUFile buffer
+ *
+ * In case of error, last_error is set.
+ */
 void qemu_fflush(QEMUFile *f)
 {
     if (!f->put_buffer)
@@ -449,7 +471,7 @@ void qemu_fflush(QEMUFile *f)
         if (len > 0)
             f->buf_offset += f->buf_index;
         else
-            f->last_error = -EINVAL;
+            qemu_file_set_error(f, -EINVAL);
         f->buf_index = 0;
     }
 }
@@ -480,15 +502,44 @@ static void qemu_fill_buffer(QEMUFile *f)
     } else if (len == 0) {
         f->last_error = -EIO;
     } else if (len != -EAGAIN)
-        f->last_error = len;
+        qemu_file_set_error(f, len);
 }
 
-int qemu_fclose(QEMUFile *f)
+/** Calls close function and set last_error if needed
+ *
+ * Internal function. qemu_fflush() must be called before this.
+ *
+ * Returns f->close() return value, or 0 if close function is not set.
+ */
+static int qemu_close(QEMUFile *f)
 {
     int ret = 0;
-    qemu_fflush(f);
-    if (f->close)
+    if (f->close) {
         ret = f->close(f->opaque);
+        qemu_file_set_if_error(f, ret);
+    }
+    return ret;
+}
+
+/** Closes the file
+ *
+ * Returns negative error value if any error happened on previous operations or
+ * while closing the file. Returns 0 or positive number on success.
+ *
+ * The meaning of return value on success depends on the specific backend
+ * being used.
+ */
+int qemu_fclose(QEMUFile *f)
+{
+    int ret;
+    qemu_fflush(f);
+    ret = qemu_close(f);
+    /* If any error was spotted before closing, we should report it
+     * instead of the close() return value.
+     */
+    if (f->last_error) {
+        ret = f->last_error;
+    }
     g_free(f);
     return ret;
 }
@@ -1553,7 +1604,7 @@ int qemu_savevm_state_begin(Monitor *mon, QEMUFile *f, int blk_enable,
 }
 
 /*
- * this funtion has three return values:
+ * this function has three return values:
  *   negative: there was one error, and we have -errno.
  *   0 : We haven't finished, caller have to go again
  *   1 : We have finished, we can go to complete phase
@@ -1952,7 +2003,7 @@ void do_savevm(Monitor *mon, const QDict *qdict)
     int ret;
     QEMUFile *f;
     int saved_vm_running;
-    uint32_t vm_state_size;
+    uint64_t vm_state_size;
 #ifdef _WIN32
     struct _timeb tb;
     struct tm *ptm;
@@ -2105,7 +2156,7 @@ int load_vmstate(const char *name)
     }
 
     /* Flush all IO requests so they don't interfere with the new state.  */
-    qemu_aio_flush();
+    bdrv_drain_all();
 
     bs = NULL;
     while ((bs = bdrv_next(bs))) {

@@ -4,7 +4,7 @@
  * Copyright (c) 2011
  * Written by Mathieu Sonet - www.elasticsheep.com
  *
- * This code is licenced under the GPL.
+ * This code is licensed under the GPL.
  *
  * *****************************************************************
  *
@@ -543,7 +543,7 @@ static int pl041_init(SysBusDevice *dev)
 
     /* Connect the device to the sysbus */
     memory_region_init_io(&s->iomem, &pl041_ops, s, "pl041", 0x1000);
-    sysbus_init_mmio_region(dev, &s->iomem);
+    sysbus_init_mmio(dev, &s->iomem);
     sysbus_init_irq(dev, &s->irq);
 
     /* Init the codec */
@@ -633,4 +633,4 @@ static void pl041_register_device(void)
     sysbus_register_withprop(&pl041_device_info);
 }
 
-device_init(pl041_register_device);
+device_init(pl041_register_device)

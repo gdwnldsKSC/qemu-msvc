@@ -52,7 +52,8 @@ DEF("drive", HAS_ARG, QEMU_OPTION_drive,
 "       [,cyls=c,heads=h,secs=s[,trans=t]][,snapshot=on|off]\n"
 "       [,cache=writethrough|writeback|none|directsync|unsafe][,format=f]\n"
 "       [,serial=s][,addr=A][,id=name][,aio=threads|native]\n"
-"       [,readonly=on|off]\n"
+"       [,readonly=on|off][,copy-on-read=on|off]\n"
+"       [[,bps=b]|[[,bps_rd=r][,bps_wr=w]]][[,iops=i]|[[,iops_rd=r][,iops_wr=w]]\n"
 "                use 'file' as a drive image\n", QEMU_ARCH_ALL)
 
 DEF("set", HAS_ARG, QEMU_OPTION_set,
@@ -114,6 +115,11 @@ DEF("soundhw", HAS_ARG, QEMU_OPTION_soundhw,
 "                and only specified sound cards (comma separated list)\n"
 "                use -soundhw ? to get the list of supported cards\n"
 "                use -soundhw all to enable all of them\n", QEMU_ARCH_ALL)
+
+DEF("balloon", HAS_ARG, QEMU_OPTION_balloon,
+"-balloon none   disable balloon device\n"
+"-balloon virtio[,addr=str]\n"
+"                enable virtio balloon device (default)\n", QEMU_ARCH_ALL)
 
 
 DEF("usb", 0, QEMU_OPTION_usb,
@@ -232,9 +238,9 @@ DEF("vnc", HAS_ARG, QEMU_OPTION_vnc ,
 "-vnc display    start a VNC server on display\n", QEMU_ARCH_ALL)
 
 
-DEFHEADING()
+ARCHHEADING(, QEMU_ARCH_I386)
 
-DEFHEADING(i386 target only:)
+ARCHHEADING(i386 target only:, QEMU_ARCH_I386)
 
 DEF("win2k-hack", 0, QEMU_OPTION_win2k_hack,
 "-win2k-hack     use it when installing Windows 2000 to avoid a disk full bug\n",
@@ -251,11 +257,6 @@ DEF("no-acpi", 0, QEMU_OPTION_no_acpi,
 
 DEF("no-hpet", 0, QEMU_OPTION_no_hpet,
 "-no-hpet        disable HPET\n", QEMU_ARCH_I386)
-
-DEF("balloon", HAS_ARG, QEMU_OPTION_balloon,
-"-balloon none   disable balloon device\n"
-"-balloon virtio[,addr=str]\n"
-"                enable virtio balloon device (default)\n", QEMU_ARCH_ALL)
 
 DEF("acpitable", HAS_ARG, QEMU_OPTION_acpitable,
 "-acpitable [sig=str][,rev=n][,oem_id=str][,oem_table_id=str][,oem_rev=n][,asl_compiler_id=str][,asl_compiler_rev=n][,{data|file}=file1[:file2]...]\n"

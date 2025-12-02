@@ -407,6 +407,7 @@
     </ClCompile>
     <ClCompile Include="qemu\hw\bitbang_i2c.c" />
     <ClCompile Include="qemu\hw\bonito.c" />
+    <ClCompile Include="qemu\hw\container.c" />
     <ClCompile Include="qemu\hw\cris-boot.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -680,6 +681,7 @@
     <ClCompile Include="qemu\qbool.c" />
     <ClCompile Include="qemu\qdict.c" />
     <ClCompile Include="qemu\qemu-config.c" />
+    <ClCompile Include="qemu\qemu-coroutine-io.c" />
     <ClCompile Include="qemu\qemu-coroutine-lock.c" />
     <ClCompile Include="qemu\qemu-coroutine.c" />
     <ClCompile Include="qemu\qemu-error.c" />
@@ -2090,6 +2092,7 @@
     <ClInclude Include="qemu\error_int.h" />
     <ClInclude Include="qemu\event_notifier.h" />
     <ClInclude Include="qemu\exec-memory.h" />
+    <ClInclude Include="qemu\exec-obsolete.h" />
     <ClInclude Include="qemu\fsdev\file-op-9p.h" />
     <ClInclude Include="qemu\fsdev\qemu-fsdev.h" />
     <ClInclude Include="qemu\hmp.h" />
@@ -2198,6 +2201,7 @@
     <ClInclude Include="qemu\qemu-error.h" />
     <ClInclude Include="qemu\qemu-objects.h" />
     <ClInclude Include="qemu\qemu-option.h" />
+    <ClInclude Include="qemu\qemu-options-wrapper.h" />
     <ClInclude Include="qemu\qemu-options.h" />
     <ClInclude Include="qemu\qemu-os-posix.h" />
     <ClInclude Include="qemu\qemu-os-win32.h" />

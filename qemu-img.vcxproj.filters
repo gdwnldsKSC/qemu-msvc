@@ -189,5 +189,23 @@
     <ClCompile Include="qemu\block\vvfat.c">
       <Filter>Source Files\block</Filter>
     </ClCompile>
+    <ClCompile Include="qemu\qemu-timer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\notify.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\main-loop.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\iohandler.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\outside_qemu_tree_custom\clock_gettime.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\outside_qemu_tree_custom\gettimeofday.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

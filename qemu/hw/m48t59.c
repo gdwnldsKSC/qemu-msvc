@@ -52,6 +52,7 @@
 struct M48t59State {
     /* Hardware parameters */
     qemu_irq IRQ;
+    MemoryRegion iomem;
     uint32_t io_base;
     uint32_t size;
     /* RTC management */
@@ -573,16 +574,12 @@ static uint32_t nvram_readl (void *opaque, target_phys_addr_t addr)
     return retval;
 }
 
-static CPUWriteMemoryFunc * const nvram_write[] = {
-    &nvram_writeb,
-    &nvram_writew,
-    &nvram_writel,
-};
-
-static CPUReadMemoryFunc * const nvram_read[] = {
-    &nvram_readb,
-    &nvram_readw,
-    &nvram_readl,
+static const MemoryRegionOps nvram_ops = {
+    .old_mmio = {
+        .read = { nvram_readb, nvram_readw, nvram_readl, },
+        .write = { nvram_writeb, nvram_writew, nvram_writel, },
+    },
+    .endianness = DEVICE_NATIVE_ENDIAN,
 };
 
 static const VMStateDescription vmstate_m48t59 = {
@@ -663,13 +660,14 @@ M48t59State *m48t59_init(qemu_irq IRQ, target_phys_addr_t mem_base,
     return state;
 }
 
-M48t59State *m48t59_init_isa(uint32_t io_base, uint16_t size, int type)
+M48t59State *m48t59_init_isa(ISABus *bus, uint32_t io_base, uint16_t size,
+                             int type)
 {
     M48t59ISAState *d;
     ISADevice *dev;
     M48t59State *s;
 
-    dev = isa_create("m48t59_isa");
+    dev = isa_create(bus, "m48t59_isa");
     qdev_prop_set_uint32(&dev->qdev, "type", type);
     qdev_prop_set_uint32(&dev->qdev, "size", size);
     qdev_prop_set_uint32(&dev->qdev, "io_base", io_base);
@@ -712,13 +710,11 @@ static int m48t59_init1(SysBusDevice *dev)
 {
     M48t59SysBusState *d = FROM_SYSBUS(M48t59SysBusState, dev);
     M48t59State *s = &d->state;
-    int mem_index;
 
     sysbus_init_irq(dev, &s->IRQ);
 
-    mem_index = cpu_register_io_memory(nvram_read, nvram_write, s,
-                                       DEVICE_NATIVE_ENDIAN);
-    sysbus_init_mmio(dev, s->size, mem_index);
+    memory_region_init_io(&s->iomem, &nvram_ops, s, "m48t59.nvram", s->size);
+    sysbus_init_mmio(dev, &s->iomem);
     m48t59_init_common(s);
 
     return 0;

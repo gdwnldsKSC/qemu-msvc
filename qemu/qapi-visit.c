@@ -318,6 +318,12 @@ void visit_type_BlockDeviceInfo(Visitor *m, BlockDeviceInfo ** obj, const char *
     }
     visit_end_optional(m, errp);
     visit_type_bool(m, (obj && *obj) ? &(*obj)->encrypted : NULL, "encrypted", errp);
+    visit_type_int(m, (obj && *obj) ? &(*obj)->bps : NULL, "bps", errp);
+    visit_type_int(m, (obj && *obj) ? &(*obj)->bps_rd : NULL, "bps_rd", errp);
+    visit_type_int(m, (obj && *obj) ? &(*obj)->bps_wr : NULL, "bps_wr", errp);
+    visit_type_int(m, (obj && *obj) ? &(*obj)->iops : NULL, "iops", errp);
+    visit_type_int(m, (obj && *obj) ? &(*obj)->iops_rd : NULL, "iops_rd", errp);
+    visit_type_int(m, (obj && *obj) ? &(*obj)->iops_wr : NULL, "iops_wr", errp);
     visit_end_struct(m, errp);
 }
 
@@ -800,6 +806,28 @@ void visit_type_PciInfoList(Visitor *m, PciInfoList ** obj, const char *name, Er
     for (*head = i = visit_next_list(m, head, errp); i; i = visit_next_list(m, &i, errp)) {
         PciInfoList *native_i = (PciInfoList *)i;
         visit_type_PciInfo(m, &native_i->value, NULL, errp);
+    }
+
+    visit_end_list(m, errp);
+}
+
+void visit_type_DevicePropertyInfo(Visitor *m, DevicePropertyInfo ** obj, const char *name, Error **errp)
+{
+    visit_start_struct(m, (void **)obj, "DevicePropertyInfo", name, sizeof(DevicePropertyInfo), errp);
+    visit_type_str(m, (obj && *obj) ? &(*obj)->name : NULL, "name", errp);
+    visit_type_str(m, (obj && *obj) ? &(*obj)->type : NULL, "type", errp);
+    visit_end_struct(m, errp);
+}
+
+void visit_type_DevicePropertyInfoList(Visitor *m, DevicePropertyInfoList ** obj, const char *name, Error **errp)
+{
+    GenericList *i, **head = (GenericList **)obj;
+
+    visit_start_list(m, name, errp);
+
+    for (*head = i = visit_next_list(m, head, errp); i; i = visit_next_list(m, &i, errp)) {
+        DevicePropertyInfoList *native_i = (DevicePropertyInfoList *)i;
+        visit_type_DevicePropertyInfo(m, &native_i->value, NULL, errp);
     }
 
     visit_end_list(m, errp);

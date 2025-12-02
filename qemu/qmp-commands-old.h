@@ -47,10 +47,7 @@
 {
 .name       = "cont",
 .args_type  = "",
-.params     = "",
-.help       = "resume emulation",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_cont,
+.mhandler.cmd_new = qmp_marshal_input_cont,
 },
 
 
@@ -64,10 +61,7 @@
 {
 .name       = "system_powerdown",
 .args_type  = "",
-.params     = "",
-.help       = "send system power down event",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_system_powerdown,
+.mhandler.cmd_new = qmp_marshal_input_system_powerdown,
 },
 
 
@@ -100,31 +94,22 @@
 
 {
 .name       = "memsave",
-.args_type  = "val:l,size:i,filename:s",
-.params     = "addr size file",
-.help       = "save to disk virtual memory dump starting at 'addr' of size 'size'",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_memory_save,
+.args_type  = "val:l,size:i,filename:s,cpu:i?",
+.mhandler.cmd_new = qmp_marshal_input_memsave,
 },
 
 
 {
 .name       = "pmemsave",
 .args_type  = "val:l,size:i,filename:s",
-.params     = "addr size file",
-.help       = "save to disk physical memory dump starting at 'addr' of size 'size'",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_physical_memory_save,
+.mhandler.cmd_new = qmp_marshal_input_pmemsave,
 },
 
 
 {
 .name       = "inject-nmi",
 .args_type  = "",
-.params     = "",
-.help       = "",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_inject_nmi,
+.mhandler.cmd_new = qmp_marshal_input_inject_nmi,
 },
 
 
@@ -145,30 +130,21 @@
 {
 .name       = "migrate_cancel",
 .args_type  = "",
-.params     = "",
-.help       = "cancel the current VM migration",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_migrate_cancel,
+.mhandler.cmd_new = qmp_marshal_input_migrate_cancel,
 },
 
 
 {
 .name       = "migrate_set_speed",
 .args_type  = "value:o",
-.params     = "value",
-.help       = "set maximum speed (in bytes) for migrations",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_migrate_set_speed,
+.mhandler.cmd_new = qmp_marshal_input_migrate_set_speed,
 },
 
 
 {
 .name       = "migrate_set_downtime",
 .args_type  = "value:T",
-.params     = "value",
-.help       = "set maximum tolerated downtime (in seconds) for migrations",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_migrate_set_downtime,
+.mhandler.cmd_new = qmp_marshal_input_migrate_set_downtime,
 },
 
 
@@ -206,40 +182,28 @@
 {
 .name       = "block_resize",
 .args_type  = "device:B,size:o",
-.params     = "device size",
-.help       = "resize a block image",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_block_resize,
+.mhandler.cmd_new = qmp_marshal_input_block_resize,
 },
 
 
 {
 .name       = "blockdev-snapshot-sync",
-.args_type  = "device:B,snapshot-file:s?,format:s?",
-.params     = "device [new-image-file] [format]",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_snapshot_blkdev,
+.args_type  = "device:B,snapshot-file:s,format:s?",
+.mhandler.cmd_new = qmp_marshal_input_blockdev_snapshot_sync,
 },
 
 
 {
 .name       = "balloon",
 .args_type  = "value:M",
-.params     = "target",
-.help       = "request VM to change its memory allocation (in MB)",
-.user_print = monitor_user_noop,
-.mhandler.cmd_async = do_balloon,
-.flags      = MONITOR_CMD_ASYNC,
+.mhandler.cmd_new = qmp_marshal_input_balloon,
 },
 
 
 {
 .name       = "set_link",
 .args_type  = "name:s,up:b",
-.params     = "name on|off",
-.help       = "change the link status of a network adapter",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_set_link,
+.mhandler.cmd_new = qmp_marshal_input_set_link,
 },
 
 
@@ -266,10 +230,17 @@
 {
 .name       = "block_passwd",
 .args_type  = "device:B,password:s",
-.params     = "block_passwd device password",
-.help       = "set the password of encrypted block devices",
+.mhandler.cmd_new = qmp_marshal_input_block_passwd,
+},
+
+
+{
+.name       = "block_set_io_throttle",
+.args_type  = "device:B,bps:l,bps_rd:l,bps_wr:l,iops:l,iops_rd:l,iops_wr:l",
+.params     = "device bps bps_rd bps_wr iops iops_rd iops_wr",
+.help       = "change I/O throttle limits for a block drive",
 .user_print = monitor_user_noop,
-.mhandler.cmd_new = do_block_set_passwd,
+.mhandler.cmd_new = do_block_set_io_throttle,
 },
 
 
@@ -315,10 +286,7 @@
 {
 .name       = "human-monitor-command",
 .args_type  = "command-line:s,cpu-index:i?",
-.params     = "",
-.help       = "",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_hmp_passthrough,
+.mhandler.cmd_new = qmp_marshal_input_human_monitor_command,
 },
 
 
@@ -434,4 +402,22 @@
 .name       = "query-balloon",
 .args_type  = "",
 .mhandler.cmd_new = qmp_marshal_input_query_balloon,
+},
+
+{
+.name       = "qom-list",
+.args_type  = "path:s",
+.mhandler.cmd_new = qmp_marshal_input_qom_list,
+},
+
+{
+.name       = "qom-set",
+.args_type  = "path:s,property:s,opts:O",
+.mhandler.cmd_new = qmp_qom_set,
+},
+
+{
+.name       = "qom-get",
+.args_type  = "path:s,property:s",
+.mhandler.cmd_new = qmp_qom_get,
 },

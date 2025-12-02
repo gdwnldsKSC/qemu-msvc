@@ -49,6 +49,9 @@ void monitor_resume(Monitor *mon);
 int monitor_read_bdrv_key_start(Monitor *mon, BlockDriverState *bs,
                                 BlockDriverCompletionFunc *completion_cb,
                                 void *opaque);
+int monitor_read_block_device_key(Monitor *mon, const char *device,
+                                  BlockDriverCompletionFunc *completion_cb,
+                                  void *opaque);
 
 int monitor_get_fd(Monitor *mon, const char *fdname);
 
@@ -63,5 +66,9 @@ int monitor_get_cpu_index(void);
 typedef void (MonitorCompletion)(void *opaque, QObject *ret_data);
 
 void monitor_set_error(Monitor *mon, QError *qerror);
+
+int qmp_qom_set(Monitor *mon, const QDict *qdict, QObject **ret);
+
+int qmp_qom_get(Monitor *mon, const QDict *qdict, QObject **ret);
 
 #endif /* !MONITOR_H */

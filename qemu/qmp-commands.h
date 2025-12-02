@@ -62,5 +62,34 @@ void qmp_marshal_input_query_blockstats(QDict* args, QObject** ret, Error** errp
 void qmp_marshal_input_query_vnc(QDict* args, QObject** ret, Error** errp);
 void qmp_marshal_input_query_balloon(QDict* args, QObject** ret, Error** errp);
 void qmp_marshal_input_query_pci(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_cont(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_system_powerdown(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_memsave(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_inject_nmi(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_migrate_cancel(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_migrate_set_speed(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_migrate_set_downtime(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_block_resize(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_blockdev_snapshot_sync(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_balloon(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_set_link(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_block_passwd(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_human_monitor_command(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_qom_list(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_pmemsave(QDict* args, QObject** ret, Error** errp);
+void qmp_memsave(int64_t val, int64_t size, const char * filename, bool has_cpu_index, int64_t cpu_index, Error **errp);
+void qmp_pmemsave(int64_t val, int64_t size, const char * filename, Error **errp);
+void qmp_cont(Error **errp);
+void qmp_inject_nmi(Error **errp);
+void qmp_set_link(const char * name, bool up, Error **errp);
+void qmp_block_passwd(const char * device, const char * password, Error **errp);
+void qmp_balloon(int64_t value, Error **errp);
+void qmp_block_resize(const char * device, int64_t size, Error **errp);
+void qmp_blockdev_snapshot_sync(const char * device, const char * snapshot_file, bool has_format, const char * format, Error **errp);
+char * qmp_human_monitor_command(const char * command_line, bool has_cpu_index, int64_t cpu_index, Error **errp);
+void qmp_migrate_cancel(Error **errp);
+void qmp_migrate_set_downtime(double value, Error **errp);
+void qmp_migrate_set_speed(int64_t value, Error **errp);
+DevicePropertyInfoList * qmp_qom_list(const char * path, Error **errp);
 
 #endif

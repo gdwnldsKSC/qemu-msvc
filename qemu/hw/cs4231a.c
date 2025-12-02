@@ -659,9 +659,9 @@ static int cs4231a_initfn (ISADevice *dev)
     return 0;
 }
 
-int cs4231a_init (qemu_irq *pic)
+int cs4231a_init (ISABus *bus)
 {
-    isa_create_simple ("cs4231a");
+    isa_create_simple (bus, "cs4231a");
     return 0;
 }
 
@@ -683,4 +683,4 @@ static void cs4231a_register (void)
 {
     isa_qdev_register (&cs4231a_info);
 }
-device_init (cs4231a_register);
+device_init(cs4231a_register);

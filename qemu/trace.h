@@ -97,14 +97,6 @@ static inline void trace_bdrv_aio_multiwrite(void *mcb, int num_callbacks, int n
 {
 }
 
-static inline void trace_bdrv_aio_multiwrite_earlyfail(void *mcb)
-{
-}
-
-static inline void trace_bdrv_aio_multiwrite_latefail(void *mcb, int i)
-{
-}
-
 static inline void trace_bdrv_aio_discard(void *bs, int64_t sector_num, int nb_sectors, void *opaque)
 {
 }
@@ -134,6 +126,10 @@ static inline void trace_bdrv_co_writev(void *bs, int64_t sector_num, int nb_sec
 }
 
 static inline void trace_bdrv_co_io_em(void *bs, int64_t sector_num, int nb_sectors, int is_write, void *acb)
+{
+}
+
+static inline void trace_bdrv_co_copy_on_readv(void *bs, int64_t sector_num, int nb_sectors, int64_t cluster_sector_num, int cluster_nb_sectors)
 {
 }
 
@@ -1705,7 +1701,7 @@ static inline void trace_v9fs_clunk(uint16_t tag, uint8_t id, int32_t fid)
 {
 }
 
-static inline void trace_v9fs_read(uint16_t tag, uint8_t id, int32_t fid, int64_t off, int32_t max_count)
+static inline void trace_v9fs_read(uint16_t tag, uint8_t id, int32_t fid, uint64_t off, uint32_t max_count)
 {
 }
 
@@ -1713,15 +1709,15 @@ static inline void trace_v9fs_read_return(uint16_t tag, uint8_t id, int32_t coun
 {
 }
 
-static inline void trace_v9fs_readdir(uint16_t tag, uint8_t id, int32_t fid, int64_t offset, int32_t max_count)
+static inline void trace_v9fs_readdir(uint16_t tag, uint8_t id, int32_t fid, uint64_t offset, uint32_t max_count)
 {
 }
 
-static inline void trace_v9fs_readdir_return(uint16_t tag, uint8_t id, int32_t count, ssize_t retval)
+static inline void trace_v9fs_readdir_return(uint16_t tag, uint8_t id, uint32_t count, ssize_t retval)
 {
 }
 
-static inline void trace_v9fs_write(uint16_t tag, uint8_t id, int32_t fid, int64_t off, int32_t count, int cnt)
+static inline void trace_v9fs_write(uint16_t tag, uint8_t id, int32_t fid, uint64_t off, uint32_t count, int cnt)
 {
 }
 
@@ -1886,6 +1882,26 @@ static inline void trace_win_helper_done(uint32_t tl)
 }
 
 static inline void trace_win_helper_retry(uint32_t tl)
+{
+}
+
+static inline void trace_dma_bdrv_io(void *dbs, void *bs, int64_t sector_num, bool to_dev)
+{
+}
+
+static inline void trace_dma_aio_cancel(void *dbs)
+{
+}
+
+static inline void trace_dma_complete(void *dbs, int ret, void *cb)
+{
+}
+
+static inline void trace_dma_bdrv_cb(void *dbs, int ret)
+{
+}
+
+static inline void trace_dma_map_wait(void *dbs)
 {
 }
 

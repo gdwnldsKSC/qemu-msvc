@@ -89,7 +89,7 @@ TimersState timers_state;
 int64_t cpu_get_icount(void)
 {
     int64_t icount;
-    CPUState *env = cpu_single_env;;
+    CPUState *env = cpu_single_env;
 
     icount = qemu_icount;
     if (env) {
@@ -281,7 +281,7 @@ void qemu_clock_warp(QEMUClock *clock)
          * (related to the time left until the next event) has passed.  This
          * rt_clock timer will do this.  This avoids that the warps are too
          * visible externally---for example, you will not be sending network
-         * packets continously instead of every 100ms.
+         * packets continuously instead of every 100ms.
          */
         qemu_mod_timer(icount_warp_timer, vm_clock_warp_start + deadline);
     } else {
@@ -396,7 +396,7 @@ static void do_vm_stop(RunState state)
         pause_all_vcpus();
         runstate_set(state);
         vm_state_notify(0, state);
-        qemu_aio_flush();
+        bdrv_drain_all();
         bdrv_flush_all();
         monitor_protocol_event(QEVENT_STOP, NULL);
     }
@@ -793,9 +793,9 @@ static void qemu_cpu_kick_thread(CPUState *env)
     }
 #else /* _WIN32 */
     if (!qemu_cpu_is_self(env)) {
-        SuspendThread(env->thread->thread);
+        SuspendThread(env->hThread);
         cpu_signal(0);
-        ResumeThread(env->thread->thread);
+        ResumeThread(env->hThread);
     }
 #endif
 }
@@ -910,7 +910,11 @@ static void qemu_tcg_init_vcpu(void *_env)
         env->halt_cond = g_malloc0(sizeof(QemuCond));
         qemu_cond_init(env->halt_cond);
         tcg_halt_cond = env->halt_cond;
-        qemu_thread_create(env->thread, qemu_tcg_cpu_thread_fn, env);
+        qemu_thread_create(env->thread, qemu_tcg_cpu_thread_fn, env,
+                           QEMU_THREAD_JOINABLE);
+#ifdef _WIN32
+        env->hThread = qemu_thread_get_handle(env->thread);
+#endif
         while (env->created == 0) {
             qemu_cond_wait(&qemu_cpu_cond, &qemu_global_mutex);
         }
@@ -926,7 +930,8 @@ static void qemu_kvm_start_vcpu(CPUState *env)
     env->thread = g_malloc0(sizeof(QemuThread));
     env->halt_cond = g_malloc0(sizeof(QemuCond));
     qemu_cond_init(env->halt_cond);
-    qemu_thread_create(env->thread, qemu_kvm_cpu_thread_fn, env);
+    qemu_thread_create(env->thread, qemu_kvm_cpu_thread_fn, env,
+                       QEMU_THREAD_JOINABLE);
     while (env->created == 0) {
         qemu_cond_wait(&qemu_cpu_cond, &qemu_global_mutex);
     }
@@ -1135,4 +1140,94 @@ CpuInfoList *qmp_query_cpus(Error **errp)
     }
 
     return head;
+}
+
+void qmp_memsave(int64_t addr, int64_t size, const char *filename,
+                 bool has_cpu, int64_t cpu_index, Error **errp)
+{
+    FILE *f;
+    uint32_t l;
+    CPUState *env;
+    uint8_t buf[1024];
+
+    if (!has_cpu) {
+        cpu_index = 0;
+    }
+
+    for (env = first_cpu; env; env = env->next_cpu) {
+        if (cpu_index == env->cpu_index) {
+            break;
+        }
+    }
+
+    if (env == NULL) {
+        error_set(errp, QERR_INVALID_PARAMETER_VALUE, "cpu-index",
+                  "a CPU number");
+        return;
+    }
+
+    f = fopen(filename, "wb");
+    if (!f) {
+        error_set(errp, QERR_OPEN_FILE_FAILED, filename);
+        return;
+    }
+
+    while (size != 0) {
+        l = sizeof(buf);
+        if (l > size)
+            l = size;
+        cpu_memory_rw_debug(env, addr, buf, l, 0);
+        if (fwrite(buf, 1, l, f) != l) {
+            error_set(errp, QERR_IO_ERROR);
+            goto exit;
+        }
+        addr += l;
+        size -= l;
+    }
+
+exit:
+    fclose(f);
+}
+
+void qmp_pmemsave(int64_t addr, int64_t size, const char *filename,
+                  Error **errp)
+{
+    FILE *f;
+    uint32_t l;
+    uint8_t buf[1024];
+
+    f = fopen(filename, "wb");
+    if (!f) {
+        error_set(errp, QERR_OPEN_FILE_FAILED, filename);
+        return;
+    }
+
+    while (size != 0) {
+        l = sizeof(buf);
+        if (l > size)
+            l = size;
+        cpu_physical_memory_rw(addr, buf, l, 0);
+        if (fwrite(buf, 1, l, f) != l) {
+            error_set(errp, QERR_IO_ERROR);
+            goto exit;
+        }
+        addr += l;
+        size -= l;
+    }
+
+exit:
+    fclose(f);
+}
+
+void qmp_inject_nmi(Error **errp)
+{
+#if defined(TARGET_I386)
+    CPUState *env;
+
+    for (env = first_cpu; env != NULL; env = env->next_cpu) {
+        cpu_interrupt(env, CPU_INTERRUPT_NMI);
+    }
+#else
+    error_set(errp, QERR_UNSUPPORTED);
+#endif
 }

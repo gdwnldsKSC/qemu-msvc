@@ -5,6 +5,9 @@
 #define CONFIG_TRACE_NOP 1
 #define CONFIG_TRACE_DEFAULT 1
 #define CONFIG_TRACE_FILE "trace"
+#define GLIB_MAJOR_VERSION 2
+#define GLIB_MINOR_VERSION 86
+#define GLIB_MICRO_VERSION 0
 #define HOST_I386 1
 #define HOST_LONG_BITS 32
 #define CONFIG_WIN32 1
@@ -13,11 +16,11 @@
 #define CONFIG_VNC
 #define CONFIG_SLIRP 1
 #define CONFIG_ADLIB 1
-#define QEMU_VERSION "1.x.x "
+#define QEMU_VERSION "1.1.x "
 #define QEMU_PKGVERSION "MS-VisualStudio-2026"
 #define CONFIG_UNAME_RELEASE ""
-#define CONFIG_FILEVERSION 1,0,0,0
-#define CONFIG_PRODUCTVERSION 1,00,0,0
+#define CONFIG_FILEVERSION 1,1,0,0
+#define CONFIG_PRODUCTVERSION 1,1,0,0
 #define CONFIG_AUDIO_DRIVERS &winwave_audio_driver, \
 
 // we must keep an empty space below config_audio_drivers

@@ -61,15 +61,6 @@
  *  2010-May-23  Artyom Tarasenko:  Reworked IUS logic
  */
 
-/*
- * WinQEMU GPL Disclaimer: For the avoidance of doubt, except that if any license choice
- * other than GPL is available it will apply instead, WinQEMU elects to use only the 
- * General Public License version 3 (GPLv3) at this time for any software where a choice of 
- * GPL license versions is made available with the language indicating that GPLv3 or any later
- * version may be used, or where a choice of which version of the GPL is applied is otherwise unspecified.
- * 
- * Please contact Yan Wen (celestialwy@gmail.com) if you need additional information or have any questions.
- */
 typedef enum {
     chn_a, chn_b,
 } ChnID;
@@ -914,7 +905,7 @@ static int escc_init1(SysBusDevice *dev)
 
     memory_region_init_io(&s->mmio, &escc_mem_ops, s, "escc",
                           ESCC_SIZE << s->it_shift);
-    sysbus_init_mmio_region(dev, &s->mmio);
+    sysbus_init_mmio(dev, &s->mmio);
 
     if (s->chn[0].type == mouse) {
         qemu_add_mouse_event_handler(sunmouse_event, &s->chn[0], 0,
