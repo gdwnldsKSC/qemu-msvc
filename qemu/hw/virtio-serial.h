@@ -28,8 +28,6 @@
 
 #define VIRTIO_CONSOLE_BAD_ID           (~(uint32_t)0)
 
-MSC_PACKED_BEGIN_1
-
 struct virtio_console_config {
     /*
      * These two fields are used by VIRTIO_CONSOLE_F_SIZE which
@@ -40,8 +38,6 @@ struct virtio_console_config {
 
     uint32_t max_nr_ports;
 } QEMU_PACKED;
-
-MSC_PACKED_END
 
 struct virtio_console_control {
     uint32_t id;		/* Port number */
@@ -66,10 +62,52 @@ struct virtio_serial_conf {
 
 /* == In-qemu interface == */
 
+#define TYPE_VIRTIO_SERIAL_PORT "virtio-serial-port"
+#define VIRTIO_SERIAL_PORT(obj) \
+     OBJECT_CHECK(VirtIOSerialPort, (obj), TYPE_VIRTIO_SERIAL_PORT)
+#define VIRTIO_SERIAL_PORT_CLASS(klass) \
+     OBJECT_CLASS_CHECK(VirtIOSerialPortClass, (klass), TYPE_VIRTIO_SERIAL_PORT)
+#define VIRTIO_SERIAL_PORT_GET_CLASS(obj) \
+     OBJECT_GET_CLASS(VirtIOSerialPortClass, (obj), TYPE_VIRTIO_SERIAL_PORT)
+
 typedef struct VirtIOSerial VirtIOSerial;
 typedef struct VirtIOSerialBus VirtIOSerialBus;
 typedef struct VirtIOSerialPort VirtIOSerialPort;
-typedef struct VirtIOSerialPortInfo VirtIOSerialPortInfo;
+
+typedef struct VirtIOSerialPortClass {
+    DeviceClass parent_class;
+
+    /* Is this a device that binds with hvc in the guest? */
+    bool is_console;
+
+    /*
+     * The per-port (or per-app) init function that's called when a
+     * new device is found on the bus.
+     */
+    int (*init)(VirtIOSerialPort *port);
+    /*
+     * Per-port exit function that's called when a port gets
+     * hot-unplugged or removed.
+     */
+    int (*exit)(VirtIOSerialPort *port);
+
+    /* Callbacks for guest events */
+        /* Guest opened device. */
+    void (*guest_open)(VirtIOSerialPort *port);
+        /* Guest closed device. */
+    void (*guest_close)(VirtIOSerialPort *port);
+
+        /* Guest is now ready to accept data (virtqueues set up). */
+    void (*guest_ready)(VirtIOSerialPort *port);
+
+    /*
+     * Guest wrote some data to the port. This data is handed over to
+     * the app via this callback.  The app can return a size less than
+     * 'len'.  In this case, throttling will be enabled for this port.
+     */
+    ssize_t (*have_data)(VirtIOSerialPort *port, const uint8_t *buf,
+                         size_t len);
+} VirtIOSerialPortClass;
 
 /*
  * This is the state that's shared between all the ports.  Some of the
@@ -135,48 +173,13 @@ struct VirtIOSerialPort {
     bool throttled;
 };
 
-struct VirtIOSerialPortInfo {
-    DeviceInfo qdev;
-
-    /* Is this a device that binds with hvc in the guest? */
-    bool is_console;
-
-    /*
-     * The per-port (or per-app) init function that's called when a
-     * new device is found on the bus.
-     */
-    int (*init)(VirtIOSerialPort *port);
-    /*
-     * Per-port exit function that's called when a port gets
-     * hot-unplugged or removed.
-     */
-    int (*exit)(VirtIOSerialPort *port);
-
-    /* Callbacks for guest events */
-        /* Guest opened device. */
-    void (*guest_open)(VirtIOSerialPort *port);
-        /* Guest closed device. */
-    void (*guest_close)(VirtIOSerialPort *port);
-
-        /* Guest is now ready to accept data (virtqueues set up). */
-    void (*guest_ready)(VirtIOSerialPort *port);
-
-    /*
-     * Guest wrote some data to the port. This data is handed over to
-     * the app via this callback.  The app can return a size less than
-     * 'len'.  In this case, throttling will be enabled for this port.
-     */
-    ssize_t (*have_data)(VirtIOSerialPort *port, const uint8_t *buf,
-                         size_t len);
-};
-
 /* Interface to the virtio-serial bus */
 
 /*
  * Individual ports/apps should call this function to register the port
  * with the virtio-serial bus
  */
-void virtio_serial_port_qdev_register(VirtIOSerialPortInfo *info);
+void virtio_serial_port_qdev_register(DeviceInfo *info);
 
 /*
  * Open a connection to the port

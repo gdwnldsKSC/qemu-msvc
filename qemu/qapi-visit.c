@@ -811,6 +811,31 @@ void visit_type_PciInfoList(Visitor *m, PciInfoList ** obj, const char *name, Er
     visit_end_list(m, errp);
 }
 
+void visit_type_BlockJobInfo(Visitor *m, BlockJobInfo ** obj, const char *name, Error **errp)
+{
+    visit_start_struct(m, (void **)obj, "BlockJobInfo", name, sizeof(BlockJobInfo), errp);
+    visit_type_str(m, (obj && *obj) ? &(*obj)->type : NULL, "type", errp);
+    visit_type_str(m, (obj && *obj) ? &(*obj)->device : NULL, "device", errp);
+    visit_type_int(m, (obj && *obj) ? &(*obj)->len : NULL, "len", errp);
+    visit_type_int(m, (obj && *obj) ? &(*obj)->offset : NULL, "offset", errp);
+    visit_type_int(m, (obj && *obj) ? &(*obj)->speed : NULL, "speed", errp);
+    visit_end_struct(m, errp);
+}
+
+void visit_type_BlockJobInfoList(Visitor *m, BlockJobInfoList ** obj, const char *name, Error **errp)
+{
+    GenericList *i, **head = (GenericList **)obj;
+
+    visit_start_list(m, name, errp);
+
+    for (*head = i = visit_next_list(m, head, errp); i; i = visit_next_list(m, &i, errp)) {
+        BlockJobInfoList *native_i = (BlockJobInfoList *)i;
+        visit_type_BlockJobInfo(m, &native_i->value, NULL, errp);
+    }
+
+    visit_end_list(m, errp);
+}
+
 void visit_type_DevicePropertyInfo(Visitor *m, DevicePropertyInfo ** obj, const char *name, Error **errp)
 {
     visit_start_struct(m, (void **)obj, "DevicePropertyInfo", name, sizeof(DevicePropertyInfo), errp);

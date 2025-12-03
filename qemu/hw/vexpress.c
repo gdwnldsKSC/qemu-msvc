@@ -31,11 +31,13 @@
 #include "exec-memory.h"
 
 #define SMP_BOOT_ADDR 0xe0000000
+#define SMP_BOOTREG_ADDR 0x10000030
 
 #define VEXPRESS_BOARD_ID 0x8e0
 
 static struct arm_boot_info vexpress_binfo = {
     .smp_loader_start = SMP_BOOT_ADDR,
+    .smp_bootreg_addr = SMP_BOOTREG_ADDR,
 };
 
 static void vexpress_a9_init(ram_addr_t ram_size,
@@ -180,6 +182,7 @@ static void vexpress_a9_init(ram_addr_t ram_size,
     /* 0x100ec000 TrustZone Address Space Controller */
     /* 0x10200000 CoreSight debug APB */
     /* 0x1e00a000 PL310 L2 Cache Controller */
+    sysbus_create_varargs("l2x0", 0x1e00a000, NULL);
 
     /* CS0: NOR0 flash          : 0x40000000 .. 0x44000000 */
     /* CS4: NOR1 flash          : 0x44000000 .. 0x48000000 */

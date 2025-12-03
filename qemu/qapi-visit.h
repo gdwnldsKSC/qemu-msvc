@@ -98,6 +98,9 @@ void visit_type_PciDeviceInfoList(Visitor *m, PciDeviceInfoList ** obj, const ch
 void visit_type_PciInfo(Visitor *m, PciInfo ** obj, const char *name, Error **errp);
 void visit_type_PciInfoList(Visitor *m, PciInfoList ** obj, const char *name, Error **errp);
 
+void visit_type_BlockJobInfo(Visitor *m, BlockJobInfo ** obj, const char *name, Error **errp);
+void visit_type_BlockJobInfoList(Visitor *m, BlockJobInfoList ** obj, const char *name, Error **errp);
+
 void visit_type_DevicePropertyInfo(Visitor *m, DevicePropertyInfo ** obj, const char *name, Error **errp);
 void visit_type_DevicePropertyInfoList(Visitor *m, DevicePropertyInfoList ** obj, const char *name, Error **errp);
 

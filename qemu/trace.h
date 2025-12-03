@@ -121,6 +121,10 @@ static inline void trace_bdrv_co_readv(void *bs, int64_t sector_num, int nb_sect
 {
 }
 
+static inline void trace_bdrv_co_copy_on_readv(void *bs, int64_t sector_num, int nb_sector)
+{
+}
+
 static inline void trace_bdrv_co_writev(void *bs, int64_t sector_num, int nb_sector)
 {
 }
@@ -129,7 +133,27 @@ static inline void trace_bdrv_co_io_em(void *bs, int64_t sector_num, int nb_sect
 {
 }
 
-static inline void trace_bdrv_co_copy_on_readv(void *bs, int64_t sector_num, int nb_sectors, int64_t cluster_sector_num, int cluster_nb_sectors)
+static inline void trace_bdrv_co_do_copy_on_readv(void *bs, int64_t sector_num, int nb_sectors, int64_t cluster_sector_num, int cluster_nb_sectors)
+{
+}
+
+static inline void trace_stream_one_iteration(void *s, int64_t sector_num, int nb_sectors, int is_allocated)
+{
+}
+
+static inline void trace_stream_start(void *bs, void *base, void *s, void *co, void *opaque)
+{
+}
+
+static inline void trace_qmp_block_job_cancel(void *job)
+{
+}
+
+static inline void trace_block_stream_cb(void *bs, void *job, int ret)
+{
+}
+
+static inline void trace_qmp_block_stream(void *bs, void *job)
 {
 }
 
@@ -142,6 +166,10 @@ static inline void trace_virtio_blk_rw_complete(void *req, int ret)
 }
 
 static inline void trace_virtio_blk_handle_write(void *req, uint64_t sector, size_t nsectors)
+{
+}
+
+static inline void trace_virtio_blk_handle_read(void *req, uint64_t sector, size_t nsectors)
 {
 }
 
@@ -193,15 +221,15 @@ static inline void trace_apic_mem_writel(uint64_t addr, uint32_t val)
 {
 }
 
+static inline void trace_apic_report_irq_delivered(int apic_irq_delivered)
+{
+}
+
 static inline void trace_apic_reset_irq_delivered(int apic_irq_delivered)
 {
 }
 
 static inline void trace_apic_get_irq_delivered(int apic_irq_delivered)
-{
-}
-
-static inline void trace_apic_set_irq(int apic_irq_delivered)
 {
 }
 
@@ -693,6 +721,10 @@ static inline void trace_usb_set_config(int addr, int config, int ret)
 {
 }
 
+static inline void trace_usb_set_interface(int addr, int iface, int alt, int ret)
+{
+}
+
 static inline void trace_usb_clear_device_feature(int addr, int feature, int ret)
 {
 }
@@ -982,6 +1014,10 @@ static inline void trace_grlib_apbuart_event(int event)
 }
 
 static inline void trace_grlib_apbuart_writel_unknown(uint64_t addr, uint32_t value)
+{
+}
+
+static inline void trace_grlib_apbuart_readl_unknown(uint64_t addr)
 {
 }
 

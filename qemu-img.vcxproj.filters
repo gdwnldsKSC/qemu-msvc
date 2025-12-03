@@ -207,5 +207,11 @@
     <ClCompile Include="third_party\outside_qemu_tree_custom\gettimeofday.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="qemu\block\stream.c">
+      <Filter>Source Files\block</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-coroutine-sleep.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

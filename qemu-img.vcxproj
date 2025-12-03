@@ -163,6 +163,7 @@
     <ClCompile Include="qemu\block\qed.c" />
     <ClCompile Include="qemu\block\raw-win32.c" />
     <ClCompile Include="qemu\block\raw.c" />
+    <ClCompile Include="qemu\block\stream.c" />
     <ClCompile Include="qemu\block\vdi.c" />
     <ClCompile Include="qemu\block\vmdk.c" />
     <ClCompile Include="qemu\block\vpc.c" />
@@ -183,6 +184,7 @@
     <ClCompile Include="qemu\qdict.c" />
     <ClCompile Include="qemu\qemu-config.c" />
     <ClCompile Include="qemu\qemu-coroutine-lock.c" />
+    <ClCompile Include="qemu\qemu-coroutine-sleep.c" />
     <ClCompile Include="qemu\qemu-coroutine.c" />
     <ClCompile Include="qemu\qemu-error.c" />
     <ClCompile Include="qemu\qemu-img.c" />

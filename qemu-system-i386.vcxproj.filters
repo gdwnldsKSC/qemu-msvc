@@ -97,6 +97,12 @@
     <Filter Include="qemu\trace">
       <UniqueIdentifier>{d618cb71-3b6c-4593-9c7c-e33ba3b5b8f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="qemu\qom">
+      <UniqueIdentifier>{7a7c50ad-f980-42bd-81bc-e164d28bf6ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="qemu\qom\src">
+      <UniqueIdentifier>{fda6f824-8203-4f25-a38e-8d440bc4a382}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1929,6 +1935,36 @@
     <ClCompile Include="qemu\qemu-coroutine-io.c">
       <Filter>qemu\src</Filter>
     </ClCompile>
+    <ClCompile Include="qemu\qom\object.c">
+      <Filter>qemu\qom\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-coroutine-sleep.c">
+      <Filter>qemu\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\block\stream.c">
+      <Filter>qemu\block\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\apic_common.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\i82374.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\i82378.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\i8259_common.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\ioapic_common.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\usb-audio.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\usb-xhci.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="float80-port.h">
@@ -2995,6 +3031,18 @@
     </ClInclude>
     <ClInclude Include="qemu\vmstate.h">
       <Filter>qemu\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\include\qemu\object.h">
+      <Filter>qemu\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\hw\apic_internal.h">
+      <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\hw\i8259_internal.h">
+      <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\hw\ioapic_internal.h">
+      <Filter>qemu\hw\inc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

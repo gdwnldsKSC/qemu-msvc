@@ -792,6 +792,36 @@ void qapi_free_PciInfo(PciInfo * obj)
     qapi_dealloc_visitor_cleanup(md);
 }
 
+void qapi_free_BlockJobInfoList(BlockJobInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockJobInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_BlockJobInfo(BlockJobInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_BlockJobInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
 void qapi_free_DevicePropertyInfoList(DevicePropertyInfoList * obj)
 {
     QapiDeallocVisitor *md;

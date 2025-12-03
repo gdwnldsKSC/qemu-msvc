@@ -35,6 +35,7 @@ VncInfo * qmp_query_vnc(Error **errp);
 SpiceInfo * qmp_query_spice(Error **errp);
 BalloonInfo * qmp_query_balloon(Error **errp);
 PciInfoList * qmp_query_pci(Error **errp);
+BlockJobInfoList * qmp_query_block_jobs(Error **errp);
 void qmp_quit(Error **errp);
 void qmp_stop(Error **errp);
 void qmp_system_reset(Error **errp);
@@ -90,6 +91,25 @@ char * qmp_human_monitor_command(const char * command_line, bool has_cpu_index, 
 void qmp_migrate_cancel(Error **errp);
 void qmp_migrate_set_downtime(double value, Error **errp);
 void qmp_migrate_set_speed(int64_t value, Error **errp);
+void qmp_marshal_input_eject(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_change(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_block_stream(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_block_job_set_speed(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_block_job_cancel(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_block_set_io_throttle(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_set_password(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_expire_password(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_query_block_jobs(QDict* args, QObject** ret, Error** errp);
+void qmp_marshal_input_change_vnc_password(QDict* args, QObject** ret, Error** errp);
 DevicePropertyInfoList * qmp_qom_list(const char * path, Error **errp);
+void qmp_set_password(const char * protocol, const char * password, bool has_connected, const char * connected, Error **errp);
+void qmp_expire_password(const char * protocol, const char * time, Error **errp);
+void qmp_eject(const char * device, bool has_force, bool force, Error **errp);
+void qmp_change_vnc_password(const char * password, Error **errp);
+void qmp_change(const char * device, const char * target, bool has_arg, const char * arg, Error **errp);
+void qmp_block_set_io_throttle(const char * device, int64_t bps, int64_t bps_rd, int64_t bps_wr, int64_t iops, int64_t iops_rd, int64_t iops_wr, Error **errp);
+void qmp_block_stream(const char * device, bool has_base, const char * base, Error **errp);
+void qmp_block_job_set_speed(const char * device, int64_t value, Error **errp);
+void qmp_block_job_cancel(const char * device, Error **errp);
 
 #endif

@@ -21,6 +21,7 @@
 #include "exec-memory.h"
 
 #define SMP_BOOT_ADDR 0xe0000000
+#define SMP_BOOTREG_ADDR 0x10000030
 
 typedef struct {
     SysBusDevice busdev;
@@ -81,10 +82,17 @@ static int realview_i2c_init(SysBusDevice *dev)
     return 0;
 }
 
-static SysBusDeviceInfo realview_i2c_info = {
-    .init = realview_i2c_init,
-    .qdev.name  = "realview_i2c",
-    .qdev.size  = sizeof(RealViewI2CState),
+static void realview_i2c_class_init(ObjectClass *klass, void *data)
+{
+    SysBusDeviceClass *k = SYS_BUS_DEVICE_CLASS(klass);
+
+    k->init = realview_i2c_init;
+}
+
+static DeviceInfo realview_i2c_info = {
+    .name = "realview_i2c",
+    .size = sizeof(RealViewI2CState),
+    .class_init = realview_i2c_class_init,
 };
 
 static void realview_register_devices(void)
@@ -96,6 +104,7 @@ static void realview_register_devices(void)
 
 static struct arm_boot_info realview_binfo = {
     .smp_loader_start = SMP_BOOT_ADDR,
+    .smp_bootreg_addr = SMP_BOOTREG_ADDR,
 };
 
 /* The following two lists must be consistent.  */
@@ -225,6 +234,8 @@ static void realview_init(ram_addr_t ram_size,
         for (n = 0; n < smp_cpus; n++) {
             sysbus_connect_irq(busdev, n, cpu_irq[n]);
         }
+        sysbus_create_varargs("l2x0", realview_binfo.smp_priv_base + 0x2000,
+                              NULL);
     } else {
         uint32_t gic_addr = is_pb ? 0x1e000000 : 0x10040000;
         /* For now just create the nIRQ GIC, and ignore the others.  */

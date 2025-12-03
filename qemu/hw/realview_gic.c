@@ -9,7 +9,6 @@
 
 #include "sysbus.h"
 
-#define GIC_NIRQ 96
 #define NCPU 1
 
 /* Only a single "CPU" interface is present.  */
@@ -37,16 +36,32 @@ static int realview_gic_init(SysBusDevice *dev)
 {
     RealViewGICState *s = FROM_SYSBUSGIC(RealViewGICState, dev);
 
-    gic_init(&s->gic);
+    /* The GICs on the RealView boards have a fixed nonconfigurable
+     * number of interrupt lines, so we don't need to expose this as
+     * a qdev property.
+     */
+    gic_init(&s->gic, 96);
     realview_gic_map_setup(s);
     sysbus_init_mmio(dev, &s->container);
     return 0;
 }
 
+static void realview_gic_class_init(ObjectClass *klass, void *data)
+{
+    SysBusDeviceClass *sdc = SYS_BUS_DEVICE_CLASS(klass);
+
+    sdc->init = realview_gic_init;
+}
+
+static DeviceInfo realview_gic_info = {
+    .name = "realview_gic",
+    .size = sizeof(RealViewGICState),
+    .class_init = realview_gic_class_init,
+};
+
 static void realview_gic_register_devices(void)
 {
-    sysbus_register_dev("realview_gic", sizeof(RealViewGICState),
-                        realview_gic_init);
+    sysbus_qdev_register(&realview_gic_info);
 }
 
 device_init(realview_gic_register_devices)

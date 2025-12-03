@@ -246,6 +246,14 @@ typedef struct PciInfoList
     struct PciInfoList *next;
 } PciInfoList;
 
+typedef struct BlockJobInfo BlockJobInfo;
+
+typedef struct BlockJobInfoList
+{
+    BlockJobInfo *value;
+    struct BlockJobInfoList *next;
+} BlockJobInfoList;
+
 typedef struct DevicePropertyInfo DevicePropertyInfo;
 
 typedef struct DevicePropertyInfoList
@@ -601,6 +609,18 @@ struct PciInfo
 
 void qapi_free_PciInfoList(PciInfoList * obj);
 void qapi_free_PciInfo(PciInfo * obj);
+
+struct BlockJobInfo
+{
+    char * type;
+    char * device;
+    int64_t len;
+    int64_t offset;
+    int64_t speed;
+};
+
+void qapi_free_BlockJobInfoList(BlockJobInfoList * obj);
+void qapi_free_BlockJobInfo(BlockJobInfo * obj);
 
 struct DevicePropertyInfo
 {

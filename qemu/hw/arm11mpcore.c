@@ -10,11 +10,6 @@
 #include "sysbus.h"
 #include "qemu-timer.h"
 
-/* ??? The MPCore TRM says the on-chip controller has 224 external IRQ lines
-   (+ 32 internal).  However my test chip only exposes/reports 32.
-   More importantly Linux falls over if more than 32 are present!  */
-#define GIC_NIRQ 64
-
 #define NCPU 4
 
 static inline int
@@ -37,6 +32,7 @@ typedef struct mpcore_priv_state {
     MemoryRegion iomem;
     MemoryRegion container;
     DeviceState *mptimer;
+    uint32_t num_irq;
 } mpcore_priv_state;
 
 /* Per-CPU private memory mapped IO.  */
@@ -132,7 +128,7 @@ static int mpcore_priv_init(SysBusDevice *dev)
 {
     mpcore_priv_state *s = FROM_SYSBUSGIC(mpcore_priv_state, dev);
 
-    gic_init(&s->gic, s->num_cpu);
+    gic_init(&s->gic, s->num_cpu, s->num_irq);
     s->mptimer = qdev_create(NULL, "arm_mptimer");
     qdev_prop_set_uint32(s->mptimer, "num-cpu", s->num_cpu);
     qdev_init_nofail(s->mptimer);
@@ -205,24 +201,51 @@ static int realview_mpcore_init(SysBusDevice *dev)
     return 0;
 }
 
-static SysBusDeviceInfo mpcore_rirq_info = {
-    .init = realview_mpcore_init,
-    .qdev.name  = "realview_mpcore",
-    .qdev.size  = sizeof(mpcore_rirq_state),
-    .qdev.props = (Property[]) {
-        DEFINE_PROP_UINT32("num-cpu", mpcore_rirq_state, num_cpu, 1),
-        DEFINE_PROP_END_OF_LIST(),
-    }
+static Property mpcore_rirq_properties[] = {
+    DEFINE_PROP_UINT32("num-cpu", mpcore_priv_state, num_cpu, 1),
+    /* The ARM11 MPCORE TRM says the on-chip controller may have
+     * anything from 0 to 224 external interrupt IRQ lines (with another
+     * 32 internal). We default to 32+32, which is the number provided by
+     * the ARM11 MPCore test chip in the Realview Versatile Express
+     * coretile. Other boards may differ and should set this property
+     * appropriately. Some Linux kernels may not boot if the hardware
+     * has more IRQ lines than the kernel expects.
+     */
+    DEFINE_PROP_UINT32("num-irq", mpcore_priv_state, num_irq, 64),
+    DEFINE_PROP_END_OF_LIST(),
 };
 
-static SysBusDeviceInfo mpcore_priv_info = {
-    .init = mpcore_priv_init,
-    .qdev.name  = "arm11mpcore_priv",
-    .qdev.size  = sizeof(mpcore_priv_state),
-    .qdev.props = (Property[]) {
-        DEFINE_PROP_UINT32("num-cpu", mpcore_priv_state, num_cpu, 1),
-        DEFINE_PROP_END_OF_LIST(),
-    }
+static void mpcore_rirq_class_init(ObjectClass *klass, void *data)
+{
+    SysBusDeviceClass *k = SYS_BUS_DEVICE_CLASS(klass);
+
+    k->init = realview_mpcore_init;
+}
+
+static DeviceInfo mpcore_rirq_info = {
+    .name = "realview_mpcore",
+    .size = sizeof(mpcore_rirq_state),
+    .props = mpcore_rirq_properties,
+    .class_init = mpcore_rirq_class_init,
+};
+
+static Property mpcore_priv_properties[] = {
+    DEFINE_PROP_UINT32("num-cpu", mpcore_priv_state, num_cpu, 1),
+    DEFINE_PROP_END_OF_LIST(),
+};
+
+static void mpcore_priv_class_init(ObjectClass *klass, void *data)
+{
+    SysBusDeviceClass *k = SYS_BUS_DEVICE_CLASS(klass);
+
+    k->init = mpcore_priv_init;
+}
+
+static DeviceInfo mpcore_priv_info = {
+    .name = "arm11mpcore_priv",
+    .size = sizeof(mpcore_priv_state),
+    .props = mpcore_priv_properties,
+    .class_init = mpcore_priv_class_init,
 };
 
 static void arm11mpcore_register_devices(void)

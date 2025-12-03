@@ -126,7 +126,7 @@ static void alarm_cb (void *opaque)
         /* Repeat once a second */
         next_time = 1;
     }
-    qemu_mod_timer(NVRAM->alrm_timer, qemu_get_clock_ns(vm_clock) +
+    qemu_mod_timer(NVRAM->alrm_timer, qemu_get_clock_ns(rtc_clock) +
                     next_time * 1000);
     qemu_set_irq(NVRAM->IRQ, 0);
 }
@@ -687,7 +687,7 @@ static void m48t59_init_common(M48t59State *s)
 {
     s->buffer = g_malloc0(s->size);
     if (s->type == 59) {
-        s->alrm_timer = qemu_new_timer_ns(vm_clock, &alarm_cb, s);
+        s->alrm_timer = qemu_new_timer_ns(rtc_clock, &alarm_cb, s);
         s->wd_timer = qemu_new_timer_ns(vm_clock, &watchdog_cb, s);
     }
     qemu_get_timedate(&s->alarm, 0);
@@ -720,13 +720,19 @@ static int m48t59_init1(SysBusDevice *dev)
     return 0;
 }
 
-static ISADeviceInfo m48t59_isa_info = {
-    .init = m48t59_init_isa1,
-    .qdev.name = "m48t59_isa",
-    .qdev.size = sizeof(M48t59ISAState),
-    .qdev.reset = m48t59_reset_isa,
-    .qdev.no_user = 1,
-    .qdev.props = (Property[]) {
+static void m48t59_init_class_isa1(ObjectClass *klass, void *data)
+{
+    ISADeviceClass *ic = ISA_DEVICE_CLASS(klass);
+    ic->init = m48t59_init_isa1;
+}
+
+static DeviceInfo m48t59_isa_info = {
+    .class_init = m48t59_init_class_isa1,
+    .name = "m48t59_isa",
+    .size = sizeof(M48t59ISAState),
+    .reset = m48t59_reset_isa,
+    .no_user = 1,
+    .props = (Property[]) {
         DEFINE_PROP_UINT32("size",    M48t59ISAState, state.size,    -1),
         DEFINE_PROP_UINT32("type",    M48t59ISAState, state.type,    -1),
         DEFINE_PROP_HEX32( "io_base", M48t59ISAState, state.io_base,  0),
@@ -734,17 +740,26 @@ static ISADeviceInfo m48t59_isa_info = {
     }
 };
 
-static SysBusDeviceInfo m48t59_info = {
-    .init = m48t59_init1,
-    .qdev.name  = "m48t59",
-    .qdev.size = sizeof(M48t59SysBusState),
-    .qdev.reset = m48t59_reset_sysbus,
-    .qdev.props = (Property[]) {
-        DEFINE_PROP_UINT32("size",    M48t59SysBusState, state.size,    -1),
-        DEFINE_PROP_UINT32("type",    M48t59SysBusState, state.type,    -1),
-        DEFINE_PROP_HEX32( "io_base", M48t59SysBusState, state.io_base,  0),
-        DEFINE_PROP_END_OF_LIST(),
-    }
+static Property m48t59_properties[] = {
+    DEFINE_PROP_UINT32("size",    M48t59SysBusState, state.size,    -1),
+    DEFINE_PROP_UINT32("type",    M48t59SysBusState, state.type,    -1),
+    DEFINE_PROP_HEX32( "io_base", M48t59SysBusState, state.io_base,  0),
+    DEFINE_PROP_END_OF_LIST(),
+};
+
+static void m48t59_class_init(ObjectClass *klass, void *data)
+{
+    SysBusDeviceClass *k = SYS_BUS_DEVICE_CLASS(klass);
+
+    k->init = m48t59_init1;
+}
+
+static DeviceInfo m48t59_info = {
+    .name = "m48t59",
+    .size = sizeof(M48t59SysBusState),
+    .reset = m48t59_reset_sysbus,
+    .props = m48t59_properties,
+    .class_init = m48t59_class_init,
 };
 
 static void m48t59_register_devices(void)

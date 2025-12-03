@@ -11,7 +11,8 @@ DEF("machine", HAS_ARG, QEMU_OPTION_machine, \
 "-machine [type=]name[,prop[=value][,...]]\n"
 "                selects emulated machine (-machine ? for list)\n"
 "                property accel=accel1[:accel2[:...]] selects accelerator\n"
-"                supported accelerators are kvm, xen, tcg (default: tcg)\n",
+"                supported accelerators are kvm, xen, tcg (default: tcg)\n"
+"                kernel_irqchip=on|off controls accelerated irqchip support\n",
 QEMU_ARCH_ALL)
 
 DEF("M", HAS_ARG, QEMU_OPTION_M, "", QEMU_ARCH_ALL)

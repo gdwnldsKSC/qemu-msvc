@@ -635,15 +635,7 @@ static int pci_bonito_map_irq(PCIDevice * pci_dev, int irq_num)
         return 4 + BONITO_IRQ_BASE;
     case 7:   /* FULONG2E_RTL_SLOT, RTL8139 */
         return 5 + BONITO_IRQ_BASE;
-#ifndef _MSC_VER
     case 8 ... 12: /* PCI slot 1 to 4 */
-#else
-    case 8: /* PCI slot 1 to 4 */
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-#endif
         return (slot - 8 + irq_num) + 6 + BONITO_IRQ_BASE;
     default:  /* Unknown device, don't do any translation */
         return irq_num;
@@ -774,25 +766,38 @@ PCIBus *bonito_init(qemu_irq *pic)
     return b;
 }
 
-static PCIDeviceInfo bonito_info = {
-    .qdev.name    = "Bonito",
-    .qdev.desc    = "Host bridge",
-    .qdev.size    = sizeof(PCIBonitoState),
-    .qdev.vmsd    = &vmstate_bonito,
-    .qdev.no_user = 1,
-    .init         = bonito_initfn,
-    /*Bonito North Bridge, built on FPGA, VENDOR_ID/DEVICE_ID are "undefined"*/
-    .vendor_id    = 0xdf53,
-    .device_id    = 0x00d5,
-    .revision     = 0x01,
-    .class_id     = PCI_CLASS_BRIDGE_HOST,
+static void bonito_class_init(ObjectClass *klass, void *data)
+{
+    PCIDeviceClass *k = PCI_DEVICE_CLASS(klass);
+
+    k->init = bonito_initfn;
+    k->vendor_id = 0xdf53;
+    k->device_id = 0x00d5;
+    k->revision = 0x01;
+    k->class_id = PCI_CLASS_BRIDGE_HOST;
+}
+
+static DeviceInfo bonito_info = {
+    .name = "Bonito",
+    .desc = "Host bridge",
+    .size = sizeof(PCIBonitoState),
+    .vmsd = &vmstate_bonito,
+    .no_user = 1,
+    .class_init = bonito_class_init,
 };
 
-static SysBusDeviceInfo bonito_pcihost_info = {
-    .init         = bonito_pcihost_initfn,
-    .qdev.name    = "Bonito-pcihost",
-    .qdev.size    = sizeof(BonitoState),
-    .qdev.no_user = 1,
+static void bonito_pcihost_class_init(ObjectClass *klass, void *data)
+{
+    SysBusDeviceClass *k = SYS_BUS_DEVICE_CLASS(klass);
+
+    k->init = bonito_pcihost_initfn;
+}
+
+static DeviceInfo bonito_pcihost_info = {
+    .name = "Bonito-pcihost",
+    .size = sizeof(BonitoState),
+    .no_user = 1,
+    .class_init = bonito_pcihost_class_init,
 };
 
 static void bonito_register(void)

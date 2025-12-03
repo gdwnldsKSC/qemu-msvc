@@ -37,14 +37,39 @@
 },
 
 
+{
+.name       = "block_stream",
+.args_type  = "device:B,base:s?",
+.params     = "device [base]",
+.help       = "copy data from a backing file into a block device",
+.mhandler.cmd = hmp_block_stream,
+},
+
+
+{
+.name       = "block_job_set_speed",
+.args_type  = "device:B,value:o",
+.params     = "device value",
+.help       = "set maximum speed for a background block operation",
+.mhandler.cmd = hmp_block_job_set_speed,
+},
+
+
+{
+.name       = "block_job_cancel",
+.args_type  = "device:B",
+.params     = "device",
+.help       = "stop an active block streaming operation",
+.mhandler.cmd = hmp_block_job_cancel,
+},
+
 
 {
 .name       = "eject",
 .args_type  = "force:-f,device:B",
 .params     = "[-f] device",
 .help       = "eject a removable medium (use -f to force it)",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_eject,
+.mhandler.cmd = hmp_eject,
 },
 
 
@@ -63,8 +88,7 @@
 .args_type  = "device:B,target:F,arg:s?",
 .params     = "device filename [format]",
 .help       = "change a removable medium, optional format",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_change,
+.mhandler.cmd = hmp_change,
 },
 
 
@@ -692,8 +716,7 @@
 .args_type  = "device:B,bps:l,bps_rd:l,bps_wr:l,iops:l,iops_rd:l,iops_wr:l",
 .params     = "device bps bps_rd bps_wr iops iops_rd iops_wr",
 .help       = "change I/O throttle limits for a block drive",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = do_block_set_io_throttle,
+.mhandler.cmd = hmp_block_set_io_throttle,
 },
 
 
@@ -702,8 +725,7 @@
 .args_type  = "protocol:s,password:s,connected:s?",
 .params     = "protocol password action-if-connected",
 .help       = "set spice/vnc password",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = set_password,
+.mhandler.cmd = hmp_set_password,
 },
 
 
@@ -712,8 +734,7 @@
 .args_type  = "protocol:s,time:s",
 .params     = "protocol time",
 .help       = "set spice/vnc password expire-time",
-.user_print = monitor_user_noop,
-.mhandler.cmd_new = expire_password,
+.mhandler.cmd = hmp_expire_password,
 },
 
 
