@@ -28,6 +28,7 @@
 #include "vga_int.h"
 #include "pixel_ops.h"
 #include "qemu-timer.h"
+#include "xen.h"
 
 //#define DEBUG_VGA
 //#define DEBUG_VGA_MEM
@@ -2240,7 +2241,9 @@ void vga_common_init(VGACommonState *s, int vga_ram_size)
 #else
     s->is_vbe_vmstate = 0;
 #endif
-    memory_region_init_ram(&s->vram, NULL, "vga.vram", vga_ram_size);
+    memory_region_init_ram(&s->vram, "vga.vram", vga_ram_size);
+    vmstate_register_ram_global(&s->vram);
+    xen_register_framebuffer(&s->vram);
     s->vram_ptr = memory_region_get_ram_ptr(&s->vram);
     s->vram_size = vga_ram_size;
     s->get_bpp = vga_get_bpp;
@@ -2389,12 +2392,10 @@ int ppm_save(const char *filename, struct DisplaySurface *ds)
                 v = *(uint32_t *)d;
             else
                 v = (uint32_t) (*(uint16_t *)d);
-            r = ((v >> ds->pf.rshift) & ds->pf.rmax) * 256 /
-                (ds->pf.rmax + 1);
-            g = ((v >> ds->pf.gshift) & ds->pf.gmax) * 256 /
-                (ds->pf.gmax + 1);
-            b = ((v >> ds->pf.bshift) & ds->pf.bmax) * 256 /
-                (ds->pf.bmax + 1);
+            /* Limited to 8 or fewer bits per channel: */
+            r = ((v >> ds->pf.rshift) & ds->pf.rmax) << (8 - ds->pf.rbits);
+            g = ((v >> ds->pf.gshift) & ds->pf.gmax) << (8 - ds->pf.gbits);
+            b = ((v >> ds->pf.bshift) & ds->pf.bmax) << (8 - ds->pf.bbits);
             *pbuf++ = r;
             *pbuf++ = g;
             *pbuf++ = b;

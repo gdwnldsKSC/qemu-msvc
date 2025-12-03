@@ -593,7 +593,7 @@ static inline uint32_t get_hwc_x(SM501State *state, int crt)
  */
 static inline uint16_t get_hwc_color(SM501State *state, int crt, int index)
 {
-    uint16_t color_reg = 0;
+    uint32_t color_reg = 0;
     uint16_t color_565 = 0;
 
     if (index == 0) {
@@ -1405,8 +1405,9 @@ void sm501_init(MemoryRegion *address_space_mem, uint32_t base,
     s->dc_crt_control = 0x00010000;
 
     /* allocate local memory */
-    memory_region_init_ram(&s->local_mem_region, NULL, "sm501.local",
+    memory_region_init_ram(&s->local_mem_region, "sm501.local",
                            local_mem_bytes);
+    vmstate_register_ram_global(&s->local_mem_region);
     s->local_mem = memory_region_get_ram_ptr(&s->local_mem_region);
     memory_region_add_subregion(address_space_mem, base, &s->local_mem_region);
 

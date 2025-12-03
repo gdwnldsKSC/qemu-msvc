@@ -1325,7 +1325,7 @@ static inline void trace_xen_ram_alloc(unsigned long ram_addr, unsigned long siz
 {
 }
 
-static inline void trace_xen_client_set_memory(uint64_t start_addr, unsigned long size, unsigned long phys_offset, bool log_dirty)
+static inline void trace_xen_client_set_memory(uint64_t start_addr, unsigned long size, bool log_dirty)
 {
 }
 

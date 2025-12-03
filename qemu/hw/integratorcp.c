@@ -21,7 +21,6 @@ typedef struct {
     MemoryRegion iomem;
     uint32_t memsz;
     MemoryRegion flash;
-    bool flash_mapped;
     uint32_t cm_osc;
     uint32_t cm_ctrl;
     uint32_t cm_lock;
@@ -110,29 +109,18 @@ static uint64_t integratorcm_read(void *opaque, target_phys_addr_t offset,
     }
 }
 
-static void integratorcm_do_remap(integratorcm_state *s, int flash)
+static void integratorcm_do_remap(integratorcm_state *s)
 {
-    if (flash) {
-        if (s->flash_mapped) {
-            sysbus_del_memory(&s->busdev, &s->flash);
-            s->flash_mapped = false;
-        }
-    } else {
-        if (!s->flash_mapped) {
-            sysbus_add_memory_overlap(&s->busdev, 0, &s->flash, 1);
-            s->flash_mapped = true;
-        }
-    }
-    //??? tlb_flush (cpu_single_env, 1);
+    /* Sync memory region state with CM_CTRL REMAP bit:
+     * bit 0 => flash at address 0; bit 1 => RAM
+     */
+    memory_region_set_enabled(&s->flash, !(s->cm_ctrl & 4));
 }
 
 static void integratorcm_set_ctrl(integratorcm_state *s, uint32_t value)
 {
     if (value & 8) {
         qemu_system_reset_request();
-    }
-    if ((s->cm_ctrl ^ value) & 4) {
-        integratorcm_do_remap(s, (value & 4) == 0);
     }
     if ((s->cm_ctrl ^ value) & 1) {
         /* (value & 1) != 0 means the green "MISC LED" is lit.
@@ -143,6 +131,7 @@ static void integratorcm_set_ctrl(integratorcm_state *s, uint32_t value)
     }
     /* Note that the RESET bit [3] always reads as zero */
     s->cm_ctrl = (s->cm_ctrl & ~5) | (value & 5);
+    integratorcm_do_remap(s);
 }
 
 static void integratorcm_update(integratorcm_state *s)
@@ -261,14 +250,14 @@ static int integratorcm_init(SysBusDevice *dev)
     }
     memcpy(integrator_spd + 73, "QEMU-MEMORY", 11);
     s->cm_init = 0x00000112;
-    memory_region_init_ram(&s->flash, NULL, "integrator.flash", 0x100000);
-    s->flash_mapped = false;
+    memory_region_init_ram(&s->flash, "integrator.flash", 0x100000);
+    vmstate_register_ram_global(&s->flash);
 
     memory_region_init_io(&s->iomem, &integratorcm_ops, s,
                           "integratorcm", 0x00800000);
     sysbus_init_mmio(dev, &s->iomem);
 
-    integratorcm_do_remap(s, 1);
+    integratorcm_do_remap(s);
     /* ??? Save/restore.  */
     return 0;
 }
@@ -471,7 +460,8 @@ static void integratorcp_init(ram_addr_t ram_size,
         fprintf(stderr, "Unable to find CPU definition\n");
         exit(1);
     }
-    memory_region_init_ram(ram, NULL, "integrator.ram", ram_size);
+    memory_region_init_ram(ram, "integrator.ram", ram_size);
+    vmstate_register_ram_global(ram);
     /* ??? On a real system the first 1Mb is mapped as SSRAM or boot flash.  */
     /* ??? RAM should repeat to fill physical memory space.  */
     /* SDRAM at address zero*/

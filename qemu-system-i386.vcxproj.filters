@@ -2987,6 +2987,15 @@
     <ClInclude Include="qemu\exec-obsolete.h">
       <Filter>qemu\inc</Filter>
     </ClInclude>
+    <ClInclude Include="qemu\hw\ptimer.h">
+      <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qemu-file.h">
+      <Filter>qemu\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\vmstate.h">
+      <Filter>qemu\inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.md" />

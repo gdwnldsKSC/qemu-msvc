@@ -2140,6 +2140,7 @@
     <ClInclude Include="qemu\hw\pm_smbus.h" />
     <ClInclude Include="qemu\hw\poison.h" />
     <ClInclude Include="qemu\hw\prep_pci.h" />
+    <ClInclude Include="qemu\hw\ptimer.h" />
     <ClInclude Include="qemu\hw\qdev-addr.h" />
     <ClInclude Include="qemu\hw\qdev.h" />
     <ClInclude Include="qemu\hw\qxl.h" />
@@ -2199,6 +2200,7 @@
     <ClInclude Include="qemu\qemu-coroutine-int.h" />
     <ClInclude Include="qemu\qemu-coroutine.h" />
     <ClInclude Include="qemu\qemu-error.h" />
+    <ClInclude Include="qemu\qemu-file.h" />
     <ClInclude Include="qemu\qemu-objects.h" />
     <ClInclude Include="qemu\qemu-option.h" />
     <ClInclude Include="qemu\qemu-options-wrapper.h" />
@@ -2279,6 +2281,7 @@
     <ClInclude Include="qemu\ui\vnc.h" />
     <ClInclude Include="qemu\ui\vnc_keysym.h" />
     <ClInclude Include="qemu\ui\x_keymap.h" />
+    <ClInclude Include="qemu\vmstate.h" />
     <ClInclude Include="qemu\xen-mapcache.h" />
     <ClInclude Include="sigcompat.h" />
     <ClInclude Include="stdafx.h" />

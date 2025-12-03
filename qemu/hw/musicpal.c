@@ -4,6 +4,9 @@
  * Copyright (c) 2008 Jan Kiszka
  *
  * This code is licensed under the GNU GPL v2.
+ *
+ * Contributions after 2012-01-13 are licensed under the terms of the
+ * GNU GPL, version 2 or (at your option) any later version.
  */
 
 #include "sysbus.h"
@@ -14,6 +17,7 @@
 #include "boards.h"
 #include "pc.h"
 #include "qemu-timer.h"
+#include "ptimer.h"
 #include "block.h"
 #include "flash.h"
 #include "console.h"
@@ -1472,10 +1476,12 @@ static void musicpal_init(ram_addr_t ram_size,
     cpu_pic = arm_pic_init_cpu(env);
 
     /* For now we use a fixed - the original - RAM size */
-    memory_region_init_ram(ram, NULL, "musicpal.ram", MP_RAM_DEFAULT_SIZE);
+    memory_region_init_ram(ram, "musicpal.ram", MP_RAM_DEFAULT_SIZE);
+    vmstate_register_ram_global(ram);
     memory_region_add_subregion(address_space_mem, 0, ram);
 
-    memory_region_init_ram(sram, NULL, "musicpal.sram", MP_SRAM_SIZE);
+    memory_region_init_ram(sram, "musicpal.sram", MP_SRAM_SIZE);
+    vmstate_register_ram_global(sram);
     memory_region_add_subregion(address_space_mem, MP_SRAM_BASE, sram);
 
     dev = sysbus_create_simple("mv88w8618_pic", MP_PIC_BASE,

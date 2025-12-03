@@ -459,7 +459,6 @@
 },
 
 
-#if defined(TARGET_I386)
 {
 .name       = "drive_add",
 .args_type  = "pci_addr:s,opts:s",
@@ -472,7 +471,6 @@
 .help       = "add drive to PCI storage controller",
 .mhandler.cmd = drive_hot_add,
 },
-#endif
 
 
 #if defined(TARGET_I386)

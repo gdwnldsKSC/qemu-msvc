@@ -6,6 +6,9 @@
  *
  * Code based on spitz platform by Andrzej Zaborowski <balrog@zabor.org>
  * This code is licensed under the GNU GPL v2.
+ *
+ * Contributions after 2012-01-13 are licensed under the terms of the
+ * GNU GPL, version 2 or (at your option) any later version.
  */
 
 #include "hw.h"
@@ -218,7 +221,8 @@ static void tosa_init(ram_addr_t ram_size,
 
     cpu = pxa255_init(address_space_mem, tosa_binfo.ram_size);
 
-    memory_region_init_ram(rom, NULL, "tosa.rom", TOSA_ROM);
+    memory_region_init_ram(rom, "tosa.rom", TOSA_ROM);
+    vmstate_register_ram_global(rom);
     memory_region_set_readonly(rom, true);
     memory_region_add_subregion(address_space_mem, 0, rom);
 

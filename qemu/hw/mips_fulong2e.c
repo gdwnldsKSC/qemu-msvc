@@ -5,6 +5,9 @@
  * Copyright (c) 2009 chenming (chenming@rdc.faw.com.cn)
  * Copyright (c) 2010 Huacai Chen (zltjiangshi@gmail.com)
  * This code is licensed under the GNU GPL v2.
+ *
+ * Contributions after 2012-01-13 are licensed under the terms of the
+ * GNU GPL, version 2 or (at your option) any later version.
  */
 
 /*
@@ -291,8 +294,10 @@ static void mips_fulong2e_init(ram_addr_t ram_size, const char *boot_device,
     bios_size = 1024 * 1024;
 
     /* allocate RAM */
-    memory_region_init_ram(ram, NULL, "fulong2e.ram", ram_size);
-    memory_region_init_ram(bios, NULL, "fulong2e.bios", bios_size);
+    memory_region_init_ram(ram, "fulong2e.ram", ram_size);
+    vmstate_register_ram_global(ram);
+    memory_region_init_ram(bios, "fulong2e.bios", bios_size);
+    vmstate_register_ram_global(bios);
     memory_region_set_readonly(bios, true);
 
     memory_region_add_subregion(address_space_mem, 0, ram);
