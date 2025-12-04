@@ -123,7 +123,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>$(SolutionDir)qemu\qapi;$(SolutionDir)third_party\glib\include;$(SolutionDir)third_party\glib\include\glib-2.0;$(SolutionDir)third_party\glib\lib\glib-2.0\include;.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\third_party\SDL-1.2-main\include;$(SolutionDir)\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)qemu\include\qemu;$(SolutionDir)qemu\qapi;$(SolutionDir)third_party\glib\include;$(SolutionDir)third_party\glib\include\glib-2.0;$(SolutionDir)third_party\glib\lib\glib-2.0\include;.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\third_party\SDL-1.2-main\include;$(SolutionDir)\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;NEED_CPU_H;__i386__;TARGET_I386;CONFIG_SOFTMMU;DATA_BITS=32;TARGET_PHYS_ADDR_BITS=32;DATA_SIZE=4;WIN32_AIO;HAS_AUDIO;CONFIG_PCSPK;CONFIG_CS4231A;CONFIG_ADLIB;CONFIG_GUS;CONFIG_AC97;CONFIG_ES1370;CONFIG_YMF262;HAS_AUDIO_CHOICE;CONFIG_VNC_THREAD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -411,7 +411,6 @@
     <ClCompile Include="qemu\hw\bonito.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="qemu\hw\container.c" />
     <ClCompile Include="qemu\hw\cris-boot.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -544,6 +543,7 @@
     <ClCompile Include="qemu\hw\piix4.c" />
     <ClCompile Include="qemu\hw\pm_smbus.c" />
     <ClCompile Include="qemu\hw\qdev-addr.c" />
+    <ClCompile Include="qemu\hw\qdev-monitor.c" />
     <ClCompile Include="qemu\hw\qdev-properties.c" />
     <ClCompile Include="qemu\hw\qdev.c" />
     <ClCompile Include="qemu\hw\qxl-logger.c">
@@ -690,6 +690,9 @@
     <ClCompile Include="qemu\qapi\qmp-registry.c" />
     <ClCompile Include="qemu\qbool.c" />
     <ClCompile Include="qemu\qdict.c" />
+    <ClCompile Include="qemu\qemu-bridge-helper.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="qemu\qemu-config.c" />
     <ClCompile Include="qemu\qemu-coroutine-io.c" />
     <ClCompile Include="qemu\qemu-coroutine-lock.c" />
@@ -727,7 +730,9 @@
     <ClCompile Include="qemu\qlist.c" />
     <ClCompile Include="qemu\qmp-marshal.c" />
     <ClCompile Include="qemu\qmp.c" />
+    <ClCompile Include="qemu\qom\container.c" />
     <ClCompile Include="qemu\qom\object.c" />
+    <ClCompile Include="qemu\qom\qom-qobject.c" />
     <ClCompile Include="qemu\qstring.c" />
     <ClCompile Include="qemu\rwhandler.c" />
     <ClCompile Include="qemu\slirp\arp_table.c" />
@@ -2118,6 +2123,7 @@
     <ClInclude Include="qemu\hw\apic_internal.h" />
     <ClInclude Include="qemu\hw\apm.h" />
     <ClInclude Include="qemu\hw\bitbang_i2c.h" />
+    <ClInclude Include="qemu\hw\cirrus_vga_template.h" />
     <ClInclude Include="qemu\hw\cris-boot.h" />
     <ClInclude Include="qemu\hw\elf_ops.h" />
     <ClInclude Include="qemu\hw\grlib.h" />
@@ -2168,6 +2174,7 @@
     <ClInclude Include="qemu\hw\usb-desc.h" />
     <ClInclude Include="qemu\hw\usb-ohci.h" />
     <ClInclude Include="qemu\hw\usb-uhci.h" />
+    <ClInclude Include="qemu\hw\vga.h" />
     <ClInclude Include="qemu\hw\vhost.h" />
     <ClInclude Include="qemu\hw\vhost_net.h" />
     <ClInclude Include="qemu\hw\virtio-pci.h" />
@@ -2179,6 +2186,7 @@
     <ClInclude Include="qemu\hw\xio3130_downstream.h" />
     <ClInclude Include="qemu\hw\xio3130_upstream.h" />
     <ClInclude Include="qemu\include\qemu\object.h" />
+    <ClInclude Include="qemu\include\qemu\qom-qobject.h" />
     <ClInclude Include="qemu\int128.h" />
     <ClInclude Include="qemu\ioport.h" />
     <ClInclude Include="qemu\iorange.h" />

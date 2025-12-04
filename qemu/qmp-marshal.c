@@ -1049,26 +1049,26 @@ out:
     return;
 }
 
-void qmp_marshal_output_qom_list(DevicePropertyInfoList * ret_in, QObject **ret_out, Error **errp)
+void qmp_marshal_output_qom_list(ObjectPropertyInfoList * ret_in, QObject **ret_out, Error **errp)
 {
     QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
     QmpOutputVisitor *mo = qmp_output_visitor_new();
     Visitor *v;
 
     v = qmp_output_get_visitor(mo);
-    visit_type_DevicePropertyInfoList(v, &ret_in, "unused", errp);
+    visit_type_ObjectPropertyInfoList(v, &ret_in, "unused", errp);
     if (!error_is_set(errp)) {
         *ret_out = qmp_output_get_qobject(mo);
     }
     qmp_output_visitor_cleanup(mo);
     v = qapi_dealloc_get_visitor(md);
-    visit_type_DevicePropertyInfoList(v, &ret_in, "unused", errp);
+    visit_type_ObjectPropertyInfoList(v, &ret_in, "unused", errp);
     qapi_dealloc_visitor_cleanup(md);
 }
 
 void qmp_marshal_input_qom_list(QDict *args, QObject **ret, Error **errp)
 {
-    DevicePropertyInfoList * retval = NULL;
+    ObjectPropertyInfoList * retval = NULL;
     QmpInputVisitor *mi;
     QapiDeallocVisitor *md;
     Visitor *v;
@@ -1398,6 +1398,73 @@ out:
     return;
 }
 
+void qmp_marshal_output_qom_list_types(ObjectTypeInfoList * ret_in, QObject **ret_out, Error **errp)
+{
+    QapiDeallocVisitor *md = qapi_dealloc_visitor_new();
+    QmpOutputVisitor *mo = qmp_output_visitor_new();
+    Visitor *v;
+
+    v = qmp_output_get_visitor(mo);
+    visit_type_ObjectTypeInfoList(v, &ret_in, "unused", errp);
+    if (!error_is_set(errp)) {
+        *ret_out = qmp_output_get_qobject(mo);
+    }
+    qmp_output_visitor_cleanup(mo);
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_ObjectTypeInfoList(v, &ret_in, "unused", errp);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qmp_marshal_input_qom_list_types(QDict *args, QObject **ret, Error **errp)
+{
+    ObjectTypeInfoList * retval = NULL;
+    QmpInputVisitor *mi;
+    QapiDeallocVisitor *md;
+    Visitor *v;
+    bool has_implements = false;
+    char * implements = NULL;
+    bool has_abstract = false;
+    bool abstract;
+
+    mi = qmp_input_visitor_new(QOBJECT(args));
+    v = qmp_input_get_visitor(mi);
+    visit_start_optional(v, &has_implements, "implements", errp);
+    if (has_implements) {
+        visit_type_str(v, &implements, "implements", errp);
+    }
+    visit_end_optional(v, errp);
+    visit_start_optional(v, &has_abstract, "abstract", errp);
+    if (has_abstract) {
+        visit_type_bool(v, &abstract, "abstract", errp);
+    }
+    visit_end_optional(v, errp);
+    qmp_input_visitor_cleanup(mi);
+
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    retval = qmp_qom_list_types(has_implements, implements, has_abstract, abstract, errp);
+    if (!error_is_set(errp)) {
+        qmp_marshal_output_qom_list_types(retval, ret, errp);
+    }
+
+out:
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_start_optional(v, &has_implements, "implements", errp);
+    if (has_implements) {
+        visit_type_str(v, &implements, "implements", errp);
+    }
+    visit_end_optional(v, errp);
+    visit_start_optional(v, &has_abstract, "abstract", errp);
+    if (has_abstract) {
+        visit_type_bool(v, &abstract, "abstract", errp);
+    }
+    visit_end_optional(v, errp);
+    qapi_dealloc_visitor_cleanup(md);
+    return;
+}
+
 static void qmp_init_marshal(void)
 {
     qmp_register_command("query-name", qmp_marshal_input_query_name);
@@ -1445,6 +1512,7 @@ static void qmp_init_marshal(void)
     qmp_register_command("block_stream", qmp_marshal_input_block_stream);
     qmp_register_command("block_job_set_speed", qmp_marshal_input_block_job_set_speed);
     qmp_register_command("block_job_cancel", qmp_marshal_input_block_job_cancel);
+    qmp_register_command("qom-list-types", qmp_marshal_input_qom_list_types);
 }
 
 qapi_init(qmp_init_marshal);

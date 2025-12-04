@@ -836,23 +836,44 @@ void visit_type_BlockJobInfoList(Visitor *m, BlockJobInfoList ** obj, const char
     visit_end_list(m, errp);
 }
 
-void visit_type_DevicePropertyInfo(Visitor *m, DevicePropertyInfo ** obj, const char *name, Error **errp)
+void visit_type_ObjectPropertyInfo(Visitor *m, ObjectPropertyInfo ** obj, const char *name, Error **errp)
 {
-    visit_start_struct(m, (void **)obj, "DevicePropertyInfo", name, sizeof(DevicePropertyInfo), errp);
+    visit_start_struct(m, (void **)obj, "ObjectPropertyInfo", name, sizeof(ObjectPropertyInfo), errp);
     visit_type_str(m, (obj && *obj) ? &(*obj)->name : NULL, "name", errp);
     visit_type_str(m, (obj && *obj) ? &(*obj)->type : NULL, "type", errp);
     visit_end_struct(m, errp);
 }
 
-void visit_type_DevicePropertyInfoList(Visitor *m, DevicePropertyInfoList ** obj, const char *name, Error **errp)
+void visit_type_ObjectPropertyInfoList(Visitor *m, ObjectPropertyInfoList ** obj, const char *name, Error **errp)
 {
     GenericList *i, **head = (GenericList **)obj;
 
     visit_start_list(m, name, errp);
 
     for (*head = i = visit_next_list(m, head, errp); i; i = visit_next_list(m, &i, errp)) {
-        DevicePropertyInfoList *native_i = (DevicePropertyInfoList *)i;
-        visit_type_DevicePropertyInfo(m, &native_i->value, NULL, errp);
+        ObjectPropertyInfoList *native_i = (ObjectPropertyInfoList *)i;
+        visit_type_ObjectPropertyInfo(m, &native_i->value, NULL, errp);
+    }
+
+    visit_end_list(m, errp);
+}
+
+void visit_type_ObjectTypeInfo(Visitor *m, ObjectTypeInfo ** obj, const char *name, Error **errp)
+{
+    visit_start_struct(m, (void **)obj, "ObjectTypeInfo", name, sizeof(ObjectTypeInfo), errp);
+    visit_type_str(m, (obj && *obj) ? &(*obj)->name : NULL, "name", errp);
+    visit_end_struct(m, errp);
+}
+
+void visit_type_ObjectTypeInfoList(Visitor *m, ObjectTypeInfoList ** obj, const char *name, Error **errp)
+{
+    GenericList *i, **head = (GenericList **)obj;
+
+    visit_start_list(m, name, errp);
+
+    for (*head = i = visit_next_list(m, head, errp); i; i = visit_next_list(m, &i, errp)) {
+        ObjectTypeInfoList *native_i = (ObjectTypeInfoList *)i;
+        visit_type_ObjectTypeInfo(m, &native_i->value, NULL, errp);
     }
 
     visit_end_list(m, errp);

@@ -822,7 +822,7 @@ void qapi_free_BlockJobInfo(BlockJobInfo * obj)
     qapi_dealloc_visitor_cleanup(md);
 }
 
-void qapi_free_DevicePropertyInfoList(DevicePropertyInfoList * obj)
+void qapi_free_ObjectPropertyInfoList(ObjectPropertyInfoList * obj)
 {
     QapiDeallocVisitor *md;
     Visitor *v;
@@ -833,11 +833,11 @@ void qapi_free_DevicePropertyInfoList(DevicePropertyInfoList * obj)
 
     md = qapi_dealloc_visitor_new();
     v = qapi_dealloc_get_visitor(md);
-    visit_type_DevicePropertyInfoList(v, &obj, NULL, NULL);
+    visit_type_ObjectPropertyInfoList(v, &obj, NULL, NULL);
     qapi_dealloc_visitor_cleanup(md);
 }
 
-void qapi_free_DevicePropertyInfo(DevicePropertyInfo * obj)
+void qapi_free_ObjectPropertyInfo(ObjectPropertyInfo * obj)
 {
     QapiDeallocVisitor *md;
     Visitor *v;
@@ -848,7 +848,37 @@ void qapi_free_DevicePropertyInfo(DevicePropertyInfo * obj)
 
     md = qapi_dealloc_visitor_new();
     v = qapi_dealloc_get_visitor(md);
-    visit_type_DevicePropertyInfo(v, &obj, NULL, NULL);
+    visit_type_ObjectPropertyInfo(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_ObjectTypeInfoList(ObjectTypeInfoList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_ObjectTypeInfoList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_ObjectTypeInfo(ObjectTypeInfo * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_ObjectTypeInfo(v, &obj, NULL, NULL);
     qapi_dealloc_visitor_cleanup(md);
 }
 

@@ -103,6 +103,9 @@
     <Filter Include="qemu\qom\src">
       <UniqueIdentifier>{fda6f824-8203-4f25-a38e-8d440bc4a382}</UniqueIdentifier>
     </Filter>
+    <Filter Include="qemu\qom\inc">
+      <UniqueIdentifier>{010b27c1-ee1d-439a-befc-fe7448fce710}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1929,9 +1932,6 @@
     <ClCompile Include="qemu\event_notifier.c">
       <Filter>qemu\src</Filter>
     </ClCompile>
-    <ClCompile Include="qemu\hw\container.c">
-      <Filter>qemu\hw\src</Filter>
-    </ClCompile>
     <ClCompile Include="qemu\qemu-coroutine-io.c">
       <Filter>qemu\src</Filter>
     </ClCompile>
@@ -1964,6 +1964,18 @@
     </ClCompile>
     <ClCompile Include="qemu\hw\usb-xhci.c">
       <Filter>qemu\hw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\qdev-monitor.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qom\container.c">
+      <Filter>qemu\qom\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qom\qom-qobject.c">
+      <Filter>qemu\qom\src</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qemu-bridge-helper.c">
+      <Filter>qemu\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3043,6 +3055,15 @@
     </ClInclude>
     <ClInclude Include="qemu\hw\ioapic_internal.h">
       <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\hw\cirrus_vga_template.h">
+      <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\hw\vga.h">
+      <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\include\qemu\qom-qobject.h">
+      <Filter>qemu\qom\inc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

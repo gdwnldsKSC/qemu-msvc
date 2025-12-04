@@ -54,6 +54,11 @@ void kvm_inject_x86_mce(CPUState* cenv, int bank, uint64_t status,
     int abort_on_error)
 {
 }
+
+qemu_irq* kvm_i8259_init(ISABus* bus)
+{
+    return NULL;
+}
 #endif
 
 int kvm_init(void)

@@ -14,13 +14,11 @@ void module_call_init(module_init_type type);
 
 #ifndef _MSC_VER
 
-/* GCC / Clang */
+/* This should not be used directly.  Use block_init etc. instead.  */
 #define module_init(function, type)                                         \
-    static void __attribute__((constructor))                                \
-    do_qemu_init_##function(void)                                           \
-    {                                                                       \
-        register_module_init(function, type);                               \
-    }
+static void __attribute__((constructor)) do_qemu_init_ ## function(void) {  \
+    register_module_init(function, type);                                   \
+}
 
 #else  /* _MSC_VER */
 

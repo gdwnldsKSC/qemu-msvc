@@ -202,7 +202,6 @@ CharDriverState *serial_hds[MAX_SERIAL_PORTS];
 CharDriverState *parallel_hds[MAX_PARALLEL_PORTS];
 CharDriverState *virtcon_hds[MAX_VIRTIO_CONSOLES];
 int win2k_install_hack = 0;
-int rtc_td_hack = 0;
 int usb_enabled = 0;
 int singlestep = 0;
 int smp_cpus = 1;
@@ -541,9 +540,18 @@ static void configure_rtc(QemuOpts *opts)
     value = qemu_opt_get(opts, "driftfix");
     if (value) {
         if (!strcmp(value, "slew")) {
-            rtc_td_hack = 1;
+            static GlobalProperty slew_lost_ticks[] = {
+                {
+                    .driver   = "mc146818rtc",
+                    .property = "lost_tick_policy",
+                    .value    = "slew",
+                },
+                { /* end of list */ }
+            };
+
+            qdev_prop_register_global_list(slew_lost_ticks);
         } else if (!strcmp(value, "none")) {
-            rtc_td_hack = 0;
+            /* discard is default */
         } else {
             fprintf(stderr, "qemu: invalid option value '%s'\n", value);
             exit(1);
@@ -1940,7 +1948,11 @@ static int virtcon_parse(const char *devname)
     }
 
     bus_opts = qemu_opts_create(device, NULL, 0);
-    qemu_opt_set(bus_opts, "driver", "virtio-serial");
+    if (arch_type == QEMU_ARCH_S390X) {
+        qemu_opt_set(bus_opts, "driver", "virtio-serial-s390");
+    } else {
+        qemu_opt_set(bus_opts, "driver", "virtio-serial-pci");
+    } 
 
     dev_opts = qemu_opts_create(device, NULL, 0);
     qemu_opt_set(dev_opts, "driver", "virtconsole");
@@ -2158,6 +2170,11 @@ static void free_and_trace(gpointer mem)
 {
     trace_g_free(mem);
     free(mem);
+}
+
+int qemu_init_main_loop(void)
+{
+    return main_loop_init();
 }
 
 int main(int argc, char **argv, char **envp)
@@ -2837,9 +2854,19 @@ int main(int argc, char **argv, char **envp)
             case QEMU_OPTION_win2k_hack:
                 win2k_install_hack = 1;
                 break;
-            case QEMU_OPTION_rtc_td_hack:
-                rtc_td_hack = 1;
+            case QEMU_OPTION_rtc_td_hack: {
+                static GlobalProperty slew_lost_ticks[] = {
+                    {
+                        .driver   = "mc146818rtc",
+                        .property = "lost_tick_policy",
+                        .value    = "slew",
+                    },
+                    { /* end of list */ }
+                };
+
+                qdev_prop_register_global_list(slew_lost_ticks);
                 break;
+            }
             case QEMU_OPTION_acpitable:
                 do_acpitable_option(optarg);
                 break;
@@ -3136,21 +3163,8 @@ int main(int argc, char **argv, char **envp)
      * specified either by the configuration file or by the command line.
      */
     if (machine->default_machine_opts) {
-        QemuOptsList *list = qemu_find_opts("machine");
-        const char *p = NULL;
-
-        if (!QTAILQ_EMPTY(&list->head)) {
-            p = qemu_opt_get(QTAILQ_FIRST(&list->head), "accel");
-        }
-        if (p == NULL) {
-            qemu_opts_reset(list);
-            opts = qemu_opts_parse(list, machine->default_machine_opts, 0);
-            if (!opts) {
-                fprintf(stderr, "parse error for machine %s: %s\n",
-                        machine->name, machine->default_machine_opts);
-                exit(1);
-            }
-        }
+        qemu_opts_set_defaults(qemu_find_opts("machine"),
+                               machine->default_machine_opts, 0);
     }
 
     qemu_opts_foreach(qemu_find_opts("device"), default_driver_check, NULL, 0);

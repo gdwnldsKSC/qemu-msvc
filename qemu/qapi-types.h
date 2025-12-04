@@ -254,13 +254,21 @@ typedef struct BlockJobInfoList
     struct BlockJobInfoList *next;
 } BlockJobInfoList;
 
-typedef struct DevicePropertyInfo DevicePropertyInfo;
+typedef struct ObjectPropertyInfo ObjectPropertyInfo;
 
-typedef struct DevicePropertyInfoList
+typedef struct ObjectPropertyInfoList
 {
-    DevicePropertyInfo *value;
-    struct DevicePropertyInfoList *next;
-} DevicePropertyInfoList;
+    ObjectPropertyInfo *value;
+    struct ObjectPropertyInfoList *next;
+} ObjectPropertyInfoList;
+
+typedef struct ObjectTypeInfo ObjectTypeInfo;
+
+typedef struct ObjectTypeInfoList
+{
+    ObjectTypeInfo *value;
+    struct ObjectTypeInfoList *next;
+} ObjectTypeInfoList;
 
 struct NameInfo
 {
@@ -622,13 +630,21 @@ struct BlockJobInfo
 void qapi_free_BlockJobInfoList(BlockJobInfoList * obj);
 void qapi_free_BlockJobInfo(BlockJobInfo * obj);
 
-struct DevicePropertyInfo
+struct ObjectPropertyInfo
 {
     char * name;
     char * type;
 };
 
-void qapi_free_DevicePropertyInfoList(DevicePropertyInfoList * obj);
-void qapi_free_DevicePropertyInfo(DevicePropertyInfo * obj);
+void qapi_free_ObjectPropertyInfoList(ObjectPropertyInfoList * obj);
+void qapi_free_ObjectPropertyInfo(ObjectPropertyInfo * obj);
+
+struct ObjectTypeInfo
+{
+    char * name;
+};
+
+void qapi_free_ObjectTypeInfoList(ObjectTypeInfoList * obj);
+void qapi_free_ObjectTypeInfo(ObjectTypeInfo * obj);
 
 #endif

@@ -101,7 +101,8 @@ void qmp_marshal_input_set_password(QDict* args, QObject** ret, Error** errp);
 void qmp_marshal_input_expire_password(QDict* args, QObject** ret, Error** errp);
 void qmp_marshal_input_query_block_jobs(QDict* args, QObject** ret, Error** errp);
 void qmp_marshal_input_change_vnc_password(QDict* args, QObject** ret, Error** errp);
-DevicePropertyInfoList * qmp_qom_list(const char * path, Error **errp);
+void qmp_marshal_input_qom_list_types(QDict* args, QObject** ret, Error** errp);
+ObjectPropertyInfoList * qmp_qom_list(const char * path, Error **errp);
 void qmp_set_password(const char * protocol, const char * password, bool has_connected, const char * connected, Error **errp);
 void qmp_expire_password(const char * protocol, const char * time, Error **errp);
 void qmp_eject(const char * device, bool has_force, bool force, Error **errp);
@@ -111,5 +112,6 @@ void qmp_block_set_io_throttle(const char * device, int64_t bps, int64_t bps_rd,
 void qmp_block_stream(const char * device, bool has_base, const char * base, Error **errp);
 void qmp_block_job_set_speed(const char * device, int64_t value, Error **errp);
 void qmp_block_job_cancel(const char * device, Error **errp);
+ObjectTypeInfoList * qmp_qom_list_types(bool has_implements, const char * implements, bool has_abstract, bool abstract, Error **errp);
 
 #endif
