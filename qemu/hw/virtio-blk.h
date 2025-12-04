@@ -36,8 +36,6 @@
 
 #define VIRTIO_BLK_ID_BYTES     20      /* ID string length */
 
-MSC_PACKED_BEGIN_1
-
 struct virtio_blk_config
 {
     uint64_t capacity;
@@ -52,8 +50,6 @@ struct virtio_blk_config
     uint16_t min_io_size;
     uint32_t opt_io_size;
 } QEMU_PACKED;
-
-MSC_PACKED_END
 
 /* These two define direction. */
 #define VIRTIO_BLK_T_IN         0

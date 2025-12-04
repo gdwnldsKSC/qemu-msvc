@@ -47,13 +47,9 @@ struct virtio_balloon_config
 #define VIRTIO_BALLOON_S_MEMTOT   5   /* Total amount of memory */
 #define VIRTIO_BALLOON_S_NR       6
 
-MSC_PACKED_BEGIN_1
-
 typedef struct VirtIOBalloonStat {
     uint16_t tag;
     uint64_t val;
 } QEMU_PACKED VirtIOBalloonStat;
-
-MSC_PACKED_END
 
 #endif

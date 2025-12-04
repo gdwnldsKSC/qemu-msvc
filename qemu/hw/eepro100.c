@@ -2093,7 +2093,7 @@ static void eepro100_class_init(ObjectClass *klass, void *data)
     k->subsystem_id = info->subsystem_id;
 }
 
-static void eepro100_register_devices(void)
+static void eepro100_register_types(void)
 {
     size_t i;
     for (i = 0; i < ARRAY_SIZE(e100_devices); i++) {
@@ -2109,4 +2109,4 @@ static void eepro100_register_devices(void)
     }
 }
 
-device_init(eepro100_register_devices);
+type_init(eepro100_register_types);

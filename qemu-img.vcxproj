@@ -80,7 +80,7 @@
       <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\glib\include;$(SolutionDir)third_party\glib\include\glib-2.0;$(SolutionDir)third_party\glib\lib\glib-2.0\include;.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)qemu\include;$(SolutionDir)third_party\glib\include;$(SolutionDir)third_party\glib\include\glib-2.0;$(SolutionDir)third_party\glib\lib\glib-2.0\include;.\third_party\outside_qemu_tree_custom;.\pxwc\inc;.\qemu\target-i386;.\qemu\fpu;.\qemu\tcg;.\qemu\tcg\i386;.\qemu;.\qemu\slirp;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>

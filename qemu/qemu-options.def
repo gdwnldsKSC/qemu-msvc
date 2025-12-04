@@ -12,7 +12,8 @@ DEF("machine", HAS_ARG, QEMU_OPTION_machine, \
 "                selects emulated machine (-machine ? for list)\n"
 "                property accel=accel1[:accel2[:...]] selects accelerator\n"
 "                supported accelerators are kvm, xen, tcg (default: tcg)\n"
-"                kernel_irqchip=on|off controls accelerated irqchip support\n",
+"                kernel_irqchip=on|off controls accelerated irqchip support\n"
+"                kvm_shadow_mem=size of KVM shadow MMU\n",
 QEMU_ARCH_ALL)
 
 DEF("M", HAS_ARG, QEMU_OPTION_M, "", QEMU_ARCH_ALL)
@@ -437,6 +438,11 @@ DEF("chardev", HAS_ARG, QEMU_OPTION_chardev,
 
 DEFHEADING()
 
+DEF("iscsi", HAS_ARG, QEMU_OPTION_iscsi,
+"-iscsi [user=user][,password=password]\n"
+"       [,header-digest=CRC32C|CR32C-NONE|NONE-CRC32C|NONE\n"
+"       [,initiator-name=iqn]\n"
+"                iSCSI session parameters\n", QEMU_ARCH_ALL)
 
 DEFHEADING(Bluetooth(R) options:)
 

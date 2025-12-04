@@ -66,8 +66,6 @@ typedef struct virtio_net_conf
 /* Maximum packet size we can receive from tap device: header + 64k */
 #define VIRTIO_NET_MAX_BUFSIZE (sizeof(struct virtio_net_hdr) + (64 << 10))
 
-MSC_PACKED_BEGIN_1
-
 struct virtio_net_config
 {
     /* The config defining mac address ($ETH_ALEN bytes) */
@@ -75,8 +73,6 @@ struct virtio_net_config
     /* See VIRTIO_NET_F_STATUS and VIRTIO_NET_S_* above */
     uint16_t status;
 } QEMU_PACKED;
-
-MSC_PACKED_END
 
 /* This is the first element of the scatter-gather list.  If you don't
  * specify GSO or CSUM features, you can simply ignore the header. */

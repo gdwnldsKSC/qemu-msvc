@@ -21,8 +21,6 @@ uint8_t *smbios_get_table(size_t *length);
  * SMBIOS spec defined tables
  */
 
-MSC_PACKED_BEGIN_1
-
 /* This goes at the beginning of every SMBIOS structure. */
 struct smbios_structure_header {
     uint8_t type;
@@ -160,7 +158,5 @@ struct smbios_type_32 {
 struct smbios_type_127 {
     struct smbios_structure_header header;
 } QEMU_PACKED;
-
-MSC_PACKED_END
 
 #endif /*QEMU_SMBIOS_H */

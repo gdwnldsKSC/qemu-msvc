@@ -129,6 +129,10 @@ static inline void trace_bdrv_co_writev(void *bs, int64_t sector_num, int nb_sec
 {
 }
 
+static inline void trace_bdrv_co_write_zeroes(void *bs, int64_t sector_num, int nb_sector)
+{
+}
+
 static inline void trace_bdrv_co_io_em(void *bs, int64_t sector_num, int nb_sectors, int is_write, void *acb)
 {
 }
@@ -925,7 +929,7 @@ static inline void trace_qed_aio_complete(void *s, void *acb, int ret)
 {
 }
 
-static inline void trace_qed_aio_setup(void *s, void *acb, int64_t sector_num, int nb_sectors, void *opaque, int is_write)
+static inline void trace_qed_aio_setup(void *s, void *acb, int64_t sector_num, int nb_sectors, void *opaque, int flags)
 {
 }
 
