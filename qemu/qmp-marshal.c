@@ -766,6 +766,19 @@ out:
     return;
 }
 
+void qmp_marshal_input_system_wakeup(QDict *args, QObject **ret, Error **errp)
+{
+    (void)args;
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    qmp_system_wakeup(errp);
+
+out:
+
+    return;
+}
+
 void qmp_marshal_input_inject_nmi(QDict *args, QObject **ret, Error **errp)
 {
     (void)args;
@@ -884,6 +897,31 @@ out:
     v = qapi_dealloc_get_visitor(md);
     visit_type_str(v, &device, "device", errp);
     visit_type_int(v, &size, "size", errp);
+    qapi_dealloc_visitor_cleanup(md);
+    return;
+}
+
+void qmp_marshal_input_blockdev_group_snapshot_sync(QDict *args, QObject **ret, Error **errp)
+{
+    QmpInputVisitor *mi;
+    QapiDeallocVisitor *md;
+    Visitor *v;
+    SnapshotDevList * devlist = NULL;
+
+    mi = qmp_input_visitor_new(QOBJECT(args));
+    v = qmp_input_get_visitor(mi);
+    visit_type_SnapshotDevList(v, &devlist, "devlist", errp);
+    qmp_input_visitor_cleanup(mi);
+
+    if (error_is_set(errp)) {
+        goto out;
+    }
+    qmp_blockdev_group_snapshot_sync(devlist, errp);
+
+out:
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_SnapshotDevList(v, &devlist, "devlist", errp);
     qapi_dealloc_visitor_cleanup(md);
     return;
 }
@@ -1492,11 +1530,13 @@ static void qmp_init_marshal(void)
     qmp_register_command("memsave", qmp_marshal_input_memsave);
     qmp_register_command("pmemsave", qmp_marshal_input_pmemsave);
     qmp_register_command("cont", qmp_marshal_input_cont);
+    qmp_register_command("system_wakeup", qmp_marshal_input_system_wakeup);
     qmp_register_command("inject-nmi", qmp_marshal_input_inject_nmi);
     qmp_register_command("set_link", qmp_marshal_input_set_link);
     qmp_register_command("block_passwd", qmp_marshal_input_block_passwd);
     qmp_register_command("balloon", qmp_marshal_input_balloon);
     qmp_register_command("block_resize", qmp_marshal_input_block_resize);
+    qmp_register_command("blockdev-group-snapshot-sync", qmp_marshal_input_blockdev_group_snapshot_sync);
     qmp_register_command("blockdev-snapshot-sync", qmp_marshal_input_blockdev_snapshot_sync);
     qmp_register_command("human-monitor-command", qmp_marshal_input_human_monitor_command);
     qmp_register_command("migrate_cancel", qmp_marshal_input_migrate_cancel);

@@ -5,7 +5,7 @@
  *
  * Written by Alon Levy, with contributions from Robert Relyea.
  *
- * Based on usb-serial.c, see it's copyright and attributions below.
+ * Based on usb-serial.c, see its copyright and attributions below.
  *
  * This work is licensed under the terms of the GNU GPL, version 2.1 or later.
  * See the COPYING file in the top-level directory.
@@ -447,7 +447,7 @@ static const USBDescDevice desc_device = {
         {
             .bNumInterfaces        = 1,
             .bConfigurationValue   = 1,
-            .bmAttributes          = 0xa0,
+            .bmAttributes          = 0xe0,
             .bMaxPower             = 50,
             .nif = 1,
             .ifs = &desc_iface0,

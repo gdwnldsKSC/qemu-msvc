@@ -836,6 +836,33 @@ void visit_type_BlockJobInfoList(Visitor *m, BlockJobInfoList ** obj, const char
     visit_end_list(m, errp);
 }
 
+void visit_type_SnapshotDev(Visitor *m, SnapshotDev ** obj, const char *name, Error **errp)
+{
+    visit_start_struct(m, (void **)obj, "SnapshotDev", name, sizeof(SnapshotDev), errp);
+    visit_type_str(m, (obj && *obj) ? &(*obj)->device : NULL, "device", errp);
+    visit_type_str(m, (obj && *obj) ? &(*obj)->snapshot_file : NULL, "snapshot-file", errp);
+    visit_start_optional(m, (obj && *obj) ? &(*obj)->has_format : NULL, "format", errp);
+    if ((*obj)->has_format) {
+        visit_type_str(m, (obj && *obj) ? &(*obj)->format : NULL, "format", errp);
+    }
+    visit_end_optional(m, errp);
+    visit_end_struct(m, errp);
+}
+
+void visit_type_SnapshotDevList(Visitor *m, SnapshotDevList ** obj, const char *name, Error **errp)
+{
+    GenericList *i, **head = (GenericList **)obj;
+
+    visit_start_list(m, name, errp);
+
+    for (*head = i = visit_next_list(m, head, errp); i; i = visit_next_list(m, &i, errp)) {
+        SnapshotDevList *native_i = (SnapshotDevList *)i;
+        visit_type_SnapshotDev(m, &native_i->value, NULL, errp);
+    }
+
+    visit_end_list(m, errp);
+}
+
 void visit_type_ObjectPropertyInfo(Visitor *m, ObjectPropertyInfo ** obj, const char *name, Error **errp)
 {
     visit_start_struct(m, (void **)obj, "ObjectPropertyInfo", name, sizeof(ObjectPropertyInfo), errp);

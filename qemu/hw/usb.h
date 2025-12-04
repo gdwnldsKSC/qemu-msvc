@@ -39,11 +39,12 @@
 #define USB_TOKEN_IN    0x69 /* device -> host */
 #define USB_TOKEN_OUT   0xe1 /* host -> device */
 
-#define USB_RET_NODEV  (-1)
-#define USB_RET_NAK    (-2)
-#define USB_RET_STALL  (-3)
-#define USB_RET_BABBLE (-4)
-#define USB_RET_ASYNC  (-5)
+#define USB_RET_NODEV   (-1)
+#define USB_RET_NAK     (-2)
+#define USB_RET_STALL   (-3)
+#define USB_RET_BABBLE  (-4)
+#define USB_RET_IOERROR (-5)
+#define USB_RET_ASYNC   (-6)
 
 #define USB_SPEED_LOW   0
 #define USB_SPEED_FULL  1
@@ -176,6 +177,7 @@ struct USBEndpoint {
     uint8_t type;
     uint8_t ifnum;
     int max_packet_size;
+    bool pipeline;
     USBDevice *dev;
     QTAILQ_HEAD(, USBPacket) queue;
 };
@@ -325,6 +327,7 @@ struct USBPacket {
     int pid;
     USBEndpoint *ep;
     QEMUIOVector iov;
+    uint64_t parameter; /* control transfers */
     int result; /* transfer length or USB_RET_* status code */
     /* Internal use by the USB layer.  */
     USBPacketState state;
@@ -363,6 +366,7 @@ void usb_ep_set_ifnum(USBDevice *dev, int pid, int ep, uint8_t ifnum);
 void usb_ep_set_max_packet_size(USBDevice *dev, int pid, int ep,
                                 uint16_t raw);
 int usb_ep_get_max_packet_size(USBDevice *dev, int pid, int ep);
+void usb_ep_set_pipeline(USBDevice *dev, int pid, int ep, bool enabled);
 
 void usb_attach(USBPort *port);
 void usb_detach(USBPort *port);
@@ -373,12 +377,12 @@ void usb_generic_async_ctrl_complete(USBDevice *s, USBPacket *p);
 int set_usb_string(uint8_t *buf, const char *str);
 
 /* usb-linux.c */
-USBDevice *usb_host_device_open(const char *devname);
+USBDevice *usb_host_device_open(USBBus *bus, const char *devname);
 int usb_host_device_close(const char *devname);
 void usb_host_info(Monitor *mon);
 
 /* usb-bt.c */
-USBDevice *usb_bt_init(HCIInfo *hci);
+USBDevice *usb_bt_init(USBBus *bus, HCIInfo *hci);
 
 /* usb ports of the VM */
 
@@ -431,7 +435,8 @@ struct USBBusOps {
 void usb_bus_new(USBBus *bus, USBBusOps *ops, DeviceState *host);
 USBBus *usb_bus_find(int busnr);
 void usb_legacy_register(const char *typename, const char *usbdevice_name,
-                         USBDevice *(*usbdevice_init)(const char *params));
+                         USBDevice *(*usbdevice_init)(USBBus *bus,
+                                                      const char *params));
 USBDevice *usb_create(USBBus *bus, const char *name);
 USBDevice *usb_create_simple(USBBus *bus, const char *name);
 USBDevice *usbdevice_create(const char *cmdline);

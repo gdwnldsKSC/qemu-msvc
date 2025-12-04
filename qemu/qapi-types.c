@@ -822,6 +822,36 @@ void qapi_free_BlockJobInfo(BlockJobInfo * obj)
     qapi_dealloc_visitor_cleanup(md);
 }
 
+void qapi_free_SnapshotDevList(SnapshotDevList * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_SnapshotDevList(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
+void qapi_free_SnapshotDev(SnapshotDev * obj)
+{
+    QapiDeallocVisitor *md;
+    Visitor *v;
+
+    if (!obj) {
+        return;
+    }
+
+    md = qapi_dealloc_visitor_new();
+    v = qapi_dealloc_get_visitor(md);
+    visit_type_SnapshotDev(v, &obj, NULL, NULL);
+    qapi_dealloc_visitor_cleanup(md);
+}
+
 void qapi_free_ObjectPropertyInfoList(ObjectPropertyInfoList * obj)
 {
     QapiDeallocVisitor *md;

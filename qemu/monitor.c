@@ -485,6 +485,15 @@ void monitor_protocol_event(MonitorEvent event, QObject *data)
         case QEVENT_BLOCK_JOB_CANCELLED:
             event_name = "BLOCK_JOB_CANCELLED";
             break;
+        case QEVENT_DEVICE_TRAY_MOVED:
+             event_name = "DEVICE_TRAY_MOVED";
+            break;
+        case QEVENT_SUSPEND:
+            event_name = "SUSPEND";
+            break;
+        case QEVENT_WAKEUP:
+            event_name = "WAKEUP";
+            break;
         default:
             abort();
             break;
@@ -1940,7 +1949,7 @@ static void tlb_info(Monitor *mon)
 
 #endif
 
-#if defined(TARGET_SPARC) || defined(TARGET_PPC)
+#if defined(TARGET_SPARC) || defined(TARGET_PPC) || defined(TARGET_XTENSA)
 static void tlb_info(Monitor *mon)
 {
     CPUState *env1 = mon_get_cpu();
@@ -2387,7 +2396,7 @@ static mon_cmd_t info_cmds[] = {
         .mhandler.info = hmp_info_pci,
     },
 #if defined(TARGET_I386) || defined(TARGET_SH4) || defined(TARGET_SPARC) || \
-    defined(TARGET_PPC)
+    defined(TARGET_PPC) || defined(TARGET_XTENSA)
     {
         .name       = "tlb",
         .args_type  = "",

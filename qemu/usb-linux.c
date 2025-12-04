@@ -364,8 +364,12 @@ static void async_complete(void *opaque)
                 p->result = USB_RET_STALL;
                 break;
 
+            case -EOVERFLOW:
+                p->result = USB_RET_BABBLE;
+                break;
+
             default:
-                p->result = USB_RET_NAK;
+                p->result = USB_RET_IOERROR;
                 break;
             }
 
@@ -722,8 +726,10 @@ static int urb_status_to_usb_ret(int status)
     switch (status) {
     case -EPIPE:
         return USB_RET_STALL;
+    case -EOVERFLOW:
+        return USB_RET_BABBLE;
     default:
-        return USB_RET_NAK;
+        return USB_RET_IOERROR;
     }
 }
 
@@ -759,7 +765,7 @@ static int usb_host_handle_iso_data(USBHostDevice *s, USBPacket *p, int in)
             } else if (aurb[i].urb.iso_frame_desc[j].actual_length
                        > p->iov.size) {
                 printf("husb: received iso data is larger then packet\n");
-                len = USB_RET_NAK;
+                len = USB_RET_BABBLE;
             /* All good copy data over */
             } else {
                 len = aurb[i].urb.iso_frame_desc[j].actual_length;
@@ -1186,6 +1192,9 @@ static int usb_linux_update_endp_table(USBHostDevice *s)
                    USB_ENDPOINT_XFER_INVALID);
             usb_ep_set_type(&s->dev, pid, ep, type);
             usb_ep_set_ifnum(&s->dev, pid, ep, interface);
+            if (type == USB_ENDPOINT_XFER_BULK) {
+                usb_ep_set_pipeline(&s->dev, pid, ep, true);
+            }
 
             epd = get_endp(s, pid, ep);
             epd->halted = 0;
@@ -1443,13 +1452,13 @@ static void usb_host_register_types(void)
 
 type_init(usb_host_register_types)
 
-USBDevice *usb_host_device_open(const char *devname)
+USBDevice *usb_host_device_open(USBBus *bus, const char *devname)
 {
     struct USBAutoFilter filter;
     USBDevice *dev;
     char *p;
 
-    dev = usb_create(NULL /* FIXME */, "usb-host");
+    dev = usb_create(bus, "usb-host");
 
     if (strstr(devname, "auto:")) {
         if (parse_filter(devname, &filter) < 0) {

@@ -429,6 +429,7 @@
     <ClCompile Include="qemu\hw\hid.c" />
     <ClCompile Include="qemu\hw\i82374.c" />
     <ClCompile Include="qemu\hw\i82378.c" />
+    <ClCompile Include="qemu\hw\i8254_common.c" />
     <ClCompile Include="qemu\hw\i8259_common.c" />
     <ClCompile Include="qemu\hw\ide\ahci.c" />
     <ClCompile Include="qemu\hw\ide\atapi.c" />
@@ -454,6 +455,7 @@
     <ClCompile Include="qemu\hw\kvmclock.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="qemu\hw\kvmvapic.c" />
     <ClCompile Include="qemu\hw\lan9118.c" />
     <ClCompile Include="qemu\hw\lance.c" />
     <ClCompile Include="qemu\hw\leon3.c">
@@ -608,6 +610,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="qemu\hw\virtio-pci.c" />
+    <ClCompile Include="qemu\hw\virtio-scsi.c" />
     <ClCompile Include="qemu\hw\virtio-serial-bus.c" />
     <ClCompile Include="qemu\hw\vt82c686.c" />
     <ClCompile Include="qemu\hw\watchdog.c" />
@@ -2132,6 +2135,7 @@
     <ClInclude Include="qemu\hw\grlib.h" />
     <ClInclude Include="qemu\hw\hid.h" />
     <ClInclude Include="qemu\hw\i8254.h" />
+    <ClInclude Include="qemu\hw\i8254_internal.h" />
     <ClInclude Include="qemu\hw\i8259_internal.h" />
     <ClInclude Include="qemu\hw\ide\ahci.h" />
     <ClInclude Include="qemu\hw\ide\internal.h" />
@@ -2183,6 +2187,7 @@
     <ClInclude Include="qemu\hw\vhost.h" />
     <ClInclude Include="qemu\hw\vhost_net.h" />
     <ClInclude Include="qemu\hw\virtio-pci.h" />
+    <ClInclude Include="qemu\hw\virtio-scsi.h" />
     <ClInclude Include="qemu\hw\virtio-serial.h" />
     <ClInclude Include="qemu\hw\vmware_vga.h" />
     <ClInclude Include="qemu\hw\vt82c686.h" />

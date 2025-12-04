@@ -17,11 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <inttypes.h>
 
 /* #define DEBUG_ILLEGAL_INSTRUCTIONS */
 /* #define DEBUG_INLINE_BRANCHES */
@@ -43,9 +38,9 @@
 static TCGv_ptr cpu_env;
 
 #include "gen-icount.h"
-#include "helpers.h"
+#include "helper.h"
 #define GEN_HELPER 1
-#include "helpers.h"
+#include "helper.h"
 
 typedef struct DisasContext DisasContext;
 struct DisasContext {

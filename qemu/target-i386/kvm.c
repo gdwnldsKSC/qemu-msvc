@@ -555,6 +555,7 @@ int kvm_arch_init_vcpu(CPUState *env)
 
     qemu_add_vm_change_state_handler(cpu_update_state, env);
 
+    cpuid_data.cpuid.padding = 0;
     r = kvm_vcpu_ioctl(env, KVM_SET_CPUID2, &cpuid_data);
     if (r) {
         return r;
@@ -740,6 +741,7 @@ static void set_seg(struct kvm_segment *lhs, const SegmentCache *rhs)
     lhs->g = (flags & DESC_G_MASK) != 0;
     lhs->avl = (flags & DESC_AVL_MASK) != 0;
     lhs->unusable = 0;
+    lhs->padding = 0;
 }
 
 static void get_seg(SegmentCache *lhs, const struct kvm_segment *rhs)
@@ -919,8 +921,10 @@ static int kvm_put_sregs(CPUState *env)
 
     sregs.idt.limit = env->idt.limit;
     sregs.idt.base = env->idt.base;
+    memset(sregs.idt.padding, 0, sizeof sregs.idt.padding);
     sregs.gdt.limit = env->gdt.limit;
     sregs.gdt.base = env->gdt.base;
+    memset(sregs.gdt.padding, 0, sizeof sregs.gdt.padding);
 
     sregs.cr0 = env->cr[0];
     sregs.cr2 = env->cr[2];
@@ -1392,6 +1396,7 @@ static int kvm_put_vcpu_events(CPUState *env, int level)
     events.exception.nr = env->exception_injected;
     events.exception.has_error_code = env->has_error_code;
     events.exception.error_code = env->error_code;
+    events.exception.pad = 0;
 
     events.interrupt.injected = (env->interrupt_injected >= 0);
     events.interrupt.nr = env->interrupt_injected;
@@ -1400,6 +1405,7 @@ static int kvm_put_vcpu_events(CPUState *env, int level)
     events.nmi.injected = env->nmi_injected;
     events.nmi.pending = env->nmi_pending;
     events.nmi.masked = !!(env->hflags2 & HF2_NMI_MASK);
+    events.nmi.pad = 0;
 
     events.sipi_vector = env->sipi_vector;
 
@@ -1635,8 +1641,10 @@ void kvm_arch_pre_run(CPUState *env, struct kvm_run *run)
     }
 
     if (!kvm_irqchip_in_kernel()) {
-        /* Force the VCPU out of its inner loop to process the INIT request */
-        if (env->interrupt_request & CPU_INTERRUPT_INIT) {
+        /* Force the VCPU out of its inner loop to process any INIT requests
+         * or pending TPR access reports. */
+        if (env->interrupt_request &
+            (CPU_INTERRUPT_INIT | CPU_INTERRUPT_TPR)) {
             env->exit_request = 1;
         }
 
@@ -1730,6 +1738,12 @@ int kvm_arch_process_async_events(CPUState *env)
         kvm_cpu_synchronize_state(env);
         do_cpu_sipi(env);
     }
+    if (env->interrupt_request & CPU_INTERRUPT_TPR) {
+        env->interrupt_request &= ~CPU_INTERRUPT_TPR;
+        kvm_cpu_synchronize_state(env);
+        apic_handle_tpr_access_report(env->apic_state, env->eip,
+                                      env->tpr_access_type);
+    }
 
     return env->halted;
 }
@@ -1744,6 +1758,16 @@ static int kvm_handle_halt(CPUState *env)
     }
 
     return 0;
+}
+
+static int kvm_handle_tpr_access(CPUState *env)
+{
+    struct kvm_run *run = env->kvm_run;
+
+    apic_handle_tpr_access_report(env->apic_state, run->tpr_access.rip,
+                                  run->tpr_access.is_write ? TPR_ACCESS_WRITE
+                                                           : TPR_ACCESS_READ);
+    return 1;
 }
 
 int kvm_arch_insert_sw_breakpoint(CPUState *env, struct kvm_sw_breakpoint *bp)
@@ -1950,6 +1974,9 @@ int kvm_arch_handle_exit(CPUState *env, struct kvm_run *run)
     case KVM_EXIT_SET_TPR:
         ret = 0;
         break;
+    case KVM_EXIT_TPR_ACCESS:
+        ret = kvm_handle_tpr_access(env);
+        break;
     case KVM_EXIT_FAIL_ENTRY:
         code = run->fail_entry.hardware_entry_failure_reason;
         fprintf(stderr, "KVM: entry failed, hardware error 0x%" PRIx64 "\n",
@@ -1987,6 +2014,7 @@ int kvm_arch_handle_exit(CPUState *env, struct kvm_run *run)
 
 bool kvm_arch_stop_on_emulation_error(CPUState *env)
 {
+    kvm_cpu_synchronize_state(env);
     return !(env->cr[0] & CR0_PE_MASK) ||
            ((env->segs[R_CS].selector  & 3) != 3);
 }

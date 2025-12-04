@@ -22,7 +22,9 @@ rm -f config.log
 
 # Print a helpful header at the top of config.log
 echo "# QEMU configure log $(date)" >> config.log
-echo "# produced by $0 $*" >> config.log
+printf "# Configured with:" >> config.log
+printf " '%s'" "$0" "$@" >> config.log
+echo >> config.log
 echo "#" >> config.log
 
 compile_object() {
@@ -98,6 +100,7 @@ audio_pt_int=""
 audio_win_int=""
 cc_i386=i386-pc-linux-gnu-gcc
 libs_qga=""
+debug_info="yes"
 
 target_list=""
 
@@ -121,6 +124,7 @@ docs=""
 fdt=""
 nptl=""
 sdl=""
+virtfs=""
 vnc="yes"
 sparse="no"
 uuid=""
@@ -207,6 +211,10 @@ for opt do
   ;;
   --extra-ldflags=*) LDFLAGS="$optarg $LDFLAGS"
   ;;
+  --enable-debug-info) debug_info="yes"
+  ;;
+  --disable-debug-info) debug_info="no"
+  ;;
   --sparc_cpu=*)
     sparc_cpu="$optarg"
     case $sparc_cpu in
@@ -226,7 +234,7 @@ for opt do
 done
 # OS specific
 # Using uname is really, really broken.  Once we have the right set of checks
-# we can eliminate it's usage altogether
+# we can eliminate its usage altogether.
 
 cc="${CC-${cross_prefix}gcc}"
 ar="${AR-${cross_prefix}ar}"
@@ -244,13 +252,15 @@ sdl_config="${SDL_CONFIG-${cross_prefix}sdl-config}"
 
 # default flags for all hosts
 QEMU_CFLAGS="-fno-strict-aliasing $QEMU_CFLAGS"
-CFLAGS="-g $CFLAGS"
 QEMU_CFLAGS="-Wall -Wundef -Wwrite-strings -Wmissing-prototypes $QEMU_CFLAGS"
 QEMU_CFLAGS="-Wstrict-prototypes -Wredundant-decls $QEMU_CFLAGS"
 QEMU_CFLAGS="-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE $QEMU_CFLAGS"
 QEMU_CFLAGS="-D_FORTIFY_SOURCE=2 $QEMU_CFLAGS"
 QEMU_INCLUDES="-I. -I\$(SRC_PATH) -I\$(SRC_PATH)/fpu"
-LDFLAGS="-g $LDFLAGS"
+if test "$debug_info" = "yes"; then
+    CFLAGS="-g $CFLAGS"
+    LDFLAGS="-g $LDFLAGS"
+fi
 
 # make source path absolute
 source_path=`cd "$source_path"; pwd`
@@ -545,6 +555,10 @@ for opt do
   ;;
   --extra-ldflags=*)
   ;;
+  --enable-debug-info)
+  ;;
+  --disable-debug-info)
+  ;;
   --cpu=*)
   ;;
   --target-list=*) target_list="$optarg"
@@ -585,6 +599,10 @@ for opt do
   --disable-sdl) sdl="no"
   ;;
   --enable-sdl) sdl="yes"
+  ;;
+  --disable-virtfs) virtfs="no"
+  ;;
+  --enable-virtfs) virtfs="yes"
   ;;
   --disable-vnc) vnc="no"
   ;;
@@ -993,6 +1011,8 @@ echo "  --disable-strip          disable stripping binaries"
 echo "  --disable-werror         disable compilation abort on warning"
 echo "  --disable-sdl            disable SDL"
 echo "  --enable-sdl             enable SDL"
+echo "  --disable-virtfs         disable VirtFS"
+echo "  --enable-virtfs          enable VirtFS"
 echo "  --disable-vnc            disable VNC"
 echo "  --enable-vnc             enable VNC"
 echo "  --enable-cocoa           enable COCOA (Mac OS X only)"
@@ -1272,17 +1292,6 @@ case "$cpu" in
 esac
 
 fi
-
-# host long bits test, actually a pointer size test
-cat > $TMPC << EOF
-int sizeof_pointer_is_8[sizeof(void *) == 8 ? 1 : -1];
-EOF
-if compile_object; then
-hostlongbits=64
-else
-hostlongbits=32
-fi
-
 
 ##########################################
 # NPTL probe
@@ -2517,17 +2526,6 @@ if test "$darwin" != "yes" -a "$mingw32" != "yes" -a "$solaris" != yes -a \
 fi
 
 ##########################################
-# check if the compiler defines offsetof
-
-need_offsetof=yes
-cat > $TMPC << EOF
-#include <stddef.h>
-int main(void) { struct s { int f; }; return offsetof(struct s, f); }
-EOF
-if compile_prog "" "" ; then
-    need_offsetof=no
-fi
-
 # spice probe
 if test "$spice" != "no" ; then
   cat > $TMPC << EOF
@@ -2536,7 +2534,7 @@ int main(void) { spice_server_new(); return 0; }
 EOF
   spice_cflags=$($pkg_config --cflags spice-protocol spice-server 2>/dev/null)
   spice_libs=$($pkg_config --libs spice-protocol spice-server 2>/dev/null)
-  if $pkg_config --atleast-version=0.6.0 spice-server >/dev/null 2>&1 && \
+  if $pkg_config --atleast-version=0.8.2 spice-server >/dev/null 2>&1 && \
      compile_prog "$spice_cflags" "$spice_libs" ; then
     spice="yes"
     libs_softmmu="$libs_softmmu $spice_libs"
@@ -2560,8 +2558,8 @@ if test "$smartcard" != "no" ; then
 int main(void) { PK11_FreeSlot(0); return 0; }
 EOF
         smartcard_cflags="-I\$(SRC_PATH)/libcacard"
-        libcacard_libs=$($pkg_config --libs nss 2>/dev/null)
-        libcacard_cflags=$($pkg_config --cflags nss 2>/dev/null)
+        libcacard_libs="$($pkg_config --libs nss 2>/dev/null) $glib_libs"
+        libcacard_cflags="$($pkg_config --cflags nss 2>/dev/null) $glib_cflags"
         if $pkg_config --atleast-version=3.12.8 nss >/dev/null 2>&1 && \
           compile_prog "$smartcard_cflags $libcacard_cflags" "$libcacard_libs"; then
             smartcard_nss="yes"
@@ -2581,7 +2579,7 @@ fi
 
 # check for usbredirparser for usb network redirection support
 if test "$usb_redir" != "no" ; then
-    if $pkg_config --atleast-version=0.3.3 libusbredirparser >/dev/null 2>&1 ; then
+    if $pkg_config --atleast-version=0.3.4 libusbredirparser >/dev/null 2>&1 ; then
         usb_redir="yes"
         usb_redir_cflags=$($pkg_config --cflags libusbredirparser 2>/dev/null)
         usb_redir_libs=$($pkg_config --libs libusbredirparser 2>/dev/null)
@@ -2712,11 +2710,15 @@ fi
 
 ##########################################
 # check if we have makecontext
+# (and that it's not a glibc stub which always returns -1)
 
 ucontext_coroutine=no
 if test "$darwin" != "yes"; then
   cat > $TMPC << EOF
 #include <ucontext.h>
+#ifdef __stub_makecontext
+#error Ignoring glibc stub makecontext which will always fail
+#endif
 int main(void) { makecontext(0, 0, 0); return 0; }
 EOF
   if compile_prog "" "" ; then
@@ -2805,8 +2807,15 @@ confdir=$sysconfdir$confsuffix
 tools=
 if test "$softmmu" = yes ; then
   tools="qemu-img\$(EXESUF) qemu-io\$(EXESUF) $tools"
-  if [ "$cap" = "yes" -a "$linux" = "yes" ] ; then
-      tools="$tools fsdev/virtfs-proxy-helper\$(EXESUF)"
+  if test "$virtfs" != no ; then
+      if test "$cap" = yes && test "$linux" = yes && test "$attr" = yes ; then
+	  virtfs=yes
+	  tools="$tools fsdev/virtfs-proxy-helper\$(EXESUF)"
+      else
+	  if test "$virtfs" = yes; then
+	      feature_not_found "virtfs"
+	  fi
+      fi
   fi
   if [ "$linux" = "yes" -o "$bsd" = "yes" -o "$solaris" = "yes" ] ; then
       tools="qemu-nbd\$(EXESUF) $tools"
@@ -2871,6 +2880,7 @@ echo "Audio drivers     $audio_drv_list"
 echo "Extra audio cards $audio_card_list"
 echo "Block whitelist   $block_drv_whitelist"
 echo "Mixer emulation   $mixemu"
+echo "VirtFS support    $virtfs"
 echo "VNC support       $vnc"
 if test "$vnc" = "yes" ; then
     echo "VNC TLS support   $vnc_tls"
@@ -2958,7 +2968,6 @@ fi
 if test "$bigendian" = "yes" ; then
   echo "HOST_WORDS_BIGENDIAN=y" >> $config_host_mak
 fi
-echo "HOST_LONG_BITS=$hostlongbits" >> $config_host_mak
 if test "$mingw32" = "yes" ; then
   echo "CONFIG_WIN32=y" >> $config_host_mak
   rc_version=`cat $source_path/VERSION`
@@ -3160,10 +3169,8 @@ fi
 if test "$libattr" = "yes" ; then
   echo "CONFIG_LIBATTR=y" >> $config_host_mak
 fi
-if test "$linux" = "yes" ; then
-  if test "$attr" = "yes" ; then
-    echo "CONFIG_VIRTFS=y" >> $config_host_mak
-  fi
+if test "$virtfs" = "yes" ; then
+  echo "CONFIG_VIRTFS=y" >> $config_host_mak
 fi
 if test "$blobs" = "yes" ; then
   echo "INSTALL_BLOBS=yes" >> $config_host_mak
@@ -3182,9 +3189,6 @@ if test "$signalfd" = "yes" ; then
 fi
 if test "$tcg_interpreter" = "yes" ; then
   echo "CONFIG_TCG_INTERPRETER=y" >> $config_host_mak
-fi
-if test "$need_offsetof" = "yes" ; then
-  echo "CONFIG_NEED_OFFSETOF=y" >> $config_host_mak
 fi
 if test "$fdatasync" = "yes" ; then
   echo "CONFIG_FDATASYNC=y" >> $config_host_mak
@@ -3457,6 +3461,7 @@ case "$target_arch2" in
     gdb_xml_files="arm-core.xml arm-vfp.xml arm-vfp3.xml arm-neon.xml"
     target_phys_bits=32
     target_llong_alignment=4
+    target_libs_softmmu="$fdt_libs"
   ;;
   cris)
     target_nptl="yes"

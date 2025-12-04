@@ -613,6 +613,10 @@ static inline void trace_sun4m_iommu_bad_addr(uint64_t addr)
 {
 }
 
+static inline void trace_usb_packet_state_change(int bus, const char *port, int ep, void *p, const char *o, const char *n)
+{
+}
+
 static inline void trace_usb_port_claim(int bus, const char *port)
 {
 }

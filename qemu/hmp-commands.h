@@ -195,6 +195,15 @@
 
 
 {
+.name       = "system_wakeup",
+.args_type  = "",
+.params     = "",
+.help       = "wakeup guest from suspend",
+.mhandler.cmd = hmp_system_wakeup,
+},
+
+
+{
 .name       = "gdbserver",
 .args_type  = "device:s?",
 .params     = "[device]",

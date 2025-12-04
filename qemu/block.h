@@ -85,15 +85,15 @@ typedef enum {
 
 typedef enum {
     BDRV_ACTION_REPORT, BDRV_ACTION_IGNORE, BDRV_ACTION_STOP
-} BlockMonEventAction;
+} BlockQMPEventAction;
 
 void bdrv_iostatus_enable(BlockDriverState *bs);
 void bdrv_iostatus_reset(BlockDriverState *bs);
 void bdrv_iostatus_disable(BlockDriverState *bs);
 bool bdrv_iostatus_is_enabled(const BlockDriverState *bs);
 void bdrv_iostatus_set_err(BlockDriverState *bs, int error);
-void bdrv_mon_event(const BlockDriverState *bdrv,
-                    BlockMonEventAction action, int is_read);
+void bdrv_emit_qmp_error_event(const BlockDriverState *bdrv,
+                               BlockQMPEventAction action, int is_read);
 void bdrv_info_print(Monitor *mon, const QObject *data);
 void bdrv_info(Monitor *mon, QObject **ret_data);
 void bdrv_stats_print(Monitor *mon, const QObject *data);
@@ -114,6 +114,7 @@ int bdrv_create(BlockDriver *drv, const char* filename,
 int bdrv_create_file(const char* filename, QEMUOptionParameter *options);
 BlockDriverState *bdrv_new(const char *device_name);
 void bdrv_make_anon(BlockDriverState *bs);
+void bdrv_append(BlockDriverState *bs_new, BlockDriverState *bs_top);
 void bdrv_delete(BlockDriverState *bs);
 int bdrv_parse_cache_flags(const char *mode, int *flags);
 int bdrv_file_open(BlockDriverState **pbs, const char *filename, int flags);
@@ -252,9 +253,17 @@ typedef enum FDriveType {
     FDRIVE_DRV_NONE = 0x03,   /* No drive connected     */
 } FDriveType;
 
+typedef enum FDriveRate {
+    FDRIVE_RATE_500K = 0x00,  /* 500 Kbps */
+    FDRIVE_RATE_300K = 0x01,  /* 300 Kbps */
+    FDRIVE_RATE_250K = 0x02,  /* 250 Kbps */
+    FDRIVE_RATE_1M   = 0x03,  /*   1 Mbps */
+} FDriveRate;
+
 void bdrv_get_floppy_geometry_hint(BlockDriverState *bs, int *nb_heads,
                                    int *max_track, int *last_sect,
-                                   FDriveType drive_in, FDriveType *drive);
+                                   FDriveType drive_in, FDriveType *drive,
+                                   FDriveRate *rate);
 int bdrv_get_translation_hint(BlockDriverState *bs);
 void bdrv_set_on_error(BlockDriverState *bs, BlockErrorAction on_read_error,
                        BlockErrorAction on_write_error);
@@ -265,7 +274,7 @@ int bdrv_enable_write_cache(BlockDriverState *bs);
 int bdrv_is_inserted(BlockDriverState *bs);
 int bdrv_media_changed(BlockDriverState *bs);
 void bdrv_lock_medium(BlockDriverState *bs, bool locked);
-void bdrv_eject(BlockDriverState *bs, int eject_flag);
+void bdrv_eject(BlockDriverState *bs, bool eject_flag);
 void bdrv_get_format(BlockDriverState *bs, char *buf, int buf_size);
 BlockDriverState *bdrv_find(const char *name);
 BlockDriverState *bdrv_next(BlockDriverState *bs);

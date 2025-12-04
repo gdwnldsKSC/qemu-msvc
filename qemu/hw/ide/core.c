@@ -519,7 +519,7 @@ static int ide_handle_rw_error(IDEState *s, int error, int op)
     BlockErrorAction action = bdrv_get_on_error(s->bs, is_read);
 
     if (action == BLOCK_ERR_IGNORE) {
-        bdrv_mon_event(s->bs, BDRV_ACTION_IGNORE, is_read);
+        bdrv_emit_qmp_error_event(s->bs, BDRV_ACTION_IGNORE, is_read);
         return 0;
     }
 
@@ -527,7 +527,7 @@ static int ide_handle_rw_error(IDEState *s, int error, int op)
             || action == BLOCK_ERR_STOP_ANY) {
         s->bus->dma->ops->set_unit(s->bus->dma, s->unit);
         s->bus->error_status = op;
-        bdrv_mon_event(s->bs, BDRV_ACTION_STOP, is_read);
+        bdrv_emit_qmp_error_event(s->bs, BDRV_ACTION_STOP, is_read);
         vm_stop(RUN_STATE_IO_ERROR);
         bdrv_iostatus_set_err(s->bs, error);
     } else {
@@ -537,7 +537,7 @@ static int ide_handle_rw_error(IDEState *s, int error, int op)
         } else {
             ide_rw_error(s);
         }
-        bdrv_mon_event(s->bs, BDRV_ACTION_REPORT, is_read);
+        bdrv_emit_qmp_error_event(s->bs, BDRV_ACTION_REPORT, is_read);
     }
 
     return 1;
@@ -1068,6 +1068,9 @@ void ide_exec_cmd(IDEBus *bus, uint32_t val)
             ide_set_signature(s); /* odd, but ATA4 8.27.5.2 requires it */
             goto abort_cmd;
         }
+        if (!s->bs) {
+            goto abort_cmd;
+        }
 	ide_cmd_lba48_transform(s, lba48);
         s->req_nb_sectors = 1;
         ide_sector_read(s);
@@ -1078,6 +1081,9 @@ void ide_exec_cmd(IDEBus *bus, uint32_t val)
     case WIN_WRITE_ONCE:
     case CFA_WRITE_SECT_WO_ERASE:
     case WIN_WRITE_VERIFY:
+        if (!s->bs) {
+            goto abort_cmd;
+        }
 	ide_cmd_lba48_transform(s, lba48);
         s->error = 0;
         s->status = SEEK_STAT | READY_STAT;
@@ -1088,8 +1094,12 @@ void ide_exec_cmd(IDEBus *bus, uint32_t val)
     case WIN_MULTREAD_EXT:
 	lba48 = 1;
     case WIN_MULTREAD:
-        if (!s->mult_sectors)
+        if (!s->bs) {
             goto abort_cmd;
+        }
+        if (!s->mult_sectors) {
+            goto abort_cmd;
+        }
 	ide_cmd_lba48_transform(s, lba48);
         s->req_nb_sectors = s->mult_sectors;
         ide_sector_read(s);
@@ -1098,8 +1108,12 @@ void ide_exec_cmd(IDEBus *bus, uint32_t val)
 	lba48 = 1;
     case WIN_MULTWRITE:
     case CFA_WRITE_MULTI_WO_ERASE:
-        if (!s->mult_sectors)
+        if (!s->bs) {
             goto abort_cmd;
+        }
+        if (!s->mult_sectors) {
+            goto abort_cmd;
+        }
 	ide_cmd_lba48_transform(s, lba48);
         s->error = 0;
         s->status = SEEK_STAT | READY_STAT;
@@ -1114,8 +1128,9 @@ void ide_exec_cmd(IDEBus *bus, uint32_t val)
 	lba48 = 1;
     case WIN_READDMA:
     case WIN_READDMA_ONCE:
-        if (!s->bs)
+        if (!s->bs) {
             goto abort_cmd;
+        }
 	ide_cmd_lba48_transform(s, lba48);
         ide_sector_start_dma(s, IDE_DMA_READ);
         break;
@@ -1123,8 +1138,9 @@ void ide_exec_cmd(IDEBus *bus, uint32_t val)
 	lba48 = 1;
     case WIN_WRITEDMA:
     case WIN_WRITEDMA_ONCE:
-        if (!s->bs)
+        if (!s->bs) {
             goto abort_cmd;
+        }
 	ide_cmd_lba48_transform(s, lba48);
         ide_sector_start_dma(s, IDE_DMA_WRITE);
         s->media_changed = 1;
@@ -2077,15 +2093,6 @@ static bool ide_drive_pio_state_needed(void *opaque)
         || (s->bus->error_status & BM_STATUS_PIO_RETRY);
 }
 
-static int ide_tray_state_post_load(void *opaque, int version_id)
-{
-    IDEState *s = opaque;
-
-    bdrv_eject(s->bs, s->tray_open);
-    bdrv_lock_medium(s->bs, s->tray_locked);
-    return 0;
-}
-
 static bool ide_tray_state_needed(void *opaque)
 {
     IDEState *s = opaque;
@@ -2125,7 +2132,6 @@ static const VMStateDescription vmstate_ide_tray_state = {
     .version_id = 1,
     .minimum_version_id = 1,
     .minimum_version_id_old = 1,
-    .post_load = ide_tray_state_post_load,
     .fields = (VMStateField[]) {
         VMSTATE_BOOL(tray_open, IDEState),
         VMSTATE_BOOL(tray_locked, IDEState),

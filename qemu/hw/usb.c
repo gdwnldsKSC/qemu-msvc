@@ -26,6 +26,7 @@
 #include "qemu-common.h"
 #include "usb.h"
 #include "iov.h"
+#include "trace.h"
 
 void usb_attach(USBPort *port)
 {
@@ -94,6 +95,7 @@ void usb_wakeup(USBEndpoint *ep)
 #define SETUP_STATE_SETUP 1
 #define SETUP_STATE_DATA  2
 #define SETUP_STATE_ACK   3
+#define SETUP_STATE_PARAM 4
 
 static int do_token_setup(USBDevice *s, USBPacket *p)
 {
@@ -225,6 +227,50 @@ static int do_token_out(USBDevice *s, USBPacket *p)
     }
 }
 
+static int do_parameter(USBDevice *s, USBPacket *p)
+{
+    int request, value, index;
+    int i, ret = 0;
+
+    for (i = 0; i < 8; i++) {
+        s->setup_buf[i] = p->parameter >> (i*8);
+    }
+
+    s->setup_state = SETUP_STATE_PARAM;
+    s->setup_len   = (s->setup_buf[7] << 8) | s->setup_buf[6];
+    s->setup_index = 0;
+
+    request = (s->setup_buf[0] << 8) | s->setup_buf[1];
+    value   = (s->setup_buf[3] << 8) | s->setup_buf[2];
+    index   = (s->setup_buf[5] << 8) | s->setup_buf[4];
+
+    if (s->setup_len > sizeof(s->data_buf)) {
+        fprintf(stderr,
+                "usb_generic_handle_packet: ctrl buffer too small (%d > %zu)\n",
+                s->setup_len, sizeof(s->data_buf));
+        return USB_RET_STALL;
+    }
+
+    if (p->pid == USB_TOKEN_OUT) {
+        usb_packet_copy(p, s->data_buf, s->setup_len);
+    }
+
+    ret = usb_device_handle_control(s, p, request, value, index,
+                                    s->setup_len, s->data_buf);
+    if (ret < 0) {
+        return ret;
+    }
+
+    if (ret < s->setup_len) {
+        s->setup_len = ret;
+    }
+    if (p->pid == USB_TOKEN_IN) {
+        usb_packet_copy(p, s->data_buf, s->setup_len);
+    }
+
+    return ret;
+}
+
 /* ctrl complete function for devices which use usb_generic_handle_packet and
    may return USB_RET_ASYNC from their handle_control callback. Device code
    which does this *must* call this function instead of the normal
@@ -247,6 +293,16 @@ void usb_generic_async_ctrl_complete(USBDevice *s, USBPacket *p)
     case SETUP_STATE_ACK:
         s->setup_state = SETUP_STATE_IDLE;
         p->result = 0;
+        break;
+
+    case SETUP_STATE_PARAM:
+        if (p->result < s->setup_len) {
+            s->setup_len = p->result;
+        }
+        if (p->pid == USB_TOKEN_IN) {
+            p->result = 0;
+            usb_packet_copy(p, s->data_buf, s->setup_len);
+        }
         break;
 
     default:
@@ -291,6 +347,9 @@ static int usb_process_one(USBPacket *p)
 
     if (p->ep->nr == 0) {
         /* control pipe */
+        if (p->parameter) {
+            return do_parameter(dev, p);
+        }
         switch (p->pid) {
         case USB_TOKEN_SETUP:
             return do_token_setup(dev, p);
@@ -322,7 +381,7 @@ int usb_handle_packet(USBDevice *dev, USBPacket *p)
     assert(p->state == USB_PACKET_SETUP);
     assert(p->ep != NULL);
 
-    if (QTAILQ_EMPTY(&p->ep->queue)) {
+    if (QTAILQ_EMPTY(&p->ep->queue) || p->ep->pipeline) {
         ret = usb_process_one(p);
         if (ret == USB_RET_ASYNC) {
             usb_packet_set_state(p, USB_PACKET_ASYNC);
@@ -355,6 +414,9 @@ void usb_packet_complete(USBDevice *dev, USBPacket *p)
 
     while (!QTAILQ_EMPTY(&ep->queue)) {
         p = QTAILQ_FIRST(&ep->queue);
+        if (p->state == USB_PACKET_ASYNC) {
+            break;
+        }
         assert(p->state == USB_PACKET_QUEUED);
         ret = usb_process_one(p);
         if (ret == USB_RET_ASYNC) {
@@ -390,7 +452,6 @@ void usb_packet_init(USBPacket *p)
 
 void usb_packet_set_state(USBPacket *p, USBPacketState state)
 {
-#ifdef DEBUG
     static const char *name[] = {
         [USB_PACKET_UNDEFINED] = "undef",
         [USB_PACKET_SETUP]     = "setup",
@@ -399,28 +460,11 @@ void usb_packet_set_state(USBPacket *p, USBPacketState state)
         [USB_PACKET_COMPLETE]  = "complete",
         [USB_PACKET_CANCELED]  = "canceled",
     };
-    static const char *rets[] = {
-        [-USB_RET_NODEV]  = "NODEV",
-        [-USB_RET_NAK]    = "NAK",
-        [-USB_RET_STALL]  = "STALL",
-        [-USB_RET_BABBLE] = "BABBLE",
-        [-USB_RET_ASYNC]  = "ASYNC",
-    };
-    char add[16] = "";
+    USBDevice *dev = p->ep->dev;
+    USBBus *bus = usb_bus_from_device(dev);
 
-    if (state == USB_PACKET_COMPLETE) {
-        if (p->result < 0) {
-            snprintf(add, sizeof(add), " - %s", rets[-p->result]);
-        } else {
-            snprintf(add, sizeof(add), " - %d", p->result);
-        }
-    }
-    fprintf(stderr, "bus %s, port %s, dev %d, ep %d: packet %p: %s -> %s%s\n",
-            p->ep->dev->qdev.parent_bus->name,
-            p->ep->dev->port->path,
-            p->ep->dev->addr, p->ep->nr,
-            p, name[p->state], name[state], add);
-#endif
+    trace_usb_packet_state_change(bus->busnr, dev->port->path, p->ep->nr,
+                                  p, name[p->state], name[state]);
     p->state = state;
 }
 
@@ -430,6 +474,7 @@ void usb_packet_setup(USBPacket *p, int pid, USBEndpoint *ep)
     p->pid = pid;
     p->ep = ep;
     p->result = 0;
+    p->parameter = 0;
     qemu_iovec_reset(&p->iov);
     usb_packet_set_state(p, USB_PACKET_SETUP);
 }
@@ -482,6 +527,7 @@ void usb_ep_init(USBDevice *dev)
     dev->ep_ctl.type = USB_ENDPOINT_XFER_CONTROL;
     dev->ep_ctl.ifnum = 0;
     dev->ep_ctl.dev = dev;
+    dev->ep_ctl.pipeline = false;
     QTAILQ_INIT(&dev->ep_ctl.queue);
     for (ep = 0; ep < USB_MAX_ENDPOINTS; ep++) {
         dev->ep_in[ep].nr = ep + 1;
@@ -494,6 +540,8 @@ void usb_ep_init(USBDevice *dev)
         dev->ep_out[ep].ifnum = 0;
         dev->ep_in[ep].dev = dev;
         dev->ep_out[ep].dev = dev;
+        dev->ep_in[ep].pipeline = false;
+        dev->ep_out[ep].pipeline = false;
         QTAILQ_INIT(&dev->ep_in[ep].queue);
         QTAILQ_INIT(&dev->ep_out[ep].queue);
     }
@@ -606,4 +654,10 @@ int usb_ep_get_max_packet_size(USBDevice *dev, int pid, int ep)
 {
     struct USBEndpoint *uep = usb_ep_get(dev, pid, ep);
     return uep->max_packet_size;
+}
+
+void usb_ep_set_pipeline(USBDevice *dev, int pid, int ep, bool enabled)
+{
+    struct USBEndpoint *uep = usb_ep_get(dev, pid, ep);
+    uep->pipeline = enabled;
 }

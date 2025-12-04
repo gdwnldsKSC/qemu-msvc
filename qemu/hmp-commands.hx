@@ -352,6 +352,20 @@ Resume emulation.
 ETEXI
 
     {
+        .name       = "system_wakeup",
+        .args_type  = "",
+        .params     = "",
+        .help       = "wakeup guest from suspend",
+        .mhandler.cmd = hmp_system_wakeup,
+    },
+
+STEXI
+@item system_wakeup
+@findex system_wakeup
+Wakeup guest from suspend.
+ETEXI
+
+    {
         .name       = "gdbserver",
         .args_type  = "device:s?",
         .params     = "[device]",
@@ -1341,7 +1355,7 @@ show i8259 (PIC) state
 @item info pci
 show emulated PCI device info
 @item info tlb
-show virtual to physical memory mappings (i386, SH4, SPARC, and PPC only)
+show virtual to physical memory mappings (i386, SH4, SPARC, PPC, and Xtensa only)
 @item info mem
 show the active virtual memory mappings (i386 only)
 @item info jit

@@ -254,6 +254,14 @@ typedef struct BlockJobInfoList
     struct BlockJobInfoList *next;
 } BlockJobInfoList;
 
+typedef struct SnapshotDev SnapshotDev;
+
+typedef struct SnapshotDevList
+{
+    SnapshotDev *value;
+    struct SnapshotDevList *next;
+} SnapshotDevList;
+
 typedef struct ObjectPropertyInfo ObjectPropertyInfo;
 
 typedef struct ObjectPropertyInfoList
@@ -629,6 +637,17 @@ struct BlockJobInfo
 
 void qapi_free_BlockJobInfoList(BlockJobInfoList * obj);
 void qapi_free_BlockJobInfo(BlockJobInfo * obj);
+
+struct SnapshotDev
+{
+    char * device;
+    char * snapshot_file;
+    bool has_format;
+    char * format;
+};
+
+void qapi_free_SnapshotDevList(SnapshotDevList * obj);
+void qapi_free_SnapshotDev(SnapshotDev * obj);
 
 struct ObjectPropertyInfo
 {

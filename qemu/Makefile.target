@@ -200,6 +200,7 @@ obj-y = arch_init.o cpus.o monitor.o machine.o gdbstub.o balloon.o ioport.o
 # need to fix this properly
 obj-$(CONFIG_NO_PCI) += pci-stub.o
 obj-$(CONFIG_VIRTIO) += virtio.o virtio-blk.o virtio-balloon.o virtio-net.o virtio-serial-bus.o
+obj-$(CONFIG_VIRTIO_SCSI) += virtio-scsi.o
 obj-y += vhost_net.o
 obj-$(CONFIG_VHOST_NET) += vhost.o
 obj-$(CONFIG_REALLY_VIRTFS) += 9pfs/virtio-9p-device.o
@@ -236,13 +237,14 @@ obj-y += device-hotplug.o
 
 # Hardware support
 obj-i386-y += mc146818rtc.o pc.o
-obj-i386-y += sga.o apic_common.o apic.o ioapic_common.o ioapic.o piix_pci.o
+obj-i386-y += apic_common.o apic.o kvmvapic.o
+obj-i386-y += sga.o ioapic_common.o ioapic.o piix_pci.o
 obj-i386-y += vmport.o
 obj-i386-y += pci-hotplug.o smbios.o wdt_ib700.o
 obj-i386-y += debugcon.o multiboot.o
 obj-i386-y += pc_piix.o
 obj-i386-y += pc_sysfw.o
-obj-i386-$(CONFIG_KVM) += kvm/clock.o kvm/apic.o kvm/i8259.o kvm/ioapic.o
+obj-i386-$(CONFIG_KVM) += kvm/clock.o kvm/apic.o kvm/i8259.o kvm/ioapic.o kvm/i8254.o
 obj-i386-$(CONFIG_SPICE) += qxl.o qxl-logger.o qxl-render.o
 
 # shared objects
@@ -305,6 +307,7 @@ obj-mips-$(CONFIG_FULONG) += bonito.o vt82c686.o mips_fulong2e.o
 
 obj-microblaze-y = petalogix_s3adsp1800_mmu.o
 obj-microblaze-y += petalogix_ml605_mmu.o
+obj-microblaze-y += microblaze_boot.o
 
 obj-microblaze-y += microblaze_pic_cpu.o
 obj-microblaze-y += xilinx_intc.o
@@ -343,6 +346,10 @@ endif
 obj-arm-y = integratorcp.o versatilepb.o arm_pic.o arm_timer.o
 obj-arm-y += arm_boot.o pl011.o pl031.o pl050.o pl080.o pl110.o pl181.o pl190.o
 obj-arm-y += versatile_pci.o
+obj-arm-y += cadence_uart.o
+obj-arm-y += cadence_ttc.o
+obj-arm-y += cadence_gem.o
+obj-arm-y += xilinx_zynq.o zynq_slcr.o
 obj-arm-y += realview_gic.o realview.o arm_sysctl.o arm11mpcore.o a9mpcore.o
 obj-arm-y += exynos4210_gic.o exynos4210_combiner.o exynos4210.o
 obj-arm-y += exynos4_boards.o exynos4210_uart.o exynos4210_pwm.o
@@ -372,6 +379,7 @@ obj-arm-y += vexpress.o
 obj-arm-y += strongarm.o
 obj-arm-y += collie.o
 obj-arm-y += pl041.o lm4549.o
+obj-arm-$(CONFIG_FDT) += device_tree.o
 
 obj-sh4-y = shix.o r2d.o sh7750.o sh7750_regnames.o tc58128.o
 obj-sh4-y += sh_timer.o sh_serial.o sh_intc.o sh_pci.o sm501.o

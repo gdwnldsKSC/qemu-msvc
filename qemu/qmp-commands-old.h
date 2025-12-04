@@ -46,6 +46,13 @@
 
 
 {
+.name       = "system_wakeup",
+.args_type  = "",
+.mhandler.cmd_new = qmp_marshal_input_system_wakeup,
+},
+
+
+{
 .name       = "system_reset",
 .args_type  = "",
 .mhandler.cmd_new = qmp_marshal_input_system_reset,
@@ -197,6 +204,13 @@
 .args_type  = "device:B",
 .mhandler.cmd_new = qmp_marshal_input_block_job_cancel,
 },
+{
+.name       = "blockdev-group-snapshot-sync",
+.args_type  = "devlist:O",
+.params  = "device:B,snapshot-file:s,format:s?",
+.mhandler.cmd_new = qmp_marshal_input_blockdev_group_snapshot_sync,
+},
+
 
 {
 .name       = "blockdev-snapshot-sync",

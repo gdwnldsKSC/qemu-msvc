@@ -471,6 +471,9 @@ DEF("append", HAS_ARG, QEMU_OPTION_append, \
 DEF("initrd", HAS_ARG, QEMU_OPTION_initrd, \
 "-initrd file    use 'file' as initial ram disk\n", QEMU_ARCH_ALL)
 
+DEF("dtb", HAS_ARG, QEMU_OPTION_dtb, \
+"-dtb    file    use 'file' as device tree image\n", QEMU_ARCH_ALL)
+
 
 DEFHEADING()
 

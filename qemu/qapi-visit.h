@@ -101,6 +101,9 @@ void visit_type_PciInfoList(Visitor *m, PciInfoList ** obj, const char *name, Er
 void visit_type_BlockJobInfo(Visitor *m, BlockJobInfo ** obj, const char *name, Error **errp);
 void visit_type_BlockJobInfoList(Visitor *m, BlockJobInfoList ** obj, const char *name, Error **errp);
 
+void visit_type_SnapshotDev(Visitor *m, SnapshotDev ** obj, const char *name, Error **errp);
+void visit_type_SnapshotDevList(Visitor *m, SnapshotDevList ** obj, const char *name, Error **errp);
+
 void visit_type_ObjectPropertyInfo(Visitor *m, ObjectPropertyInfo ** obj, const char *name, Error **errp);
 void visit_type_ObjectPropertyInfoList(Visitor *m, ObjectPropertyInfoList ** obj, const char *name, Error **errp);
 

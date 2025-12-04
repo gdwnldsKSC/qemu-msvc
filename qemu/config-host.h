@@ -9,7 +9,6 @@
 #define GLIB_MINOR_VERSION 86
 #define GLIB_MICRO_VERSION 0
 #define HOST_I386 1
-#define HOST_LONG_BITS 32
 #define CONFIG_WIN32 1
 //#define CONFIG_GDBSTUB 1
 #define CONFIG_STATIC 1
