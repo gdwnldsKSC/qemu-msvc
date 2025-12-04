@@ -10,7 +10,7 @@
  * See the COPYING file in the top-level directory.
  */
 
-#include "include/qemu/object.h"
+#include "qemu/object.h"
 #include "module.h"
 
 static TypeInfo container_info = {

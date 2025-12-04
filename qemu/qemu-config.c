@@ -547,6 +547,7 @@ QemuOptsList qemu_option_rom_opts = {
 static QemuOptsList qemu_machine_opts = {
     .name = "machine",
     .implied_opt_name = "type",
+    .merge_lists = true,
     .head = QTAILQ_HEAD_INITIALIZER(qemu_machine_opts.head),
     .desc = {
         {
@@ -565,6 +566,18 @@ static QemuOptsList qemu_machine_opts = {
             .name = "kvm_shadow_mem",
             .type = QEMU_OPT_SIZE,
             .help = "KVM shadow MMU size",
+        }, {
+            .name = "kernel",
+            .type = QEMU_OPT_STRING,
+            .help = "Linux kernel image file",
+        }, {
+            .name = "initrd",
+            .type = QEMU_OPT_STRING,
+            .help = "Linux initial ramdisk file",
+        }, {
+            .name = "append",
+            .type = QEMU_OPT_STRING,
+            .help = "Linux kernel command line",
         },
         { /* End of list */ }
     },

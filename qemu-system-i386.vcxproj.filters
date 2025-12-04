@@ -1977,6 +1977,15 @@
     <ClCompile Include="qemu\qemu-bridge-helper.c">
       <Filter>qemu\src</Filter>
     </ClCompile>
+    <ClCompile Include="qemu\qapi\string-input-visitor.c">
+      <Filter>qemu\qapi</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\qapi\string-output-visitor.c">
+      <Filter>qemu\qapi</Filter>
+    </ClCompile>
+    <ClCompile Include="qemu\hw\pc_sysfw.c">
+      <Filter>qemu\hw\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="float80-port.h">
@@ -3064,6 +3073,21 @@
     </ClInclude>
     <ClInclude Include="qemu\include\qemu\qom-qobject.h">
       <Filter>qemu\qom\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\qapi-visit-impl.h">
+      <Filter>qemu\qapi</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\string-input-visitor.h">
+      <Filter>qemu\qapi</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\qapi\string-output-visitor.h">
+      <Filter>qemu\qapi</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\hw\i8254.h">
+      <Filter>qemu\hw\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="qemu\hw\pcspk.h">
+      <Filter>qemu\hw\inc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

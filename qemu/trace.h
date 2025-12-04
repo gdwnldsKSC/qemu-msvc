@@ -333,6 +333,14 @@ static inline void trace_ecc_diag_mem_readb(uint64_t addr, uint32_t ret)
 {
 }
 
+static inline void trace_jazz_led_read(uint64_t addr, uint8_t val)
+{
+}
+
+static inline void trace_jazz_led_write(uint64_t addr, uint8_t new)
+{
+}
+
 static inline void trace_lance_mem_readw(uint64_t addr, uint32_t ret)
 {
 }

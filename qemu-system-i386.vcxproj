@@ -534,6 +534,7 @@
     <ClCompile Include="qemu\hw\pci_host.c" />
     <ClCompile Include="qemu\hw\pcnet-pci.c" />
     <ClCompile Include="qemu\hw\pc_piix.c" />
+    <ClCompile Include="qemu\hw\pc_sysfw.c" />
     <ClCompile Include="qemu\hw\petalogix_ml605_mmu.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -688,6 +689,8 @@
     <ClCompile Include="qemu\qapi\qmp-input-visitor.c" />
     <ClCompile Include="qemu\qapi\qmp-output-visitor.c" />
     <ClCompile Include="qemu\qapi\qmp-registry.c" />
+    <ClCompile Include="qemu\qapi\string-input-visitor.c" />
+    <ClCompile Include="qemu\qapi\string-output-visitor.c" />
     <ClCompile Include="qemu\qbool.c" />
     <ClCompile Include="qemu\qdict.c" />
     <ClCompile Include="qemu\qemu-bridge-helper.c">
@@ -2128,6 +2131,7 @@
     <ClInclude Include="qemu\hw\elf_ops.h" />
     <ClInclude Include="qemu\hw\grlib.h" />
     <ClInclude Include="qemu\hw\hid.h" />
+    <ClInclude Include="qemu\hw\i8254.h" />
     <ClInclude Include="qemu\hw\i8259_internal.h" />
     <ClInclude Include="qemu\hw\ide\ahci.h" />
     <ClInclude Include="qemu\hw\ide\internal.h" />
@@ -2157,6 +2161,7 @@
     <ClInclude Include="qemu\hw\pci_ids.h" />
     <ClInclude Include="qemu\hw\pci_internals.h" />
     <ClInclude Include="qemu\hw\pcnet.h" />
+    <ClInclude Include="qemu\hw\pcspk.h" />
     <ClInclude Include="qemu\hw\pl041.h" />
     <ClInclude Include="qemu\hw\pm_smbus.h" />
     <ClInclude Include="qemu\hw\poison.h" />
@@ -2214,9 +2219,12 @@
     <ClInclude Include="qemu\qapi\qapi-dealloc-visitor.h" />
     <ClInclude Include="qemu\qapi\qapi-types-core.h" />
     <ClInclude Include="qemu\qapi\qapi-visit-core.h" />
+    <ClInclude Include="qemu\qapi\qapi-visit-impl.h" />
     <ClInclude Include="qemu\qapi\qmp-core.h" />
     <ClInclude Include="qemu\qapi\qmp-input-visitor.h" />
     <ClInclude Include="qemu\qapi\qmp-output-visitor.h" />
+    <ClInclude Include="qemu\qapi\string-input-visitor.h" />
+    <ClInclude Include="qemu\qapi\string-output-visitor.h" />
     <ClInclude Include="qemu\qbool.h" />
     <ClInclude Include="qemu\qdict.h" />
     <ClInclude Include="qemu\qemu-barrier.h" />

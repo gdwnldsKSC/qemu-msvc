@@ -1188,7 +1188,7 @@ static QEMUMachine *find_machine(const char *name)
     return NULL;
 }
 
-static QEMUMachine *find_default_machine(void)
+QEMUMachine *find_default_machine(void)
 {
     QEMUMachine *m;
 
@@ -2031,7 +2031,7 @@ static int configure_accelerator(void)
     const char *p = NULL;
     char buf[10];
     int i, ret;
-    bool accel_initalised = 0;
+    bool accel_initialised = 0;
     bool init_failed = 0;
 
     QemuOptsList *list = qemu_find_opts("machine");
@@ -2044,7 +2044,7 @@ static int configure_accelerator(void)
         p = "tcg";
     }
 
-    while (!accel_initalised && *p != '\0') {
+    while (!accel_initialised && *p != '\0') {
         if (*p == ':') {
             p++;
         }
@@ -2065,7 +2065,7 @@ static int configure_accelerator(void)
                     }
                     *(accel_list[i].allowed) = 0;
                 } else {
-                    accel_initalised = 1;
+                    accel_initialised = 1;
                 }
                 break;
             }
@@ -2075,7 +2075,7 @@ static int configure_accelerator(void)
         }
     }
 
-    if (!accel_initalised) {
+    if (!accel_initialised) {
         fprintf(stderr, "No accelerator found!\n");
         exit(1);
     }
@@ -2084,7 +2084,7 @@ static int configure_accelerator(void)
         fprintf(stderr, "Back to %s accelerator.\n", accel_list[i].name);
     }
 
-    return !accel_initalised;
+    return !accel_initialised;
 }
 
 void qemu_add_exit_notifier(Notifier *notify)
@@ -2094,7 +2094,7 @@ void qemu_add_exit_notifier(Notifier *notify)
 
 void qemu_remove_exit_notifier(Notifier *notify)
 {
-    notifier_list_remove(&exit_notifiers, notify);
+    notifier_remove(notify);
 }
 
 static void qemu_run_exit_notifiers(void)
@@ -2239,11 +2239,8 @@ int main(int argc, char **argv, char **envp)
     module_call_init(MODULE_INIT_MACHINE);
     machine = find_default_machine();
     cpu_model = NULL;
-    initrd_filename = NULL;
     ram_size = 0;
     snapshot = 0;
-    kernel_filename = NULL;
-    kernel_cmdline = "";
     cyls = heads = secs = 0;
     translation = BIOS_ATA_TRANSLATION_AUTO;
 
@@ -2318,9 +2315,6 @@ int main(int argc, char **argv, char **envp)
                 } else {
                     cpu_model = optarg;
                 }
-                break;
-            case QEMU_OPTION_initrd:
-                initrd_filename = optarg;
                 break;
             case QEMU_OPTION_hda:
                 {
@@ -2452,10 +2446,13 @@ int main(int argc, char **argv, char **envp)
                 }
                 break;
             case QEMU_OPTION_kernel:
-                kernel_filename = optarg;
+                qemu_opts_set(qemu_find_opts("machine"), 0, "kernel", optarg);
+                break;
+            case QEMU_OPTION_initrd:
+                qemu_opts_set(qemu_find_opts("machine"), 0, "initrd", optarg);
                 break;
             case QEMU_OPTION_append:
-                kernel_cmdline = optarg;
+                qemu_opts_set(qemu_find_opts("machine"), 0, "append", optarg);
                 break;
             case QEMU_OPTION_cdrom:
                 drive_add(IF_DEFAULT, 2, optarg, CDROM_OPTS);
@@ -2883,12 +2880,10 @@ int main(int argc, char **argv, char **envp)
                 break;
             case QEMU_OPTION_enable_kvm:
                 olist = qemu_find_opts("machine");
-                qemu_opts_reset(olist);
                 qemu_opts_parse(olist, "accel=kvm", 0);
                 break;
             case QEMU_OPTION_machine:
                 olist = qemu_find_opts("machine");
-                qemu_opts_reset(olist);
                 opts = qemu_opts_parse(olist, optarg, 1);
                 if (!opts) {
                     fprintf(stderr, "parse error: %s\n", optarg);
@@ -3252,6 +3247,17 @@ int main(int argc, char **argv, char **envp)
         fprintf(stderr, "qemu_init_main_loop failed\n");
         exit(1);
     }
+
+    kernel_filename = qemu_opt_get(qemu_opts_find(qemu_find_opts("machine"),
+                                                  0), "kernel");
+    initrd_filename = qemu_opt_get(qemu_opts_find(qemu_find_opts("machine"),
+                                                  0), "initrd");
+    kernel_cmdline = qemu_opt_get(qemu_opts_find(qemu_find_opts("machine"),
+                                                 0), "append");
+    if (!kernel_cmdline) {
+        kernel_cmdline = "";
+    }
+
     linux_boot = (kernel_filename != NULL);
 
     if (!linux_boot && *kernel_cmdline != '\0') {
